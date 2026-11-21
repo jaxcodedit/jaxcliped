@@ -10,13 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@300&family=Archivo+Black&family=Anton&family=Poppins:wght@800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --brand:#0071E3;--brand-press:#0077ED;--brand-ink:#FFFFFF;--brand-soft:#EBF5FF;--brand-line:#BAE6FD;--brand-deep:#0051A8;
-  --frame:#F5F5F7;--frame-2:#FFFFFF;--frame-line:rgba(0,0,0,.08);--frame-text:#1D1D1F;--frame-dim:#86868B;
-  --bg:#FFFFFF;--muted:#F5F5F7;--line:rgba(0,0,0,.08);--line-2:rgba(0,0,0,.14);
-  --text:#1D1D1F;--dim:#6E6E73;--faint:#A1A1A6;
-  --good:#0F8A57;--good-soft:#E6F6EE;--bad:#D3343F;--bad-soft:#FDECEE;--live:#E5323F;
+  --brand:#0A84FF;--brand-press:#0071E3;--brand-ink:#FFFFFF;--brand-soft:rgba(10,132,255,0.15);--brand-line:rgba(10,132,255,0.3);--brand-deep:#0051A8;
+  --frame:#161618;--frame-2:#202024;--frame-line:rgba(255,255,255,0.1);--frame-text:#F5F5F7;--frame-dim:#A1A1A6;
+  --bg:#1C1C1E;--muted:#2C2C2E;--line:rgba(255,255,255,0.12);--line-2:rgba(255,255,255,0.2);
+  --text:#F5F5F7;--dim:#A1A1A6;--faint:#636366;
+  --good:#30D158;--good-soft:rgba(48,209,88,0.15);--bad:#FF453A;--bad-soft:rgba(255,69,58,0.15);--live:#FF375F;
   --r-lg:16px;--r:12px;--r-sm:8px;
-  color-scheme:light;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -196,7 +196,7 @@ img.avatar.ring{background:transparent}
 .app.mini .sb-tag{display:none}
 
 /* ---------- buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line-2);background:#fff;color:var(--text);cursor:pointer;text-decoration:none;white-space:nowrap;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 14px;border-radius:var(--r);border:1px solid var(--line-2);background:var(--frame-2);color:var(--text);cursor:pointer;text-decoration:none;white-space:nowrap;font-weight:600}
 .btn:active{background:var(--muted)}
 .btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
 .btn.primary:active{background:var(--brand-press);border-color:var(--brand-press)}
@@ -211,10 +211,10 @@ img.avatar.ring{background:transparent}
 .btn:disabled{opacity:.45;cursor:default;pointer-events:none}
 
 /* ---------- fields */
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea){width:100%;height:40px;padding:0 12px;background:#fff;border:1px solid var(--line-2);border-radius:var(--r-sm);min-width:0;outline:none;transition:border-color .15s ease}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea){width:100%;height:40px;padding:0 12px;background:var(--frame-2);color:var(--text);border:1px solid var(--line-2);border-radius:var(--r-sm);min-width:0;outline:none;transition:border-color .15s ease}
 :where(textarea){height:auto;padding:10px 12px;resize:vertical}
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):hover{border-color:#D9CCC2}
-:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):focus{background:#fff;border-color:var(--brand)}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):hover{border-color:var(--line-2)}
+:where(input:not([type=checkbox],[type=radio],[type=file],[type=range]),select,textarea):focus{background:var(--frame-2);border-color:var(--brand)}
 input:not([type=checkbox],[type=radio],[type=range]):focus-visible,select:focus-visible,textarea:focus-visible{outline:none}
 input::placeholder,textarea::placeholder{color:var(--faint)}
 label.f{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--dim);font-weight:600}
@@ -231,8 +231,8 @@ label.ck input{accent-color:var(--brand);margin:0}
 .span{grid-column:1/-1}
 
 /* ---------- surfaces */
-.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:16px}
-.card>h2,.card-head h2{font-size:15px;font-weight:600;color:var(--brand-ink)}
+.card{background:var(--frame-2);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.card>h2,.card-head h2{font-size:15px;font-weight:600;color:var(--text)}
 .card>h2{margin-bottom:4px}
 .card>h2+.help{margin-bottom:18px}
 .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
