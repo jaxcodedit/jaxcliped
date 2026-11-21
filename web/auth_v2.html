@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>PeakCut — Studio Authentication</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-tint": "#00dbe9",
+            "on-background": "#e4e1ed",
+            "primary": "#00F0FF",
+            "secondary": "#7B61FF",
+            "background": "#07070B"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+</script>
+<style>
+    @layer base {
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #07070B;
+        color: #EDEDED;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+      .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 16px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+    
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.45; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+    }
+    .animate-pulse-glow {
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+    .mesh-gradient {
+      background: radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.18) 0%, rgba(123, 97, 255, 0.18) 40%, rgba(10, 0, 20, 0.95) 75%, #07070B 100%);
+    }
+</style>
+</head>
+<body class="bg-[#07070B] text-zinc-100 flex flex-col min-h-screen pt-safe pb-safe selection:bg-[#00F0FF]/30 selection:text-white">
+<main class="flex flex-col relative w-full flex-grow items-center justify-start overflow-x-hidden">
+<!-- Top Split Presentation with Ambient Glow -->
+<section class="relative w-full overflow-hidden mesh-gradient pt-8 pb-7 px-6 flex flex-col items-center border-b border-white/[0.04]">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-72 h-72 bg-[#00F0FF]/20 rounded-full blur-[80px] pointer-events-none animate-pulse-glow"></div>
+<div class="absolute top-10 -right-10 w-56 h-56 bg-[#7B61FF]/25 rounded-full blur-[70px] pointer-events-none"></div>
+
+<!-- Minimal Floating Badge -->
+<div class="relative z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md mb-6 shadow-sm">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-[#00F0FF] shadow-[0_0_8px_#00F0FF]"></span>
+<span class="text-[11px] font-medium tracking-wide uppercase text-zinc-300">Next-generation stream intelligence</span>
+</div>
+
+<!-- PeakCut Floating Glowing Emblem -->
+<div class="relative z-10 flex flex-col items-center">
+<a href="/" class="relative group cursor-pointer">
+<div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#00F0FF] via-[#7B61FF] to-[#00F0FF] opacity-75 blur-md group-hover:opacity-100 transition duration-500"></div>
+<div class="relative w-16 h-16 rounded-2xl bg-[#090910] border border-white/10 p-2.5 flex items-center justify-center shadow-2xl">
+<svg class="w-full h-full drop-shadow-[0_0_8px_rgba(0,240,255,0.7)]" fill="none" viewBox="0 0 100 100">
+<path d="M15 72L42 28L58 54L48 72H15Z" stroke="#00F0FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"></path>
+<path d="M42 72L65 24L88 62L76 72" stroke="#7B61FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"></path>
+</svg>
+</div>
+</a>
+<div class="flex items-center gap-1 mt-4">
+<span class="text-2xl font-semibold tracking-tight text-white">Peak</span>
+<span class="text-2xl font-bold tracking-tight text-[#00F0FF] drop-shadow-[0_0_14px_rgba(0,240,255,0.6)]">Cut</span>
+</div>
+<p class="text-xs text-zinc-400 font-normal tracking-wide mt-1 text-center max-w-xs">
+Turn hours of raw stream footage into viral clips in seconds.
+</p>
+</div>
+</section>
+
+<!-- Main Auth Form Container -->
+<div class="w-full max-w-[420px] px-5 py-6 flex flex-col items-center">
+<div class="w-full bg-[#07070B] border border-white/[0.06] rounded-2xl p-6 shadow-2xl shadow-black/80 backdrop-blur-xl relative">
+
+<!-- Segmented Control with Sliding Pill Indicator -->
+<div class="relative w-full p-1 bg-[#0E0E16] border border-white/[0.06] rounded-xl flex items-center mb-6">
+<div class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-[#1A1A26] rounded-lg border border-white/[0.08] shadow-sm transition-transform duration-300 ease-out" id="tab-slider"></div>
+<button class="relative z-10 flex-1 py-1.5 text-xs font-semibold text-white transition-colors duration-200 text-center tracking-tight" id="tab-signup" onclick="setAuthMode('signup')" type="button">
+Create Account
+</button>
+<button class="relative z-10 flex-1 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200 text-center tracking-tight" id="tab-login" onclick="setAuthMode('login')" type="button">
+Log In
+</button>
+</div>
+
+<!-- Dynamic Header Text -->
+<div class="text-left mb-5">
+<h1 class="text-lg font-semibold tracking-tight text-white" id="auth-heading">Create your account</h1>
+<p class="text-xs text-zinc-400 mt-1 leading-relaxed" id="auth-subtitle">Supercharge long-form edits into viral shorts with synthetic intelligence.</p>
+</div>
+
+<!-- Google SSO Button -->
+<a href="/auth/google/start" class="w-full py-2.5 px-4 bg-white hover:bg-zinc-100 text-[#07070B] font-semibold text-xs rounded-xl flex items-center justify-center gap-2.5 transition-all duration-150 active:scale-[0.985] shadow-[0_2px_12px_rgba(255,255,255,0.08)] cursor-pointer">
+<svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span class="tracking-tight">Continue with Google</span>
+</a>
+
+<!-- Divider -->
+<div class="relative flex items-center justify-center my-5">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-white/[0.06]"></div>
+</div>
+<span class="relative bg-[#07070B] px-3 text-[10px] uppercase font-mono tracking-widest text-zinc-500">
+or continue with email
+</span>
+</div>
+
+<!-- Form Elements -->
+<form class="space-y-3.5" id="auth-form" onsubmit="event.preventDefault(); triggerAuth();">
+<!-- Email Input -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-xs">
+<label class="text-zinc-300 font-medium text-[11px]" for="input-email">Creator Email</label>
+<span class="text-[11px] text-[#00F0FF] font-mono opacity-0 transition-opacity flex items-center gap-0.5" id="email-valid">
+<span class="material-symbols-outlined text-[13px]">check</span> Valid
+</span>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-zinc-500 text-[18px] pointer-events-none">alternate_email</span>
+<input class="w-full pl-10 pr-3.5 py-2.5 bg-[#0E0E16] text-zinc-100 placeholder:text-zinc-600 text-xs rounded-xl border border-white/[0.08] focus:border-[#00F0FF]/60 focus:ring-1 focus:ring-[#00F0FF]/30 transition-all outline-none" id="input-email" oninput="checkEmail(this.value)" placeholder="creator@stream.tv" required type="email"/>
+</div>
+</div>
+
+<!-- Password Input -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-xs">
+<label class="text-zinc-300 font-medium text-[11px]" for="input-password">Password</label>
+<button class="text-[11px] text-[#00F0FF] hover:text-[#7df4ff] transition-colors hidden font-medium" id="forgot-link" onclick="notifyForgot()" type="button">
+Forgot password?
+</button>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-zinc-500 text-[18px] pointer-events-none">lock</span>
+<input class="w-full pl-10 pr-10 py-2.5 bg-[#0E0E16] text-zinc-100 placeholder:text-zinc-600 text-xs rounded-xl border border-white/[0.08] focus:border-[#00F0FF]/60 focus:ring-1 focus:ring-[#00F0FF]/30 transition-all outline-none font-mono" id="input-password" oninput="validateMatch()" placeholder="••••••••••••" required type="password"/>
+<button class="absolute right-3 text-zinc-500 hover:text-zinc-300 transition-colors p-1 flex items-center justify-center" onclick="togglePassVisibility('input-password', 'eye-pwd')" type="button">
+<span class="material-symbols-outlined text-[18px]" id="eye-pwd">visibility</span>
+</button>
+</div>
+</div>
+
+<!-- Confirm Password (Sign-up only) -->
+<div class="space-y-1 transition-all duration-200" id="confirm-pwd-group">
+<div class="flex items-center justify-between text-xs">
+<label class="text-zinc-300 font-medium text-[11px]" for="input-confirm-password">Confirm Password</label>
+<span class="text-[11px] text-zinc-500 font-mono opacity-0 transition-opacity flex items-center gap-0.5" id="match-indicator">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> Match
+</span>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-zinc-500 text-[18px] pointer-events-none">enhanced_encryption</span>
+<input class="w-full pl-10 pr-10 py-2.5 bg-[#0E0E16] text-zinc-100 placeholder:text-zinc-600 text-xs rounded-xl border border-white/[0.08] focus:border-[#00F0FF]/60 focus:ring-1 focus:ring-[#00F0FF]/30 transition-all outline-none font-mono" id="input-confirm-password" oninput="validateMatch()" placeholder="••••••••••••" type="password"/>
+<button class="absolute right-3 text-zinc-500 hover:text-zinc-300 transition-colors p-1 flex items-center justify-center" onclick="togglePassVisibility('input-confirm-password', 'eye-confirm')" type="button">
+<span class="material-symbols-outlined text-[18px]" id="eye-confirm">visibility</span>
+</button>
+</div>
+</div>
+
+<!-- Terms Checkbox -->
+<div class="flex items-start gap-2.5 pt-1" id="terms-group">
+<label class="relative flex items-center cursor-pointer pt-0.5 select-none">
+<input checked class="peer sr-only" id="terms-checkbox" required type="checkbox"/>
+<div class="w-4 h-4 rounded-md bg-[#0E0E16] border border-white/[0.12] peer-checked:bg-[#00F0FF] peer-checked:border-[#00F0FF] flex items-center justify-center transition-all shadow-sm">
+<span class="material-symbols-outlined text-black text-[13px] font-bold opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</label>
+<span class="text-[11px] text-zinc-400 leading-snug">
+I agree to the <a class="text-zinc-200 hover:text-[#00F0FF] transition-colors underline underline-offset-2" href="/terms">Terms of Service</a> and <a class="text-zinc-200 hover:text-[#00F0FF] transition-colors underline underline-offset-2" href="/privacy">Privacy Policy</a>
+</span>
+</div>
+
+<!-- Primary CTA Button -->
+<button class="w-full mt-3 py-3 px-4 bg-gradient-to-r from-[#00F0FF] to-[#7B61FF] text-black font-semibold text-xs tracking-tight rounded-xl flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(0,240,255,0.35)] hover:shadow-[0_0_32px_rgba(0,240,255,0.5)] active:scale-[0.985] transition-all duration-200 cursor-pointer" id="submit-cta" type="submit">
+<span id="cta-label">Create Account</span>
+<span class="material-symbols-outlined text-[18px] font-bold">bolt</span>
+</button>
+</form>
+
+<!-- Toggle Switch Microcopy -->
+<div class="mt-4 pt-4 border-t border-white/[0.04] text-center text-xs text-zinc-400">
+<span id="switch-prompt">Already have an account?</span>
+<button class="ml-1 text-[#00F0FF] hover:text-[#7df4ff] font-medium transition-colors cursor-pointer" id="switch-btn" onclick="toggleModeFromLink()" type="button">
+Log in
+</button>
+</div>
+</div>
+
+<!-- Security & Uptime Badges -->
+<div class="mt-6 flex items-center justify-center gap-3 text-[11px] font-mono text-zinc-500 tracking-tight">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#00F0FF]">verified_user</span>
+<span>256-bit Neural Encryption</span>
+</div>
+<span class="text-zinc-700">•</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-[#7B61FF]">bolt</span>
+<span>99.9% GPU Uptime</span>
+</div>
+</div>
+</div>
+
+<!-- Toast Notification -->
+<div class="fixed bottom-6 px-4 py-2.5 bg-[#14141E]/95 border border-white/10 backdrop-blur-md text-zinc-100 text-xs rounded-xl shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2 z-50" id="toast">
+<span class="material-symbols-outlined text-[#00F0FF] text-[16px]">info</span>
+<span id="toast-text">Success!</span>
+</div>
+</main>
+
+<script>
+    let currentMode = window.location.pathname.includes('login') ? 'login' : 'signup';
+
+    function setAuthMode(mode) {
+      currentMode = mode;
+      const tabSlider = document.getElementById('tab-slider');
+      const tabSignup = document.getElementById('tab-signup');
+      const tabLogin = document.getElementById('tab-login');
+      const heading = document.getElementById('auth-heading');
+      const subtitle = document.getElementById('auth-subtitle');
+      const confirmGroup = document.getElementById('confirm-pwd-group');
+      const termsGroup = document.getElementById('terms-group');
+      const forgotLink = document.getElementById('forgot-link');
+      const ctaLabel = document.getElementById('cta-label');
+      const switchPrompt = document.getElementById('switch-prompt');
+      const switchBtn = document.getElementById('switch-btn');
+      const confirmInput = document.getElementById('input-confirm-password');
+
+      if (mode === 'signup') {
+        tabSlider.style.transform = 'translateX(0%)';
+        tabSignup.className = "relative z-10 flex-1 py-1.5 text-xs font-semibold text-white transition-colors duration-200 text-center tracking-tight";
+        tabLogin.className = "relative z-10 flex-1 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200 text-center tracking-tight";
+        heading.innerText = "Create your account";
+        subtitle.innerText = "Supercharge long-form edits into viral shorts with synthetic intelligence.";
+        confirmGroup.classList.remove('hidden');
+        confirmInput.setAttribute('required', 'true');
+        termsGroup.classList.remove('hidden');
+        forgotLink.classList.add('hidden');
+        ctaLabel.innerText = "Create Account";
+        switchPrompt.innerText = "Already have an account?";
+        switchBtn.innerText = "Log in";
+      } else {
+        tabSlider.style.transform = 'translateX(100%)';
+        tabLogin.className = "relative z-10 flex-1 py-1.5 text-xs font-semibold text-white transition-colors duration-200 text-center tracking-tight";
+        tabSignup.className = "relative z-10 flex-1 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200 text-center tracking-tight";
+        heading.innerText = "Welcome back";
+        subtitle.innerText = "Access your timeline, generated AI hooks, and viral render pipeline.";
+        confirmGroup.classList.add('hidden');
+        confirmInput.removeAttribute('required');
+        termsGroup.classList.add('hidden');
+        forgotLink.classList.remove('hidden');
+        ctaLabel.innerText = "Log In to Studio";
+        switchPrompt.innerText = "Don't have an account?";
+        switchBtn.innerText = "Create account";
+      }
+    }
+
+    // Set initial mode based on URL
+    setAuthMode(currentMode);
+
+    function toggleModeFromLink() {
+      setAuthMode(currentMode === 'signup' ? 'login' : 'signup');
+    }
+
+    function togglePassVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerText = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.innerText = 'visibility';
+      }
+    }
+
+    function checkEmail(val) {
+      const indicator = document.getElementById('email-valid');
+      if (val.includes('@') && val.includes('.')) {
+        indicator.classList.remove('opacity-0');
+      } else {
+        indicator.classList.add('opacity-0');
+      }
+    }
+
+    function validateMatch() {
+      if (currentMode !== 'signup') return;
+      const pwd = document.getElementById('input-password').value;
+      const confirm = document.getElementById('input-confirm-password').value;
+      const indicator = document.getElementById('match-indicator');
+      
+      if (confirm.length > 0 && pwd === confirm) {
+        indicator.classList.remove('opacity-0', 'text-zinc-500', 'text-rose-400');
+        indicator.classList.add('text-[#00F0FF]');
+        indicator.innerHTML = '<span class="material-symbols-outlined text-[13px]">check_circle</span> Match';
+      } else if (confirm.length > 0) {
+        indicator.classList.remove('opacity-0', 'text-[#00F0FF]', 'text-zinc-500');
+        indicator.classList.add('text-rose-400');
+        indicator.innerHTML = '<span class="material-symbols-outlined text-[13px]">cancel</span> Mismatch';
+      } else {
+        indicator.classList.add('opacity-0');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      toastText.innerText = msg;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    async function triggerAuth() {
+      const email = document.getElementById('input-email').value.trim();
+      const password = document.getElementById('input-password').value;
+      const ctaBtn = document.getElementById('submit-cta');
+
+      if (currentMode === 'signup') {
+        const confirm = document.getElementById('input-confirm-password').value;
+        if (password !== confirm) {
+          showToast('Passwords do not match');
+          return;
+        }
+      }
+
+      ctaBtn.disabled = true;
+      showToast(currentMode === 'signup' ? 'Creating account...' : 'Signing in...');
+
+      try {
+        const endpoint = currentMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+        const body = currentMode === 'signup'
+          ? { email: email, password: password, name: email.split('@')[0] }
+          : { email: email, password: password };
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || 'Authentication failed');
+        }
+
+        showToast('Success! Redirecting to studio...');
+        setTimeout(() => {
+          window.location.href = '/app';
+        }, 500);
+      } catch (err) {
+        showToast(err.message || 'Error occurred');
+        ctaBtn.disabled = false;
+      }
+    }
+
+    async function notifyForgot() {
+      const email = document.getElementById('input-email').value.trim();
+      if (!email || !email.includes('@')) {
+        showToast('Enter your email above first');
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/forgot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+        showToast('Password reset link sent to your email.');
+      } catch (e) {
+        showToast('Failed to request reset.');
+      }
+    }
+</script>
+</body>
+</html>
