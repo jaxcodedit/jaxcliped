@@ -296,11 +296,16 @@
           body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Authentication failed");
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const msg = typeof data.detail === 'string' ? data.detail : (Array.isArray(data.detail) && data.detail[0]?.msg ? data.detail[0].msg : "Authentication failed");
+          throw new Error(msg);
+        }
 
         showAlert("Success! Entering JaxCliped Studio...", true);
-        setTimeout(() => { window.location.href = '/app'; }, 400);
+        const nextParam = new URLSearchParams(location.search).get("next");
+        const dest = nextParam && /^\/(?![\/\\])[^\\\t\r\n]*$/.test(nextParam) ? nextParam : '/app';
+        setTimeout(() => { window.location.href = dest; }, 300);
 
       } catch (err) {
         showAlert(err.message || "An error occurred");
