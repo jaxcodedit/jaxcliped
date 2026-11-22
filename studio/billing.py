@@ -174,21 +174,29 @@ def upgrade_user(
             .values(plan=plan_id, plan_until=plan_until)
         )
 
-        # Record payment transaction
+        # Record or update payment transaction
         t_id = txn_id or f"pay_{secrets.token_hex(12)}"
         try:
-            c.execute(
-                db.payments.insert().values(
-                    id=t_id,
-                    user_id=u.id,
-                    plan=plan_id,
-                    amount=float(amount),
-                    currency="inr" if provider == "upi" else "usd",
-                    provider=provider,
-                    status="completed",
-                    created_at=now,
+            existing_pay = c.execute(sa.select(db.payments).where(db.payments.c.id == t_id)).first()
+            if existing_pay:
+                c.execute(
+                    db.payments.update()
+                    .where(db.payments.c.id == t_id)
+                    .values(status="completed", plan=plan_id, amount=float(amount or existing_pay.amount))
                 )
-            )
+            else:
+                c.execute(
+                    db.payments.insert().values(
+                        id=t_id,
+                        user_id=u.id,
+                        plan=plan_id,
+                        amount=float(amount),
+                        currency="inr" if provider == "upi" else "usd",
+                        provider=provider,
+                        status="completed",
+                        created_at=now,
+                    )
+                )
         except Exception as e:
             log.warning(f"Error recording payment table: {e}")
 
@@ -339,7 +347,7 @@ def get_upi_config() -> dict:
 
 
 def submit_upi_payment(user_id: str, plan_id: str, utr: str, upi_sender: str = "") -> dict:
-    """Verify UPI transaction reference ID and immediately upgrade user account."""
+    """Submit UPI transaction reference ID for admin verification and approval."""
     plan_id = plan_id.lower().strip()
     if plan_id not in ("creator", "business"):
         raise ValueError("Invalid plan selected")
@@ -351,45 +359,216 @@ def submit_upi_payment(user_id: str, plan_id: str, utr: str, upi_sender: str = "
     price_info = UPI_PRICES[plan_id]
     amount = price_info["inr"]
     txn_id = f"upi_{clean_utr}"
+    now = time.time()
 
-    # Check if this transaction ID was already redeemed by another user
-    with db.engine.connect() as c:
+    with db.engine.begin() as c:
         existing = c.execute(sa.select(db.payments).where(db.payments.c.id == txn_id)).first()
-        if existing and existing.user_id != user_id:
-            raise ValueError("This UPI Reference / UTR has already been claimed for another account.")
+        if existing:
+            if existing.status == "completed":
+                raise ValueError("This UPI Reference / UTR has already been verified and redeemed.")
+            if existing.status == "rejected":
+                raise ValueError("This UPI Reference / UTR was previously rejected. Please contact support.")
+            return {
+                "ok": True,
+                "status": "pending",
+                "plan": plan_id,
+                "message": f"⏳ UTR {clean_utr} is already submitted and awaiting admin approval.",
+                "utr": clean_utr,
+            }
 
-    # Upgrade the user immediately for 30 days
-    success = upgrade_user(
-        uid_or_email=user_id,
-        plan_id=plan_id,
-        duration_days=30,
-        provider="upi",
-        amount=amount,
-        txn_id=txn_id,
-    )
+        # Insert payment with 'pending' status
+        c.execute(
+            db.payments.insert().values(
+                id=txn_id,
+                user_id=user_id,
+                plan=plan_id,
+                amount=amount,
+                currency="inr",
+                provider="upi",
+                status="pending",
+                created_at=now,
+            )
+        )
 
-    if not success:
-        raise ValueError("Unable to upgrade user account. Please check your user session or contact support.")
-
-    # Log in admin_log
-    try:
-        with db.engine.begin() as c:
+        # Notify user
+        try:
             c.execute(
-                db.admin_log.insert().values(
-                    t=time.time(),
-                    admin_id="system",
-                    action=f"upi_verified:{plan_id}",
-                    target_id=user_id,
-                    detail=f"UPI UTR: {clean_utr} | Sender: {upi_sender or 'N/A'} | Plan: {plan_id} | Amount: INR {amount}",
+                db.notices.insert().values(
+                    user_id=user_id,
+                    t=now,
+                    kind="account",
+                    title="⏳ UPI Payment Submitted for Verification",
+                    body=f"Your UPI payment (Ref: {clean_utr}) for {price_info['name']} (₹{amount:g}) has been submitted. Our team will verify and activate your plan shortly!",
+                    link="/app",
+                    ref=f"pending_{txn_id}",
                 )
             )
-    except Exception:
-        pass
+        except Exception:
+            pass
+
+        # Log for admin
+        try:
+            c.execute(
+                db.admin_log.insert().values(
+                    t=now,
+                    admin_id="system",
+                    action=f"upi_pending:{plan_id}",
+                    target_id=user_id,
+                    detail=f"UPI UTR: {clean_utr} | Plan: {plan_id} | Amount: INR {amount} | Status: Pending Verification",
+                )
+            )
+        except Exception:
+            pass
 
     return {
         "ok": True,
+        "status": "pending",
         "plan": plan_id,
-        "message": f"🎉 UPI Payment Verified! You are now upgraded to {price_info['name']}.",
+        "message": f"⏳ Payment reference submitted (UTR: {clean_utr})! It is under verification and will be activated shortly.",
         "utr": clean_utr,
     }
+
+
+def list_payments(limit: int = 100) -> list:
+    """List all payment transactions with user details for admin review."""
+    with db.engine.connect() as c:
+        j = db.payments.join(db.users, db.payments.c.user_id == db.users.c.id)
+        rows = c.execute(
+            sa.select(
+                db.payments.c.id,
+                db.payments.c.user_id,
+                db.payments.c.plan,
+                db.payments.c.amount,
+                db.payments.c.currency,
+                db.payments.c.provider,
+                db.payments.c.status,
+                db.payments.c.created_at,
+                db.users.c.email,
+                db.users.c.name,
+            )
+            .select_from(j)
+            .order_by(db.payments.c.created_at.desc())
+            .limit(limit)
+        ).all()
+        return [
+            {
+                "id": r.id,
+                "user_id": r.user_id,
+                "email": r.email,
+                "name": r.name,
+                "plan": r.plan,
+                "amount": r.amount,
+                "currency": r.currency,
+                "provider": r.provider,
+                "status": r.status,
+                "created_at": r.created_at,
+                "utr": r.id.replace("upi_", "") if r.id.startswith("upi_") else r.id,
+            }
+            for r in rows
+        ]
+
+
+def approve_payment(payment_id: str, admin_email: str = "admin") -> dict:
+    """Approve a pending payment, upgrade user plan, and notify them."""
+    with db.engine.begin() as c:
+        p = c.execute(sa.select(db.payments).where(db.payments.c.id == payment_id)).first()
+        if not p:
+            raise ValueError("Payment record not found")
+        if p.status == "completed":
+            return {"ok": True, "message": "Payment already approved."}
+
+        now = time.time()
+        plan_until = now + (30 * 86400)
+
+        # Upgrade user
+        c.execute(
+            db.users.update()
+            .where(db.users.c.id == p.user_id)
+            .values(plan=p.plan, plan_until=plan_until)
+        )
+
+        # Mark payment completed
+        c.execute(
+            db.payments.update()
+            .where(db.payments.c.id == payment_id)
+            .values(status="completed")
+        )
+
+        # Send user celebration notice
+        plan_name = PLANS.get(p.plan, {}).get("name", p.plan.upper())
+        try:
+            c.execute(
+                db.notices.insert().values(
+                    user_id=p.user_id,
+                    t=now,
+                    kind="account",
+                    title=f"🎉 Payment Approved: Welcome to {plan_name}!",
+                    body=f"Your UPI payment (Ref: {p.id.replace('upi_', '')}) has been verified. All {plan_name} features are now unlocked!",
+                    link="/app",
+                    ref=f"approved_{payment_id}",
+                )
+            )
+        except Exception:
+            pass
+
+        # Log admin action
+        try:
+            c.execute(
+                db.admin_log.insert().values(
+                    t=now,
+                    admin_id=admin_email,
+                    action=f"approve_payment:{p.plan}",
+                    target_id=p.user_id,
+                    detail=f"Approved UPI Payment {p.id} for plan {p.plan} (Amount: {p.amount})",
+                )
+            )
+        except Exception:
+            pass
+
+    return {"ok": True, "message": f"Payment {payment_id} approved! User upgraded to {p.plan}."}
+
+
+def reject_payment(payment_id: str, admin_email: str = "admin", reason: str = "") -> dict:
+    """Reject an invalid / fraudulent payment submission."""
+    with db.engine.begin() as c:
+        p = c.execute(sa.select(db.payments).where(db.payments.c.id == payment_id)).first()
+        if not p:
+            raise ValueError("Payment record not found")
+
+        now = time.time()
+        c.execute(
+            db.payments.update()
+            .where(db.payments.c.id == payment_id)
+            .values(status="rejected")
+        )
+
+        try:
+            c.execute(
+                db.notices.insert().values(
+                    user_id=p.user_id,
+                    t=now,
+                    kind="account",
+                    title="⚠️ Payment Verification Failed",
+                    body=f"We could not verify your UPI payment reference (Ref: {p.id.replace('upi_', '')}). Please verify the 12-digit UTR from your bank app or contact support.",
+                    link="/app",
+                    ref=f"rejected_{payment_id}",
+                )
+            )
+        except Exception:
+            pass
+
+        try:
+            c.execute(
+                db.admin_log.insert().values(
+                    t=now,
+                    admin_id=admin_email,
+                    action=f"reject_payment:{p.plan}",
+                    target_id=p.user_id,
+                    detail=f"Rejected UPI Payment {p.id}: {reason or 'Invalid UTR'}",
+                )
+            )
+        except Exception:
+            pass
+
+    return {"ok": True, "message": f"Payment {payment_id} marked rejected."}
 

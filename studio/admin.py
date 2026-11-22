@@ -47,6 +47,10 @@ def overview() -> dict:
         verified = {r[0] for r in c.execute(sa.select(db.email_ok.c.user_id))}
         used = {r[0]: (r[1], int(r[2] or 0)) for r in c.execute(sa.select(g.user_id, sa.func.count(), sa.func.sum(tok)).group_by(g.user_id))}
         calls_today = c.execute(sa.select(sa.func.count()).select_from(db.usage).where(g.t >= midnight)).scalar()
+        try:
+            pending_pays = c.execute(sa.select(sa.func.count()).select_from(db.payments).where(db.payments.c.status == "pending")).scalar() or 0
+        except Exception:
+            pending_pays = 0
 
         days = [_day(now - 86400 * i) for i in range(29, -1, -1)]
         daily = {d: {"day": d, "signups": 0, "tokens": 0, "calls": 0} for d in days}
@@ -82,6 +86,7 @@ def overview() -> dict:
     return {
         "totals": {"users": int(n_users), "verified": sum(1 for x in users if x["verified"]),
                    "disabled": sum(1 for x in users if x["disabled"]), "admins": sum(1 for x in users if x["role"] == "admin"),
+                   "pending_payments": int(pending_pays),
                    "signups_today": sum(1 for x in users if x["created_at"] >= midnight),
                    "signups_7d": sum(1 for x in users if x["created_at"] >= d7),
                    "signups_30d": sum(1 for x in users if x["created_at"] >= d30),

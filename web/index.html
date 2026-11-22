@@ -1530,12 +1530,12 @@ function openCheckout(plan = "creator", method = "upi") {
           <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:12px;padding:12px 14px;margin-top:10px;text-align:left;max-width:440px;margin-left:auto;margin-right:auto">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
               <span style="font-size:12px;font-weight:800;color:var(--text)">Step 2: Enter 12-Digit UPI UTR / Reference ID</span>
-              <span style="font-size:10px;font-weight:700;color:#10B981;background:#ECFDF5;padding:2px 8px;border-radius:999px">Instant Unlock</span>
+              <span style="font-size:10px;font-weight:700;color:#0071E3;background:#EFF6FF;padding:2px 8px;border-radius:999px">Verification</span>
             </div>
-            <p style="font-size:11px;color:var(--dim);margin-bottom:8px">Once you pay, paste the 12-digit UTR from your payment screen below to activate immediately:</p>
+            <p style="font-size:11px;color:var(--dim);margin-bottom:8px">After transferring ₹${cur.inr}, enter your 12-digit UPI Reference / UTR Number from your payment app screen:</p>
             <div style="display:flex;gap:8px">
               <input id="upi_utr_input" type="text" placeholder="e.g. 432810982341" maxlength="32" style="flex:1;padding:8px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:monospace;letter-spacing:0.5px" autofocus>
-              <button type="button" class="btn primary" data-act="submitupi" data-p="${plan}" style="background:#0071E3;border-radius:8px;font-weight:700;padding:8px 14px;white-space:nowrap;font-size:13px">✓ Verify & Activate</button>
+              <button type="button" class="btn primary" data-act="submitupi" data-p="${plan}" style="background:#0071E3;border-radius:8px;font-weight:700;padding:8px 14px;white-space:nowrap;font-size:13px">Submit UTR</button>
             </div>
           </div>
         </div>
@@ -2671,15 +2671,15 @@ document.addEventListener("click", async e => {
       const utr = $("#upi_utr_input")?.value?.trim();
       if (!utr || utr.length < 6) return toast("Please enter your 12-digit UPI Reference / UTR Number.", "bad");
       try {
-        toast("Verifying UPI transaction...", "ok");
+        toast("Submitting UPI reference for verification...", "ok");
         const res = await send("/api/billing/upi-submit", {plan_id: plan, utr: utr});
         $("#formdlg").close();
-        toast(res.message || "🎉 UPI Payment Verified! You are upgraded!", "ok");
+        toast(res.message || "⏳ UTR reference submitted! Your plan will activate once verified by admin.", "ok");
         S.status = await api("/api/status");
         drawShell();
         if (S.view === "settings") drawSettings();
       } catch (err) {
-        toast(err.message || "Verification failed. Check your UTR number.", "bad");
+        toast(err.message || "Submission failed. Check your UTR number.", "bad");
       }
       return;
     }

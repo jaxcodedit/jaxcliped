@@ -193,6 +193,7 @@ const I = {
  "arrowr": "<path d=\"M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z\"/>",
  "bolt": "<path d=\"M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z\"/>",
  "video": "<path d=\"M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,248,184a8,8,0,0,0,8-8V80A8,8,0,0,0,251.77,73ZM192,184H32V72H192V184Zm48-22.95-32-21.33V116.28L240,95Z\"/>",
+ "card": "<path d=\"M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V120H224v72Zm-16-44a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h32A8,8,0,0,1,208,148Z\"/>",
  "plus": "<path d=\"M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z\"/>"
 };
 const ic = n => `<svg viewBox="0 0 256 256" aria-hidden="true">${I[n] || ""}</svg>`;
@@ -201,7 +202,7 @@ const kfmt = v => v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).t
 const when = t => t ? new Date(t * 1000).toLocaleString([], {month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"}) : "Never";
 const day = t => t ? new Date(t * 1000).toLocaleDateString([], {day:"numeric", month:"short", year:"numeric"}) : "Never";
 const ago = t => { if (!t) return "Never"; const s = Date.now() / 1000 - t; return s < 300 ? "Now" : s < 3600 ? Math.floor(s / 60) + " min ago" : s < 86400 ? Math.floor(s / 3600) + " h ago" : s < 30 * 86400 ? Math.floor(s / 86400) + " d ago" : day(t); };
-const ACTION = {disable:"Disabled an account", enable:"Enabled an account", delete:"Deleted an account", "role:admin":"Made an admin", "role:user":"Removed admin", "upi_verified:creator":"Verified UPI Payment (Creator Pro)", "upi_verified:business":"Verified UPI Payment (Business VIP)", "upgrade:creator":"Upgraded to Creator Pro", "upgrade:business":"Upgraded to Business VIP"};
+const ACTION = {disable:"Disabled an account", enable:"Enabled an account", delete:"Deleted an account", "role:admin":"Made an admin", "role:user":"Removed admin", "upi_verified:creator":"Verified UPI Payment (Creator Pro)", "upi_verified:business":"Verified UPI Payment (Business VIP)", "upgrade:creator":"Upgraded to Creator Pro", "upgrade:business":"Upgraded to Business VIP", "approve_payment:creator":"Approved Payment (Creator Pro)", "approve_payment:business":"Approved Payment (Business VIP)", "reject_payment:creator":"Rejected Payment (Creator Pro)", "reject_payment:business":"Rejected Payment (Business VIP)"};
 
 async function api(path, opt) {
   const r = await fetch(path, opt);
@@ -215,9 +216,10 @@ function toast(msg, kind = "") {
   $("#toasts").append(t); setTimeout(() => t.remove(), kind === "bad" ? 7000 : 3200);
 }
 
-const S = {tab:"overview", data:null, me:null, q:"", filter:"all", sort:"created_at", fb:null, fbStatus:"new"};
-const TABS = {overview:["Overview", "home", "Sign-ups, videos and AI use across this PeakCut server."],
-              users:["Users", "users", "Every account. Open one to see how much it uses the AI."],
+const S = {tab:"overview", data:null, me:null, q:"", filter:"all", sort:"created_at", fb:null, fbStatus:"new", payments:null, payFilter:"all"};
+const TABS = {overview:["Overview", "home", "Sign-ups, videos and AI use across this JaxCliped server."],
+              users:["Users", "users", "Every account and subscription plan. Open one to manage their plan."],
+              payments:["Payments", "card", "UPI and card payment submissions. Verify UTRs and approve plans."],
               feedback:["Feedback", "chat", "Bug reports, feature ideas and other messages from users."],
               activity:["Activity", "clock", "Everything admins have done, newest first."]};
 const pathFor = t => "/admin" + (t === "overview" ? "" : "/" + t);
@@ -338,16 +340,94 @@ async function loadFeedback() {
   try { S.fb = await api("/api/admin/feedback" + (S.fbStatus ? "?status=" + S.fbStatus : "")); } catch (e) { toast(e.message, "bad"); }
   if (S.tab === "feedback") draw();
 }
+
+async function loadPayments() {
+  try {
+    const res = await api("/api/admin/payments");
+    S.payments = res.payments || [];
+    if (S.tab === "payments") draw();
+  } catch (e) {
+    toast(e.message, "bad");
+  }
+}
+
+function drawPayments() {
+  const pList = S.payments || [];
+  let rows = pList;
+  if (S.payFilter === "pending") rows = rows.filter(p => p.status === "pending");
+  if (S.payFilter === "completed") rows = rows.filter(p => p.status === "completed");
+  if (S.payFilter === "rejected") rows = rows.filter(p => p.status === "rejected");
+
+  const pendingCount = pList.filter(p => p.status === "pending").length;
+  const seg = (k, l, count) => `<button class="${S.payFilter === k ? "on" : ""}" data-act="payfilter" data-k="${k}">${l}${count !== undefined ? ` · ${count}` : ""}</button>`;
+
+  return `
+    <div class="toolbar">
+      <div class="seg">
+        ${seg("all", "All", pList.length)}
+        ${seg("pending", "Pending Review", pendingCount)}
+        ${seg("completed", "Approved", pList.filter(p => p.status === "completed").length)}
+        ${seg("rejected", "Rejected", pList.filter(p => p.status === "rejected").length)}
+      </div>
+      <span class="sub">${rows.length} transactions</span>
+    </div>
+    <div class="card">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>UTR / Reference ID</th>
+              <th>Customer</th>
+              <th>Plan</th>
+              <th class="num">Amount</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th class="acts">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(p => `
+              <tr>
+                <td><code style="font-weight:700;background:var(--muted);padding:3px 8px;border-radius:6px;font-size:13px">${esc(p.utr || p.id)}</code></td>
+                <td><b>${esc(p.name || p.email.split("@")[0])}</b><div class="em">${esc(p.email)}</div></td>
+                <td>${planBadge(p.plan)}</td>
+                <td class="num"><b>₹${num(p.amount)}</b></td>
+                <td class="sub">${esc(when(p.created_at))}</td>
+                <td>
+                  ${p.status === "completed" ? '<span class="pill ok">Approved ✓</span>' :
+                    p.status === "rejected" ? '<span class="pill bad">Rejected ✕</span>' :
+                    '<span class="pill warn" style="font-weight:700">⏳ Needs Review</span>'}
+                </td>
+                <td class="acts">
+                  ${p.status === "pending" ? `
+                    <button class="btn sm primary" data-act="approvepay" data-id="${esc(p.id)}" style="background:#10B981;border-color:#10B981;padding:0 12px;font-weight:700">✓ Approve & Unlock</button>
+                    <button class="btn sm danger" data-act="rejectpay" data-id="${esc(p.id)}" style="padding:0 10px">✕ Reject</button>
+                  ` : p.status === "completed" ? `
+                    <span class="pill ok">Activated</span>
+                  ` : `
+                    <button class="btn sm primary" data-act="approvepay" data-id="${esc(p.id)}" style="padding:0 8px;font-size:11px">Re-Approve</button>
+                  `}
+                </td>
+              </tr>
+            `).join("") || `<tr><td colspan="7"><div class="empty"><b>No transactions found</b>Payment submissions via UPI QR code will appear here.</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
 function draw() {
   const a = S.data, [title, , sub] = TABS[S.tab];
   $("#nav").innerHTML = `<h4>Admin</h4>` + Object.entries(TABS).map(([k, [l, i]]) =>
-    `<a class="nav-item ${S.tab === k ? "on" : ""}" href="${pathFor(k)}" data-act="tab" data-k="${k}">${ic(i)}<span class="label">${l}</span>${k === "users" && a ? `<span class="count">${num(a.totals.users)}</span>` : ""}${k === "feedback" && S.fb?.counts.new ? `<span class="count">${num(S.fb.counts.new)}</span>` : ""}</a>`).join("");
+    `<a class="nav-item ${S.tab === k ? "on" : ""}" href="${pathFor(k)}" data-act="tab" data-k="${k}">${ic(i)}<span class="label">${l}</span>${k === "users" && a ? `<span class="count">${num(a.totals.users)}</span>` : ""}${k === "payments" && a?.totals?.pending_payments ? `<span class="count" style="background:#F59E0B;color:#fff">${num(a.totals.pending_payments)}</span>` : ""}${k === "feedback" && S.fb?.counts.new ? `<span class="count">${num(S.fb.counts.new)}</span>` : ""}</a>`).join("");
   $("#foot").innerHTML = (S.me ? `<div class="who"><b>${esc(S.me.name)}</b>${esc(S.me.email)}</div>` : "") +
     `<a class="nav-item" href="/app">${ic("arrowr")}<span class="label">Back to the app</span></a>
      <button class="nav-item" data-act="logout">${ic("signout")}<span class="label">Sign out</span></button>`;
   $("#title").textContent = title; $("#subtitle").textContent = sub;
   $("#actions").innerHTML = `<button class="btn sm" data-act="refresh">Refresh</button>`;
   if (S.tab === "feedback") { if (!S.fb && !S.fbLoading) { S.fbLoading = true; loadFeedback().finally(() => S.fbLoading = false); } $("#view").innerHTML = drawFeedback(); return; }
+  if (S.tab === "payments") { if (!S.payments && !S.payLoading) { S.payLoading = true; loadPayments().finally(() => S.payLoading = false); } $("#view").innerHTML = drawPayments(); return; }
   if (!a) return;
   const keep = document.activeElement?.id === "q" ? $("#q").selectionStart : null;
   $("#view").innerHTML = {overview: drawOverview, users: drawUsers, activity: drawActivity}[S.tab](a);
@@ -360,6 +440,7 @@ async function load() {
 function go(tab, push = true) {
   S.tab = tab; if (push && location.pathname !== pathFor(tab)) history.pushState(null, "", pathFor(tab));
   if (tab === "feedback") loadFeedback();
+  if (tab === "payments") loadPayments();
   draw(); $("#main").scrollTo(0, 0);
 }
 addEventListener("popstate", () => go(fromPath(), false));
@@ -412,9 +493,32 @@ document.addEventListener("click", async e => {
   const a = b.dataset.act, d = b.dataset;
   try {
     if (a === "tab") { e.preventDefault(); return go(d.k); }
-    if (a === "refresh") { await load(); await loadFeedback(); return toast("Up to date", "ok"); }
+    if (a === "refresh") { await load(); await loadFeedback(); await loadPayments(); return toast("Up to date", "ok"); }
     if (a === "fbfilter") { S.fbStatus = d.k; return loadFeedback(); }
     if (a === "fbset") { await send(`/api/admin/feedback/${d.id}`, {status: d.s}); toast(d.s === "done" ? "Marked done" : d.s === "seen" ? "Marked seen" : "Reopened", "ok"); return loadFeedback(); }
+    if (a === "payfilter") { S.payFilter = d.k; return draw(); }
+    if (a === "approvepay") {
+      try {
+        const res = await send(`/api/admin/payments/${encodeURIComponent(d.id)}/approve`, {});
+        toast(res.message || "Payment approved & plan activated!", "ok");
+        await loadPayments();
+        return load();
+      } catch (err) {
+        return toast(err.message || "Failed to approve payment", "bad");
+      }
+    }
+    if (a === "rejectpay") {
+      const reason = prompt("Enter rejection reason (optional):", "Invalid UTR / Payment not received");
+      if (reason === null) return;
+      try {
+        const res = await send(`/api/admin/payments/${encodeURIComponent(d.id)}/reject`, { reason: reason });
+        toast(res.message || "Payment rejected", "ok");
+        await loadPayments();
+        return load();
+      } catch (err) {
+        return toast(err.message || "Failed to reject payment", "bad");
+      }
+    }
     if (a === "filter") { S.filter = d.k; return draw(); }
     if (a === "sort") { e.stopPropagation(); S.sort = d.k; return draw(); }
     if (a === "closedlg") return $("#dlg").close();

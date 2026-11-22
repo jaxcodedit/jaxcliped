@@ -1605,6 +1605,33 @@ def admin_set_user_plan(request: Request, uid: str, body: dict = Body(...)):
         raise HTTPException(400, str(e))
 
 
+@app.get("/api/admin/payments")
+def admin_payments(request: Request):
+    _admin(request)
+    from . import billing
+    return {"payments": billing.list_payments()}
+
+
+@app.post("/api/admin/payments/{pid}/approve")
+def admin_approve_payment(request: Request, pid: str):
+    me_ = _admin(request)
+    from . import billing
+    try:
+        return billing.approve_payment(pid, admin_email=me_.email)
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/admin/payments/{pid}/reject")
+def admin_reject_payment(request: Request, pid: str, body: dict = Body({})):
+    me_ = _admin(request)
+    from . import billing
+    try:
+        return billing.reject_payment(pid, admin_email=me_.email, reason=str(body.get("reason", "")))
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+
 @app.post("/api/admin/users/{uid}/delete")
 def admin_delete_user(request: Request, uid: str, body: dict = Body(...)):
     me_ = _admin(request)
