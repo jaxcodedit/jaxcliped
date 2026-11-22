@@ -1404,8 +1404,8 @@ function openPricing(preselect = "creator") {
           <div>
             <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:#0071E3">CREATOR PRO</span>
             <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0">
-              <span style="font-size:28px;font-weight:800;color:var(--text)">$14.90</span>
-              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">$149</span>
+              <span style="font-size:28px;font-weight:800;color:var(--text)">₹149 <small style="font-size:13px;font-weight:500;color:var(--dim)">/mo</small></span>
+              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">₹1,490</span>
               <span style="font-size:11px;font-weight:700;color:#059669;background:#ECFDF5;padding:1px 6px;border-radius:6px">SAVE 90%</span>
             </div>
             <p style="font-size:12px;color:var(--dim);min-height:36px">For streamers scaling on TikTok, Reels, and Shorts.</p>
@@ -1417,7 +1417,7 @@ function openPricing(preselect = "creator") {
               <li>5x GPU priority queue</li>
             </ul>
           </div>
-          <button class="btn primary" data-act="opencheckout" data-p="creator" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;box-shadow:0 4px 14px rgba(0,113,227,0.35)">${curPlan === 'creator' ? 'Active Plan ✓' : 'Claim 90% Off — ₹1,299 ($14.90)'}</button>
+          <button class="btn primary" data-act="opencheckout" data-p="creator" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;box-shadow:0 4px 14px rgba(0,113,227,0.35)">${curPlan === 'creator' ? 'Active Plan ✓' : 'Claim 90% Off — ₹149/mo'}</button>
         </div>
 
         <!-- Business VIP Plan -->
@@ -1426,8 +1426,8 @@ function openPricing(preselect = "creator") {
           <div>
             <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:#7C3AED">BUSINESS VIP</span>
             <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0">
-              <span style="font-size:28px;font-weight:800;color:var(--text)">$24.90</span>
-              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">$249</span>
+              <span style="font-size:28px;font-weight:800;color:var(--text)">₹249 <small style="font-size:13px;font-weight:500;color:var(--dim)">/mo</small></span>
+              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">₹2,490</span>
               <span style="font-size:11px;font-weight:700;color:#059669;background:#ECFDF5;padding:1px 6px;border-radius:6px">SAVE 90%</span>
             </div>
             <p style="font-size:12px;color:var(--dim);min-height:36px">Autonomous 24/7 AI clipping with your dedicated Personal Agent.</p>
@@ -1439,7 +1439,7 @@ function openPricing(preselect = "creator") {
               <li>Dedicated VIP WhatsApp support</li>
             </ul>
           </div>
-          <button class="btn primary" data-act="opencheckout" data-p="business" style="width:100%;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);border:0;box-shadow:0 4px 14px rgba(124,58,237,0.35)">${curPlan === 'business' ? 'Active Plan ✓' : 'Claim 90% Off — ₹2,199 ($24.90)'}</button>
+          <button class="btn primary" data-act="opencheckout" data-p="business" style="width:100%;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);border:0;box-shadow:0 4px 14px rgba(124,58,237,0.35)">${curPlan === 'business' ? 'Active Plan ✓' : 'Claim 90% Off — ₹249/mo'}</button>
         </div>
       </div>
 
@@ -1456,16 +1456,16 @@ function openCheckout(plan = "creator", method = "upi") {
   const plans = {
     creator: {
       name: "Creator Pro",
-      inr: 1299,
-      usd: "14.90",
-      save: "Save ₹11,700 (90% OFF)",
+      inr: 149,
+      usd: "1.79",
+      save: "Save ₹1,341 (90% OFF)",
       features: "Phonk captions, 4K 60fps export, multi-platform auto-posting",
     },
     business: {
       name: "Business VIP",
-      inr: 2199,
-      usd: "24.90",
-      save: "Save ₹19,800 (90% OFF)",
+      inr: 249,
+      usd: "2.99",
+      save: "Save ₹2,241 (90% OFF)",
       features: "Personal AI Agent (24/7 autonomous), unlimited workspaces, turbo GPU",
     }
   };
@@ -1486,10 +1486,10 @@ function openCheckout(plan = "creator", method = "upi") {
       <!-- Plan Switcher Pills -->
       <div style="display:flex;gap:6px;background:var(--muted);padding:4px;border-radius:12px;margin:10px 0">
         <button type="button" class="btn sm" data-act="opencheckout" data-p="creator" data-m="${method}" style="flex:1;border-radius:8px;font-weight:700;font-size:12px;${plan === 'creator' ? 'background:#fff;color:#0071E3;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(0,113,227,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
-          ⭐ Creator Pro (₹1,299 / $14.90)
+          ⭐ Creator Pro (₹149)
         </button>
         <button type="button" class="btn sm" data-act="opencheckout" data-p="business" data-m="${method}" style="flex:1;border-radius:8px;font-weight:700;font-size:12px;${plan === 'business' ? 'background:#fff;color:#7C3AED;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(124,58,237,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
-          🤖 Business VIP (₹2,199 / $24.90)
+          🤖 Business VIP (₹249)
         </button>
       </div>
 
@@ -2384,7 +2384,7 @@ async function drawSettings() {
       body.innerHTML = `<section class="set-sec"><h2>Profile</h2><p class="help">This is how you appear in JaxCliped.</p>
         <div class="prof">${meAvatar(me).replace('class="avatar me-pic"', 'class="avatar prof-pic"')}<div><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div></div>
         <dl class="kv"><div><dt>Email</dt><dd>${esc(me.email)} ${me.verified === false ? `<span class="pill warn">Not confirmed</span>` : `<span class="pill ok">Confirmed</span>`}</dd></div>
-          <div><dt>Subscription Plan</dt><dd><span class="pill ${me.plan && me.plan !== 'free' ? 'ok' : 'warn'}">${esc({free: 'Starter ($0)', creator: 'Creator Pro ($14.90/mo)', business: 'Business VIP ($24.90/mo)'}[me.plan] || 'Starter ($0)')}</span> <button class="btn sm ${me.plan && me.plan !== 'free' ? 'ghost' : 'primary'}" data-act="openpricing" data-p="creator" style="margin-left:8px">${me.plan && me.plan !== 'free' ? 'Change Plan' : 'Upgrade (90% OFF)'}</button></dd></div>
+          <div><dt>Subscription Plan</dt><dd><span class="pill ${me.plan && me.plan !== 'free' ? 'ok' : 'warn'}">${esc({free: 'Starter (₹0)', creator: 'Creator Pro (₹149/mo)', business: 'Business VIP (₹249/mo)'}[me.plan] || 'Starter (₹0)')}</span> <button class="btn sm ${me.plan && me.plan !== 'free' ? 'ghost' : 'primary'}" data-act="openpricing" data-p="creator" style="margin-left:8px">${me.plan && me.plan !== 'free' ? 'Change Plan' : 'Upgrade (90% OFF)'}</button></dd></div>
           <div><dt>Sign-in method</dt><dd>${me.google ? `Google${me.has_password ? " and password" : ""}` : "Email and password"}</dd></div>
           <div><dt>Account type</dt><dd>${me.is_admin ? "Admin" : "Standard"}</dd></div>
           ${joined ? `<div><dt>Member since</dt><dd>${joined}</dd></div>` : ""}</dl>

@@ -45,11 +45,12 @@ PLANS = {
         "id": "creator",
         "name": "Creator",
         "badge": "Most Popular",
-        "price_monthly": 14.90,          # 90% OFF $149
-        "price_annual": 149.00,          # $149 / year
-        "original_monthly": 149.00,
-        "original_annual": 1490.00,
+        "price_monthly": 149.00,         # 90% OFF ₹1,490
+        "price_annual": 1490.00,         # ₹1,490 / year
+        "original_monthly": 1490.00,
+        "original_annual": 14900.00,
         "discount": "90% OFF",
+        "currency": "INR",
         "description": "Built for content creators scaling on TikTok, Shorts, and Reels.",
         "features": [
             "Everything in Starter, plus:",
@@ -74,11 +75,12 @@ PLANS = {
         "id": "business",
         "name": "Business VIP",
         "badge": "Ultimate Power",
-        "price_monthly": 24.90,          # 90% OFF $249
-        "price_annual": 249.00,          # $249 / year
-        "original_monthly": 249.00,
-        "original_annual": 2490.00,
+        "price_monthly": 249.00,         # 90% OFF ₹2,490
+        "price_annual": 2490.00,         # ₹2,490 / year
+        "original_monthly": 2490.00,
+        "original_annual": 24900.00,
         "discount": "90% OFF",
+        "currency": "INR",
         "description": "Autonomous 24/7 AI clipping with your own dedicated Personal Agent.",
         "features": [
             "Personal AI Agent (24/7 Autonomous Stream Monitoring)",
@@ -308,17 +310,19 @@ UPI_ID = "8360101258@upi"
 UPI_NAME = "JaxCliped"
 UPI_PRICES = {
     "creator": {
-        "inr": 1299.0,
-        "usd": 14.90,
+        "inr": 149.0,
+        "usd": 1.79,
         "name": "Creator Pro",
-        "save": "90% OFF (Save ₹11,700)",
+        "original_inr": 1490.0,
+        "save": "90% OFF (Save ₹1,341)",
         "desc": "Beat-synced Phonk captions, 4K 60fps export, multi-platform auto-posting.",
     },
     "business": {
-        "inr": 2199.0,
-        "usd": 24.90,
+        "inr": 249.0,
+        "usd": 2.99,
         "name": "Business VIP",
-        "save": "90% OFF (Save ₹19,800)",
+        "original_inr": 2490.0,
+        "save": "90% OFF (Save ₹2,241)",
         "desc": "Dedicated 24/7 Personal AI Agent, unlimited workspaces, turbo GPU.",
     },
 }
