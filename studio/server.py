@@ -1559,6 +1559,44 @@ def add_posts(body: dict = Body(...)):
     return {"queued": len(made)}
 
 
+@app.post("/api/accounts/instagram/token")
+def add_instagram_token(body: dict = Body(...)):
+    token = str(body.get("token", "")).strip()
+    if not token:
+        raise HTTPException(400, "Please provide an Instagram access token.")
+    try:
+        acc = accounts.instagram_add(token)
+        return {"ok": True, "account": acc}
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/clips/{job_id}/{clip_id}/upload")
+def quick_upload_clip(job_id: str, clip_id: str, body: dict = Body(...)):
+    platform = str(body.get("platform", "youtube")).lower().strip()
+    job = jobs.get(job_id)
+    clip = next((c for c in job["clips"] if c["id"] == clip_id), None) if job else None
+    if not clip or clip.get("status") != "done":
+        raise HTTPException(404, "That clip is not ready or has not finished rendering.")
+
+    user_accs = accounts.list_accounts()
+    target_acc = next((a for a in user_accs if a.get("platform") == platform), None)
+    if not target_acc:
+        name = "YouTube" if platform == "youtube" else "Instagram" if platform == "instagram" else platform.title()
+        raise HTTPException(400, f"No {name} account connected yet. Go to Settings -> Connected apps to connect your {name} account.")
+
+    made = posting.enqueue(job, clip, [target_acc["id"]], now=True)
+    if not made:
+        raise HTTPException(400, f"This clip is already queued or posted to {target_acc['name']}.")
+
+    return {
+        "ok": True,
+        "platform": platform,
+        "account_name": target_acc["name"],
+        "message": f"🚀 Upload started to {target_acc['name']} ({platform.title()})!",
+    }
+
+
 @app.post("/api/posts/{pid}/{action}")
 def post_action(pid: str, action: str):
     try:
