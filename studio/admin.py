@@ -157,7 +157,8 @@ def _cli(argv):
     if argv[:1] == ["list"]:
         with db.engine.connect() as c:
             for r in c.execute(sa.select(db.users).order_by(db.users.c.created_at)):
-                print(f"{'admin' if r.is_admin else 'user ':5}  {'disabled' if r.disabled else '        '}  {r.email}")
+                plan = getattr(r, "plan", "free") or "free"
+                print(f"{'admin' if r.is_admin else 'user ':5}  {'disabled' if r.disabled else '        '}  [{plan.upper():8}]  {r.email}")
         return 0
     if len(argv) == 2 and argv[0] in ("grant", "revoke"):
         if not set_admin(argv[1], argv[0] == "grant"):
@@ -165,6 +166,17 @@ def _cli(argv):
             return 1
         print(f"{argv[1]} is now {'an admin' if argv[0] == 'grant' else 'a normal user'}.")
         return 0
+    if len(argv) == 3 and argv[0] == "plan":
+        from . import billing
+        email, plan = argv[1], argv[2].lower()
+        if plan not in billing.PLANS:
+            print(f"Invalid plan '{plan}'. Choose from: {list(billing.PLANS.keys())}")
+            return 1
+        if billing.upgrade_user(email, plan, duration_days=3650 if plan != "free" else 0, provider="admin_cli"):
+            print(f"Successfully set {email}'s plan to [{plan.upper()}].")
+            return 0
+        print(f"User {email} not found.")
+        return 1
     print(__doc__)
     return 2
 

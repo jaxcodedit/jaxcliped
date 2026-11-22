@@ -35,6 +35,8 @@ users = sa.Table(
     sa.Column("disabled", sa.Boolean, nullable=False, server_default=sa.false()),
     sa.Column("created_at", sa.Float, nullable=False),
     sa.Column("last_seen", sa.Float),
+    sa.Column("plan", sa.String(20), nullable=False, server_default="free"),  # free | creator | business
+    sa.Column("plan_until", sa.Float),                                         # timestamp when plan expires (or None for lifetime)
 )
 sessions = sa.Table(
     "sessions", meta,
@@ -112,8 +114,30 @@ admin_log = sa.Table(                                                         # 
 )
 
 
+payments = sa.Table(
+    "payments", meta,
+    sa.Column("id", sa.String(80), primary_key=True),                        # transaction or session id
+    sa.Column("user_id", sa.String(40), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
+    sa.Column("plan", sa.String(20), nullable=False),                        # creator | business
+    sa.Column("amount", sa.Float, nullable=False),
+    sa.Column("currency", sa.String(10), nullable=False, server_default="usd"),
+    sa.Column("provider", sa.String(30), nullable=False, server_default="stripe"),
+    sa.Column("status", sa.String(20), nullable=False, server_default="completed"),
+    sa.Column("created_at", sa.Float, nullable=False),
+)
+
+
 def init():
     meta.create_all(engine)
+    with engine.begin() as conn:
+        try:
+            conn.execute(sa.text("ALTER TABLE users ADD COLUMN plan VARCHAR(20) DEFAULT 'free'"))
+        except Exception:
+            pass
+        try:
+            conn.execute(sa.text("ALTER TABLE users ADD COLUMN plan_until FLOAT"))
+        except Exception:
+            pass
 
 
 def now() -> float:

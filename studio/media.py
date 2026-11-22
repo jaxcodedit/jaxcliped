@@ -1,7 +1,9 @@
 """Getting video in: link download, probing, audio extraction, loudness."""
 import contextlib
 import json
+import os
 import re
+import socket
 import subprocess
 import time
 from pathlib import Path
@@ -97,10 +99,20 @@ class _Quiet:
 
 def _ydl(opts):
     import yt_dlp
+    import socket
     # a channel or playlist link is answered as "a list" straight away, never walked video by video
     base = {"noplaylist": True, "quiet": True, "no_warnings": True, "logger": _Quiet(),
             "extract_flat": "in_playlist", "playlistend": 1, "socket_timeout": 20,
-            "concurrent_fragment_downloads": 4, "proxy": "socks5://127.0.0.1:40000"}
+            "concurrent_fragment_downloads": 4}
+    proxy = os.environ.get("YTDLP_PROXY", "")
+    if proxy:
+        base["proxy"] = proxy
+    else:
+        try:
+            with socket.create_connection(("127.0.0.1", 40000), timeout=0.2):
+                base["proxy"] = "socks5://127.0.0.1:40000"
+        except Exception:
+            pass
     for p in (config.ROOT / "cookies.txt", config.DATA_DIR / "cookies.txt"):
         if p.exists():
             base["cookiefile"] = str(p)

@@ -71,10 +71,13 @@ def throttle(key: str, limit: int, window: int):
 
 # ---------------------------------------------------------------- users
 def public(u) -> dict:
+    plan = getattr(u, "plan", "free") or "free"
+    plan_until = getattr(u, "plan_until", None)
     return {"id": u.id, "email": u.email, "name": u.name or u.email.split("@")[0], "is_admin": bool(u.is_admin),
             "role": "admin" if u.is_admin else "user",
             "has_password": bool(u.password_hash), "google": bool(u.google_sub), "created_at": u.created_at,
-            "verified": is_verified(u.id), "photo": _photo_stamp(u.id)}
+            "verified": is_verified(u.id), "photo": _photo_stamp(u.id),
+            "plan": plan, "plan_until": plan_until}
 
 
 def _photo_stamp(uid: str) -> int:

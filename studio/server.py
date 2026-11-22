@@ -36,7 +36,7 @@ def _quiet(fn):
 
 app = FastAPI(title="JaxCliped", docs_url=None, redoc_url=None, openapi_url=None)
 WEB = config.ROOT / "web"
-OPEN = ("/api/auth/", "/pub/", "/api/public", "/auth/google/", "/auth/verify", "/brand/", "/assets/", "/healthz", "/favicon.ico", "/robots.txt", "/sitemap.xml")
+OPEN = ("/api/auth/", "/pub/", "/api/public", "/auth/google/", "/auth/verify", "/brand/", "/assets/", "/healthz", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/api/billing/plans", "/api/billing/webhook")
 PAGES = {"/": "landing_jaxcliped.html", "/login": "auth_jaxcliped.html", "/signup": "auth_jaxcliped.html", "/reset": "reset.html",
          "/privacy": "legal.html", "/terms": "legal.html", "/acceptable-use": "legal.html"}
 VIDEO_TYPES = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".ts", ".flv"}
@@ -439,6 +439,45 @@ def favicon():
 def public_config():
     from . import mailer
     return {"google": auth.google_ready(), "mail": mailer.ready(), "verify_email": config.VERIFY_EMAIL}
+
+
+# ================================================================ billing and automated payments
+@app.get("/api/billing/plans")
+def billing_plans():
+    from . import billing
+    return billing.get_plans()
+
+
+@app.get("/api/billing/current")
+def billing_current(request: Request):
+    u = _me(request)
+    if not u:
+        raise HTTPException(401, "Please sign in.")
+    from . import billing
+    return billing.get_user_plan(u.id)
+
+
+@app.post("/api/billing/checkout")
+def billing_checkout(request: Request, body: dict = Body(...)):
+    u = _me(request)
+    if not u:
+        raise HTTPException(401, "Please sign in to choose a plan.")
+    from . import billing
+    plan_id = str(body.get("plan", "creator")).lower()
+    cycle = str(body.get("cycle", "monthly")).lower()
+    try:
+        return billing.create_checkout(auth.public(u), plan_id, cycle)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/billing/webhook")
+async def billing_webhook(request: Request):
+    from . import billing
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature", "")
+    ok = billing.handle_stripe_webhook(payload, sig_header)
+    return {"received": True, "processed": ok}
 
 
 def _signed_in(request: Request, user, first: bool, redirect=None):

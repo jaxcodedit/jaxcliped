@@ -26,46 +26,43 @@ LOGO_CID = "peakcut-logo"
 
 
 def _html(title: str, intro: str, button: str, link: str, outro: str, logo_src: str = "cid:" + LOGO_CID) -> str:
-    """The branded email: logo, a white card with the message and one big button, and a quiet footer.
-    Tables and inline styles only, because that is what every email app renders the same way."""
+    """The branded email: JaxCliped logo, clean Apple glass card with the message, Apple blue button, and footer."""
     e = html.escape
     site = config.PUBLIC_URL
     font = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light only"><title>{e(title)}</title></head>
-<body style="margin:0;padding:0;background:#F4EEEA;-webkit-text-size-adjust:100%">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F4EEEA">{e(intro)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EEEA"><tr><td align="center" style="padding:36px 14px">
+<body style="margin:0;padding:0;background:#F5F5F7;-webkit-text-size-adjust:100%">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F5F5F7">{e(intro)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F7"><tr><td align="center" style="padding:40px 16px">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
-    <tr><td style="padding:0 6px 22px"><a href="{e(site)}" style="text-decoration:none">
-      <img src="{e(logo_src)}" width="138" height="38" alt="PeakCut" style="display:block;border:0;width:138px;height:38px"></a></td></tr>
-    <tr><td style="background:#ffffff;border-radius:18px;border:1px solid #EAE2DC;padding:36px 34px">
+    <tr><td style="padding:0 6px 20px;text-align:center"><a href="{e(site)}" style="text-decoration:none;font-family:{font};font-size:26px;font-weight:800;color:#1D1D1F;letter-spacing:-0.5px">
+      Jax<span style="color:#0071E3">Cliped</span></a></td></tr>
+    <tr><td style="background:#ffffff;border-radius:24px;border:1px solid #E5E5EA;padding:40px 36px;box-shadow:0 8px 30px rgba(0,0,0,0.04)">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr><td style="font-family:{font};font-size:24px;line-height:1.25;font-weight:700;color:#2A1A12;padding-bottom:12px">{e(title)}</td></tr>
-        <tr><td style="font-family:{font};font-size:16px;line-height:1.65;color:#5A4A40;padding-bottom:28px">{e(intro)}</td></tr>
+        <tr><td style="font-family:{font};font-size:24px;line-height:1.25;font-weight:700;color:#1D1D1F;padding-bottom:12px">{e(title)}</td></tr>
+        <tr><td style="font-family:{font};font-size:15px;line-height:1.6;color:#48484A;padding-bottom:28px">{e(intro)}</td></tr>
         <tr><td style="padding-bottom:28px">
-          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:12px;background:#FF8B33">
-            <a href="{e(link)}" style="display:inline-block;padding:14px 28px;font-family:{font};font-size:16px;font-weight:700;color:#2A1A12;text-decoration:none;border-radius:12px">{e(button)}</a>
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:999px;background:#0071E3">
+            <a href="{e(link)}" style="display:inline-block;padding:14px 32px;font-family:{font};font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:999px">{e(button)}</a>
           </td></tr></table></td></tr>
-        <tr><td style="font-family:{font};font-size:14px;line-height:1.6;color:#7A6A60;padding-bottom:22px">{e(outro)}</td></tr>
-        <tr><td style="border-top:1px solid #EFE8E3;padding-top:18px;font-family:{font};font-size:12px;line-height:1.6;color:#9C8A7E">
-          Button not working? Copy this link into your browser:<br><a href="{e(link)}" style="color:#A9480A;word-break:break-all">{e(link)}</a></td></tr>
+        <tr><td style="font-family:{font};font-size:13px;line-height:1.6;color:#86868B;padding-bottom:22px">{e(outro)}</td></tr>
+        <tr><td style="border-top:1px solid #F2F2F7;padding-top:18px;font-family:{font};font-size:12px;line-height:1.6;color:#AEAEB2">
+          Button not working? Copy this link into your browser:<br><a href="{e(link)}" style="color:#0071E3;word-break:break-all">{e(link)}</a></td></tr>
       </table></td></tr>
-    <tr><td align="center" style="padding:24px 10px 0;font-family:{font};font-size:12px;line-height:1.7;color:#9C8A7E">
-      You're getting this because of your PeakCut account. We only email you about your account.<br>
-      <a href="{e(site)}" style="color:#7A6A60;text-decoration:underline">PeakCut</a> &nbsp;·&nbsp;
-      <a href="{e(site)}/privacy" style="color:#7A6A60;text-decoration:underline">Privacy</a> &nbsp;·&nbsp;
-      <a href="{e(site)}/terms" style="color:#7A6A60;text-decoration:underline">Terms</a></td></tr>
+    <tr><td align="center" style="padding:24px 10px 0;font-family:{font};font-size:12px;line-height:1.7;color:#86868B">
+      You're receiving this regarding your JaxCliped account.<br>
+      <a href="{e(site)}" style="color:#0071E3;text-decoration:none">JaxCliped AI Studio</a> &nbsp;·&nbsp;
+      <a href="{e(site)}/privacy" style="color:#86868B;text-decoration:none">Privacy</a> &nbsp;·&nbsp;
+      <a href="{e(site)}/terms" style="color:#86868B;text-decoration:none">Terms</a></td></tr>
   </table></td></tr></table></body></html>"""
 
 
-def preview(title="Confirm your email", intro="Thanks for joining PeakCut. Confirm this is your email address to start clipping.",
-            button="Confirm my email", link=None, outro="The link works for 3 days. If you didn't sign up, you can ignore this email.") -> str:
-    """The same email for viewing in a browser: the logo is inlined so it shows without an email app."""
-    import base64
-    data = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode() if LOGO.is_file() else ""
-    return _html(title, intro, button, link or config.PUBLIC_URL + "/auth/verify?t=example", outro, logo_src=data)
+def preview(title="Confirm your email", intro="Thanks for joining JaxCliped. Confirm your email address below to start clipping viral moments.",
+            button="Confirm Email Address", link=None, outro="This verification link works for 3 days. If you didn't create an account, you can safely ignore this email.") -> str:
+    """The same email for viewing in a browser."""
+    return _html(title, intro, button, link or config.PUBLIC_URL + "/auth/verify?t=example", outro)
 
 
 def send(to: str, subject: str, title: str, intro: str, button: str, link: str, outro: str) -> bool:
@@ -77,7 +74,7 @@ def send(to: str, subject: str, title: str, intro: str, button: str, link: str, 
         if config.HTTPS:      # a real site: a sign-in link must never sit in a log file
             log.warning("Email not set up, so nothing was sent: %s", subject)
         else:                 # on your own computer the link is printed so you can use it
-            print(f"[PeakCut mail] {subject} for {to}: {link}", flush=True)
+            print(f"[JaxCliped mail] {subject} for {to}: {link}", flush=True)
         return False
     msg = EmailMessage()
     name, addr = parseaddr(config.MAIL_FROM)
