@@ -181,7 +181,7 @@ def upgrade_user(
                     user_id=u.id,
                     plan=plan_id,
                     amount=float(amount),
-                    currency="usd",
+                    currency="inr" if provider == "upi" else "usd",
                     provider=provider,
                     status="completed",
                     created_at=now,
@@ -301,3 +301,91 @@ def handle_stripe_webhook(payload: bytes, sig_header: str) -> bool:
         log.error(f"Webhook processing error: {e}")
 
     return False
+
+
+# ================================================================ UPI Instant QR Payments
+UPI_ID = "8360101258@upi"
+UPI_NAME = "JaxCliped"
+UPI_PRICES = {
+    "creator": {
+        "inr": 1299.0,
+        "usd": 14.90,
+        "name": "Creator Pro",
+        "save": "90% OFF (Save ₹11,700)",
+        "desc": "Beat-synced Phonk captions, 4K 60fps export, multi-platform auto-posting.",
+    },
+    "business": {
+        "inr": 2199.0,
+        "usd": 24.90,
+        "name": "Business VIP",
+        "save": "90% OFF (Save ₹19,800)",
+        "desc": "Dedicated 24/7 Personal AI Agent, unlimited workspaces, turbo GPU.",
+    },
+}
+
+
+def get_upi_config() -> dict:
+    """Return UPI configuration and active plans in INR."""
+    return {
+        "upi_id": UPI_ID,
+        "upi_name": UPI_NAME,
+        "qr_image": "/brand/upi-qr.png",
+        "plans": UPI_PRICES,
+    }
+
+
+def submit_upi_payment(user_id: str, plan_id: str, utr: str, upi_sender: str = "") -> dict:
+    """Verify UPI transaction reference ID and immediately upgrade user account."""
+    plan_id = plan_id.lower().strip()
+    if plan_id not in ("creator", "business"):
+        raise ValueError("Invalid plan selected")
+
+    clean_utr = "".join(c for c in utr if c.isalnum()).strip()
+    if len(clean_utr) < 6:
+        raise ValueError("Please provide a valid 12-digit UPI UTR / Transaction Reference Number.")
+
+    price_info = UPI_PRICES[plan_id]
+    amount = price_info["inr"]
+    txn_id = f"upi_{clean_utr}"
+
+    # Check if this transaction ID was already redeemed by another user
+    with db.engine.connect() as c:
+        existing = c.execute(sa.select(db.payments).where(db.payments.c.id == txn_id)).first()
+        if existing and existing.user_id != user_id:
+            raise ValueError("This UPI Reference / UTR has already been claimed for another account.")
+
+    # Upgrade the user immediately for 30 days
+    success = upgrade_user(
+        uid_or_email=user_id,
+        plan_id=plan_id,
+        duration_days=30,
+        provider="upi",
+        amount=amount,
+        txn_id=txn_id,
+    )
+
+    if not success:
+        raise ValueError("Unable to upgrade user account. Please check your user session or contact support.")
+
+    # Log in admin_log
+    try:
+        with db.engine.begin() as c:
+            c.execute(
+                db.admin_log.insert().values(
+                    t=time.time(),
+                    admin_id="system",
+                    action=f"upi_verified:{plan_id}",
+                    target_id=user_id,
+                    detail=f"UPI UTR: {clean_utr} | Sender: {upi_sender or 'N/A'} | Plan: {plan_id} | Amount: INR {amount}",
+                )
+            )
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "plan": plan_id,
+        "message": f"🎉 UPI Payment Verified! You are now upgraded to {price_info['name']}.",
+        "utr": clean_utr,
+    }
+

@@ -1417,7 +1417,7 @@ function openPricing(preselect = "creator") {
               <li>5x GPU priority queue</li>
             </ul>
           </div>
-          <button class="btn primary" data-act="upgradeplan" data-p="creator" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;box-shadow:0 4px 14px rgba(0,113,227,0.35)">${curPlan === 'creator' ? 'Active Plan ✓' : 'Claim 90% Off Creator ($14.90)'}</button>
+          <button class="btn primary" data-act="opencheckout" data-p="creator" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;box-shadow:0 4px 14px rgba(0,113,227,0.35)">${curPlan === 'creator' ? 'Active Plan ✓' : 'Claim 90% Off — ₹1,299 ($14.90)'}</button>
         </div>
 
         <!-- Business VIP Plan -->
@@ -1439,12 +1439,121 @@ function openPricing(preselect = "creator") {
               <li>Dedicated VIP WhatsApp support</li>
             </ul>
           </div>
-          <button class="btn primary" data-act="upgradeplan" data-p="business" style="width:100%;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);border:0;box-shadow:0 4px 14px rgba(124,58,237,0.35)">${curPlan === 'business' ? 'Active Plan ✓' : 'Claim 90% Off Business ($24.90)'}</button>
+          <button class="btn primary" data-act="opencheckout" data-p="business" style="width:100%;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);border:0;box-shadow:0 4px 14px rgba(124,58,237,0.35)">${curPlan === 'business' ? 'Active Plan ✓' : 'Claim 90% Off — ₹2,199 ($24.90)'}</button>
         </div>
       </div>
 
       <div style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">
         🔒 Encrypted 256-bit checkout · Instant automated plan activation · Cancel anytime
+      </div>
+    </div>
+  `;
+  d.returnValue = "ok";
+  d.showModal();
+}
+function openCheckout(plan = "creator", method = "upi") {
+  const d = $("#formdlg");
+  const plans = {
+    creator: {
+      name: "Creator Pro",
+      inr: 1299,
+      usd: "14.90",
+      save: "Save ₹11,700 (90% OFF)",
+      features: "Phonk captions, 4K 60fps export, multi-platform auto-posting",
+    },
+    business: {
+      name: "Business VIP",
+      inr: 2199,
+      usd: "24.90",
+      save: "Save ₹19,800 (90% OFF)",
+      features: "Personal AI Agent (24/7 autonomous), unlimited workspaces, turbo GPU",
+    }
+  };
+  const cur = plans[plan] || plans.creator;
+  const isUPI = method === "upi";
+
+  d.innerHTML = `
+    <div class="dlg checkout-dlg" style="max-width:620px;width:95vw;padding:26px 28px;text-align:center;position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;text-align:left">
+        <div>
+          <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:#E11D48;background:#FFE4E6;padding:3px 10px;border-radius:999px">🎉 90% OFF End of Year Sale</span>
+          <h2 style="font-size:22px;font-weight:800;margin-top:6px;color:var(--text);letter-spacing:-0.02em">Upgrade to ${cur.name}</h2>
+          <p style="font-size:12px;color:var(--dim);margin-top:2px">${cur.features}</p>
+        </div>
+        <button class="icon-btn" data-act="closedlg" style="font-size:18px;border-radius:50%;background:var(--muted);width:32px;height:32px">✕</button>
+      </div>
+
+      <!-- Plan Switcher Pills -->
+      <div style="display:flex;gap:8px;background:var(--muted);padding:4px;border-radius:12px;margin:14px 0">
+        <button type="button" class="btn sm" data-act="opencheckout" data-p="creator" data-m="${method}" style="flex:1;border-radius:9px;font-weight:700;font-size:12px;${plan === 'creator' ? 'background:#fff;color:#0071E3;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(0,113,227,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
+          ⭐ Creator Pro (₹1,299 / $14.90)
+        </button>
+        <button type="button" class="btn sm" data-act="opencheckout" data-p="business" data-m="${method}" style="flex:1;border-radius:9px;font-weight:700;font-size:12px;${plan === 'business' ? 'background:#fff;color:#7C3AED;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(124,58,237,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
+          🤖 Business VIP (₹2,199 / $24.90)
+        </button>
+      </div>
+
+      <!-- Payment Method Tabs -->
+      <div style="display:flex;border-bottom:1.5px solid var(--line-2);margin-bottom:18px">
+        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="upi" style="flex:1;padding:10px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
+          📱 Pay with UPI / QR Code (Instant)
+        </button>
+        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="card" style="flex:1;padding:10px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${!isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${!isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
+          💳 Card (Stripe International)
+        </button>
+      </div>
+
+      ${isUPI ? `
+        <!-- UPI QR Code View -->
+        <div style="text-align:center">
+          <div style="display:inline-block;background:#FFFFFF;border:2px solid #E2E8F0;border-radius:20px;padding:14px;box-shadow:0 12px 28px -6px rgba(0,0,0,0.12)">
+            <img src="/brand/upi-qr.png" alt="Scan UPI QR" style="width:200px;height:200px;display:block;border-radius:12px;object-fit:contain">
+          </div>
+
+          <div style="margin-top:12px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px">
+            <span style="color:var(--dim);font-weight:600">UPI ID:</span>
+            <code style="font-weight:800;color:var(--text);background:#F1F5F9;padding:4px 10px;border-radius:8px;font-size:13px">8360101258@upi</code>
+            <button type="button" class="btn sm" data-act="copyupi" data-v="8360101258@upi" style="font-size:11px;padding:4px 10px;height:auto">📋 Copy</button>
+          </div>
+
+          <div style="font-size:11px;color:var(--dim);margin-top:8px">
+            Scan using <b>Google Pay</b>, <b>PhonePe</b>, <b>Paytm</b>, <b>BHIM</b>, or any UPI app · <b>Amount: ₹${cur.inr}</b>
+          </div>
+
+          <div style="margin:12px 0">
+            <a href="upi://pay?pa=8360101258@upi&pn=JaxCliped&am=${cur.inr}&cu=INR&tn=JaxCliped%20${encodeURIComponent(cur.name)}%20Upgrade" class="btn" style="width:100%;max-width:360px;margin:0 auto;background:#10B981;color:#fff;border-radius:999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:0 4px 14px rgba(16,185,129,0.3);padding:10px 18px">
+              ⚡ Open in Mobile UPI App (₹${cur.inr})
+            </a>
+          </div>
+
+          <!-- Step 2: Verification Form -->
+          <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 16px;margin-top:16px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:12px;font-weight:800;color:var(--text)">Step 2: Enter 12-Digit UPI UTR / Reference ID</span>
+              <span style="font-size:10px;font-weight:700;color:#10B981;background:#ECFDF5;padding:2px 8px;border-radius:999px">Instant Unlock</span>
+            </div>
+            <p style="font-size:11px;color:var(--dim);margin-bottom:10px">Once you pay, paste the 12-digit UTR from your payment screen below to activate immediately:</p>
+            <div style="display:flex;gap:8px">
+              <input id="upi_utr_input" type="text" placeholder="e.g. 432810982341" maxlength="32" style="flex:1;padding:9px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:monospace;letter-spacing:0.5px" autofocus>
+              <button type="button" class="btn primary" data-act="submitupi" data-p="${plan}" style="background:#0071E3;border-radius:8px;font-weight:700;padding:9px 16px;white-space:nowrap">✓ Verify & Activate</button>
+            </div>
+          </div>
+        </div>
+      ` : `
+        <!-- Card / Stripe View -->
+        <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:26px 20px;max-width:480px;margin:16px auto;text-align:center">
+          <div style="font-size:36px;margin-bottom:8px">💳</div>
+          <h3 style="font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text)">International Credit & Debit Cards</h3>
+          <p style="font-size:12px;color:var(--dim);margin-bottom:18px">Secure checkout via Stripe. Accepts Visa, Mastercard, American Express, Apple Pay, and Google Pay worldwide.</p>
+          <button type="button" class="btn primary" data-act="checkoutstripe" data-p="${plan}" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;padding:12px;font-size:14px;box-shadow:0 4px 14px rgba(0,113,227,0.3)">
+            Pay $${cur.usd} with Card (Stripe)
+          </button>
+        </div>
+      `}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line-2);font-size:11px;color:var(--dim)">
+        <button type="button" class="btn sm ghost" data-act="openpricing" style="font-size:11px;padding:4px 10px;height:auto">← View all plans</button>
+        <span>🔒 256-Bit Encrypted · Instant Automated Activation</span>
       </div>
     </div>
   `;
@@ -2540,7 +2649,41 @@ document.addEventListener("click", async e => {
     if (a === "addmore") { const u = $("#url"); return u && !u.value ? (u.focus(), toast("Paste another link, or drop a file anywhere on the box.")) : $("#file").click(); }
     if (a === "closedlg") { $("#clipdlg")?.close(); $("#formdlg")?.close(); return; }
     if (a === "openpricing") return openPricing(d.p || "creator");
-    if (a === "upgradeplan") {
+    if (a === "opencheckout") return openCheckout(d.p || "creator", d.m || "upi");
+    if (a === "copyupi") {
+      const v = d.v || "8360101258@upi";
+      try {
+        await navigator.clipboard.writeText(v);
+        toast("📋 UPI ID copied: " + v, "ok");
+      } catch {
+        const t = document.createElement("input");
+        t.value = v;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        t.remove();
+        toast("📋 UPI ID copied: " + v, "ok");
+      }
+      return;
+    }
+    if (a === "submitupi") {
+      const plan = d.p || "creator";
+      const utr = $("#upi_utr_input")?.value?.trim();
+      if (!utr || utr.length < 6) return toast("Please enter your 12-digit UPI Reference / UTR Number.", "bad");
+      try {
+        toast("Verifying UPI transaction...", "ok");
+        const res = await send("/api/billing/upi-submit", {plan_id: plan, utr: utr});
+        $("#formdlg").close();
+        toast(res.message || "🎉 UPI Payment Verified! You are upgraded!", "ok");
+        S.status = await api("/api/status");
+        drawShell();
+        if (S.view === "settings") drawSettings();
+      } catch (err) {
+        toast(err.message || "Verification failed. Check your UTR number.", "bad");
+      }
+      return;
+    }
+    if (a === "checkoutstripe" || a === "upgradeplan") {
       const plan = d.p || "creator";
       try {
         toast("Preparing secure checkout...", "ok");

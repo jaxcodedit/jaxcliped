@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>PeakCut Admin</title>
+<title>JaxCliped Admin</title>
 <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg?v=jaxcliped7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -201,7 +201,7 @@ const kfmt = v => v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).t
 const when = t => t ? new Date(t * 1000).toLocaleString([], {month:"short", day:"numeric", hour:"2-digit", minute:"2-digit"}) : "Never";
 const day = t => t ? new Date(t * 1000).toLocaleDateString([], {day:"numeric", month:"short", year:"numeric"}) : "Never";
 const ago = t => { if (!t) return "Never"; const s = Date.now() / 1000 - t; return s < 300 ? "Now" : s < 3600 ? Math.floor(s / 60) + " min ago" : s < 86400 ? Math.floor(s / 3600) + " h ago" : s < 30 * 86400 ? Math.floor(s / 86400) + " d ago" : day(t); };
-const ACTION = {disable:"Disabled an account", enable:"Enabled an account", delete:"Deleted an account", "role:admin":"Made an admin", "role:user":"Removed admin"};
+const ACTION = {disable:"Disabled an account", enable:"Enabled an account", delete:"Deleted an account", "role:admin":"Made an admin", "role:user":"Removed admin", "upi_verified:creator":"Verified UPI Payment (Creator Pro)", "upi_verified:business":"Verified UPI Payment (Business VIP)", "upgrade:creator":"Upgraded to Creator Pro", "upgrade:business":"Upgraded to Business VIP"};
 
 async function api(path, opt) {
   const r = await fetch(path, opt);
