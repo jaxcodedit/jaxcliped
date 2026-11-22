@@ -54,6 +54,7 @@ PLANS = {
         "description": "Built for content creators scaling on TikTok, Shorts, and Reels.",
         "features": [
             "Everything in Starter, plus:",
+            "All New Feature Updates 1 Week Earlier",
             "Beat-Synced Phonk Captions & Motion FX",
             "4K / 60FPS High-Bitrate Video Export",
             "Multi-Platform Auto-Posting (Shorts, Reels, TikTok)",
@@ -335,7 +336,7 @@ UPI_PRICES = {
         "name": "Creator Pro",
         "original_inr": 1490.0,
         "save": "90% OFF (Save ₹1,341)",
-        "desc": "Beat-synced Phonk captions, 4K 60fps export, multi-platform auto-posting.",
+        "desc": "All new feature updates 1 week earlier, Beat-synced Phonk captions, 4K 60fps export, multi-platform auto-posting.",
     },
     "business": {
         "inr": 249.0,
