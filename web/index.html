@@ -1367,6 +1367,90 @@ function updateHow() {
   d.onclose = () => { if (d.returnValue === "later") { try { localStorage.setItem("jaxcliped_update_seen", up.latest); } catch {} drawShell(); } };
   d.returnValue = "ok"; d.showModal();
 }
+function openPricing(preselect = "creator") {
+  const d = $("#formdlg");
+  const curPlan = S.status.user?.plan || "free";
+  d.innerHTML = `
+    <div class="dlg pricing-dlg" style="max-width:880px;width:95vw;padding:24px 28px;text-align:left;position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+        <div>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:#E11D48;background:#FFE4E6;padding:4px 12px;border-radius:999px">🎉 End of Year Sale — 90% OFF All Plans</span>
+          <h2 style="font-size:24px;font-weight:800;margin-top:8px;color:var(--text);letter-spacing:-0.02em">Upgrade Your JaxCliped Experience</h2>
+          <p style="font-size:13px;color:var(--dim);margin-top:3px">Instant automated activation. Unlock 4K 60fps export, Phonk beat sync, and autonomous AI agents.</p>
+        </div>
+        <button class="icon-btn" data-act="closedlg" style="font-size:18px;border-radius:50%;background:var(--muted);width:32px;height:32px">✕</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:20px 0">
+        <!-- Starter Plan -->
+        <div style="background:#fff;border:1px solid var(--line-2);border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:var(--dim)">STARTER</span>
+            <div style="font-size:28px;font-weight:800;margin:8px 0;color:var(--text)">$0 <small style="font-size:13px;font-weight:500;color:var(--dim)">/mo</small></div>
+            <p style="font-size:12px;color:var(--dim);min-height:36px">Essential AI clipping for casual streamers and test runs.</p>
+            <ul style="font-size:12px;line-height:2;padding-left:16px;color:var(--text);margin:12px 0">
+              <li>1 Creator workspace</li>
+              <li>Standard 1080p export</li>
+              <li>Loudness hype clipping</li>
+              <li>Standard queue</li>
+            </ul>
+          </div>
+          <button class="btn" disabled style="width:100%;background:var(--muted);color:var(--dim);border-radius:999px">${curPlan === 'free' ? 'Current Plan' : 'Free'}</button>
+        </div>
+
+        <!-- Creator Plan -->
+        <div style="background:linear-gradient(180deg,#FFFFFF 0%,#F0F7FF 100%);border:2px solid #0071E3;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;position:relative;box-shadow:0 8px 30px rgba(0,113,227,0.18)">
+          <div style="position:absolute;top:-11px;right:20px;background:#0071E3;color:#fff;font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;letter-spacing:0.5px">POPULAR · 90% OFF</div>
+          <div>
+            <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:#0071E3">CREATOR PRO</span>
+            <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0">
+              <span style="font-size:28px;font-weight:800;color:var(--text)">$14.90</span>
+              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">$149</span>
+              <span style="font-size:11px;font-weight:700;color:#059669;background:#ECFDF5;padding:1px 6px;border-radius:6px">SAVE 90%</span>
+            </div>
+            <p style="font-size:12px;color:var(--dim);min-height:36px">For streamers scaling on TikTok, Reels, and Shorts.</p>
+            <ul style="font-size:12px;line-height:2;padding-left:16px;color:var(--text);margin:12px 0">
+              <li><b>10 Creator workspaces</b></li>
+              <li><b>Beat-synced Phonk captions</b></li>
+              <li><b>4K 60fps high-bitrate export</b></li>
+              <li><b>Multi-platform auto-posting</b></li>
+              <li>5x GPU priority queue</li>
+            </ul>
+          </div>
+          <button class="btn primary" data-act="upgradeplan" data-p="creator" style="width:100%;border-radius:999px;font-weight:700;background:#0071E3;box-shadow:0 4px 14px rgba(0,113,227,0.35)">${curPlan === 'creator' ? 'Active Plan ✓' : 'Claim 90% Off Creator ($14.90)'}</button>
+        </div>
+
+        <!-- Business VIP Plan -->
+        <div style="background:linear-gradient(180deg,#FFFFFF 0%,#FAF5FF 100%);border:2px solid #8B5CF6;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;position:relative;box-shadow:0 8px 30px rgba(139,92,246,0.18)">
+          <div style="position:absolute;top:-11px;right:20px;background:linear-gradient(135deg,#7C3AED,#C026D3);color:#fff;font-size:10px;font-weight:800;padding:2px 10px;border-radius:999px;letter-spacing:0.5px">PERSONAL AGENT · 90% OFF</div>
+          <div>
+            <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:#7C3AED">BUSINESS VIP</span>
+            <div style="display:flex;align-items:baseline;gap:8px;margin:8px 0">
+              <span style="font-size:28px;font-weight:800;color:var(--text)">$24.90</span>
+              <span style="font-size:14px;color:var(--faint);text-decoration:line-through">$249</span>
+              <span style="font-size:11px;font-weight:700;color:#059669;background:#ECFDF5;padding:1px 6px;border-radius:6px">SAVE 90%</span>
+            </div>
+            <p style="font-size:12px;color:var(--dim);min-height:36px">Autonomous 24/7 AI clipping with your dedicated Personal Agent.</p>
+            <ul style="font-size:12px;line-height:2;padding-left:16px;color:var(--text);margin:12px 0">
+              <li><b>🤖 Personal AI Agent (24/7 autonomous)</b></li>
+              <li><b>Unlimited creators & streams</b></li>
+              <li><b>Turbo GPU (zero waiting queue)</b></li>
+              <li>All features of Creator & Starter</li>
+              <li>Dedicated VIP WhatsApp support</li>
+            </ul>
+          </div>
+          <button class="btn primary" data-act="upgradeplan" data-p="business" style="width:100%;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);border:0;box-shadow:0 4px 14px rgba(124,58,237,0.35)">${curPlan === 'business' ? 'Active Plan ✓' : 'Claim 90% Off Business ($24.90)'}</button>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px">
+        🔒 Encrypted 256-bit checkout · Instant automated plan activation · Cancel anytime
+      </div>
+    </div>
+  `;
+  d.returnValue = "ok";
+  d.showModal();
+}
 function greeting() { const h = new Date().getHours(); return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; }
 let lastInd = null;
 addEventListener("resize", () => { lastInd = null; const i = $("#utabs .ind"); if (i) i.remove(); moveInd(); });   // where the orange pill was, so it can slide from there to the new tab
@@ -1394,8 +1478,16 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
     (S.status.user?.role === "admin" && S.status.accounts !== false ? `<h4><span>Owner</span></h4><a class="nav-item" href="/admin" title="Admin dashboard" style="text-decoration:none">${ic("shield")}<span class="label">Admin dashboard</span></a>` : ""));
   const st = S.status;
   const k = S.status.ai;
+  const uPlan = S.status.user?.plan || "free";
+  const isPaid = uPlan !== "free";
+  const pName = {free: "Starter", creator: "Creator Pro", business: "Business VIP"}[uPlan] || "Starter";
+  const planCard = S.status.user ? (isPaid
+    ? `<div class="side-card" style="margin-bottom:8px;background:rgba(0,113,227,0.06);border:1px solid rgba(0,113,227,0.18);padding:9px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:700;font-size:12px;color:var(--brand)">⭐ ${esc(pName)}</span><button class="btn sm ghost" data-act="openpricing" style="padding:2px 8px;font-size:11px;color:var(--brand);height:auto">Change</button></div></div>`
+    : `<div class="side-card" style="margin-bottom:8px;padding:9px 12px"><div style="display:flex;align-items:center;gap:6px"><span class="led mid"></span><span style="font-size:12px">Plan: <b>Starter</b></span></div><button class="btn sm primary" data-act="openpricing" data-p="creator" style="width:100%;margin-top:7px;font-size:11px;font-weight:700;border-radius:999px;background:linear-gradient(135deg,#0071E3,#818CF8);border:0;color:#fff;box-shadow:0 3px 10px rgba(0,113,227,0.3)">⭐ Claim 90% Off Sale</button></div>`) : "";
+
   put($("#foot"), (k ? `<button class="ai-card ${S.view === "usage" ? "on" : ""}" data-act="go" data-v="usage" title="${k.ready ? `AI: ${esc(k.provider || "ready")}, ${k.today_calls || 0} calls today` : "The AI is not set up"}">
       <span class="ai-ic">${ic("bolt")}</span><span class="ai-tx"><small>AI</small><b>${k.ready ? esc(k.provider || "Ready") : "Not set up"}</b></span>${k.ready ? `<span class="ai-n">${(k.today_calls || 0).toLocaleString()} today</span>` : ""}</button>` : "") +
+    planCard +
     (S.status.user ? `<div class="me"><button class="me-btn" data-act="acctmenu" aria-haspopup="menu" aria-expanded="false">${meAvatar(S.status.user)}
       <span class="who">${S.status.accounts === false ? `<b>Settings</b><span>AI key, connected apps</span>` : `<b>${esc(S.status.user.name)}</b><span>${esc(S.status.user.email)}</span>`}</span></button>
       <button class="icon-btn bell" data-act="bell" title="Notifications" aria-label="Notifications${S.status.unread ? `, ${S.status.unread} new` : ""}" aria-haspopup="dialog">${ic("bell")}${S.status.unread ? `<span class="dotn">${S.status.unread > 9 ? "9+" : S.status.unread}</span>` : ""}</button></div>` : ""));
@@ -2183,6 +2275,7 @@ async function drawSettings() {
       body.innerHTML = `<section class="set-sec"><h2>Profile</h2><p class="help">This is how you appear in JaxCliped.</p>
         <div class="prof">${meAvatar(me).replace('class="avatar me-pic"', 'class="avatar prof-pic"')}<div><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div></div>
         <dl class="kv"><div><dt>Email</dt><dd>${esc(me.email)} ${me.verified === false ? `<span class="pill warn">Not confirmed</span>` : `<span class="pill ok">Confirmed</span>`}</dd></div>
+          <div><dt>Subscription Plan</dt><dd><span class="pill ${me.plan && me.plan !== 'free' ? 'ok' : 'warn'}">${esc({free: 'Starter ($0)', creator: 'Creator Pro ($14.90/mo)', business: 'Business VIP ($24.90/mo)'}[me.plan] || 'Starter ($0)')}</span> <button class="btn sm ${me.plan && me.plan !== 'free' ? 'ghost' : 'primary'}" data-act="openpricing" data-p="creator" style="margin-left:8px">${me.plan && me.plan !== 'free' ? 'Change Plan' : 'Upgrade (90% OFF)'}</button></dd></div>
           <div><dt>Sign-in method</dt><dd>${me.google ? `Google${me.has_password ? " and password" : ""}` : "Email and password"}</dd></div>
           <div><dt>Account type</dt><dd>${me.is_admin ? "Admin" : "Standard"}</dd></div>
           ${joined ? `<div><dt>Member since</dt><dd>${joined}</dd></div>` : ""}</dl>
@@ -2445,7 +2538,27 @@ document.addEventListener("click", async e => {
     if (a === "tab") return setTab(d.t);
     if (a === "pickfile") return $("#file").click();
     if (a === "addmore") { const u = $("#url"); return u && !u.value ? (u.focus(), toast("Paste another link, or drop a file anywhere on the box.")) : $("#file").click(); }
-    if (a === "closedlg") return $("#clipdlg").close();
+    if (a === "closedlg") { $("#clipdlg")?.close(); $("#formdlg")?.close(); return; }
+    if (a === "openpricing") return openPricing(d.p || "creator");
+    if (a === "upgradeplan") {
+      const plan = d.p || "creator";
+      try {
+        toast("Preparing secure checkout...", "ok");
+        const res = await send("/api/billing/checkout", {plan_id: plan, cycle: "monthly"});
+        if (res.url && res.mode === "stripe") {
+          window.location.href = res.url;
+        } else {
+          $("#formdlg").close();
+          toast(res.message || `🎉 Successfully upgraded to ${plan.toUpperCase()}!`, "ok");
+          S.status = await api("/api/status");
+          drawShell();
+          if (S.view === "settings") drawSettings();
+        }
+      } catch (err) {
+        toast(err.message || "Checkout failed. Please try again.", "bad");
+      }
+      return;
+    }
     if (a === "openclip") return openClip(d.j, d.c);
     if (a === "newcreator") {
       const dlg = $("#formdlg");
@@ -2634,6 +2747,8 @@ $("#main").addEventListener("scroll", () => $(".topbar").classList.toggle("stuck
   }
   if (q.get("verified")) { history.replaceState(null, "", location.pathname); setTimeout(() => toast("Email confirmed. You're ready to clip.", "ok"), 300); }
   if (q.get("verify_error")) { history.replaceState(null, "", location.pathname); setTimeout(() => toast(q.get("verify_error"), "bad"), 300); }
+  if (q.get("upgraded")) { history.replaceState(null, "", location.pathname); setTimeout(() => toast("🎉 Congratulations! Your plan was upgraded and all features are unlocked.", "ok"), 300); }
+  if (q.get("upgrade")) { setTimeout(() => openPricing(q.get("upgrade")), 400); }
   if (location.pathname.startsWith("/app/")) { const [v, tab] = fromPath(location.pathname); S.view = v; S.ctab = tab; }  // the address decides, before anything loads
   await tick();
   { const [v, tab] = location.pathname.startsWith("/app/") ? fromPath(location.pathname) : ["overview", "clips"]; go(v, tab, true); remember(S.view, S.ctab, "replace"); }
