@@ -75,6 +75,7 @@ def overview() -> dict:
     verify_on = config.VERIFY_EMAIL
     users = [{"id": r.id, "email": r.email, "name": r.name, "role": "admin" if r.is_admin else "user", "disabled": bool(r.disabled),
               "verified": (not verify_on) or r.id in verified, "google": bool(r.google_sub),
+              "plan": getattr(r, "plan", "free") or "free", "plan_until": getattr(r, "plan_until", None),
               "created_at": r.created_at, "last_seen": r.last_seen,
               "ai_calls": used.get(r.id, (0, 0))[0], "tokens": used.get(r.id, (0, 0))[1],
               "videos": vids[r.id], "clips": clips[r.id]} for r in rows]
@@ -113,6 +114,7 @@ def user_detail(uid: str) -> dict:
         devices = c.execute(sa.select(sa.func.count()).select_from(db.sessions).where(
             db.sessions.c.user_id == uid, db.sessions.c.expires_at > time.time())).scalar()
     return {"id": r.id, "email": r.email, "name": r.name, "role": "admin" if r.is_admin else "user", "disabled": bool(r.disabled),
+            "plan": getattr(r, "plan", "free") or "free", "plan_until": getattr(r, "plan_until", None),
             "created_at": r.created_at, "last_seen": r.last_seen,
             "signed_in_devices": int(devices), "recent": recent, "by_purpose": by_purpose}
 

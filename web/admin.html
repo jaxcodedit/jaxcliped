@@ -274,12 +274,21 @@ function drawOverview(a) {
       ${sv.ai_key ? "" : `<p class="note" style="margin-top:14px">No AI key is set, so clips are picked by loudness only. Add your own key to the .env file on the server (see .env.example) and restart.</p>`}</div>`;
 }
 
+function planBadge(plan) {
+  if (plan === "creator") return `<span class="pill ok" style="font-weight:700">⭐ Creator (₹149)</span>`;
+  if (plan === "business") return `<span class="pill brand" style="font-weight:700;background:linear-gradient(135deg,#7C3AED,#6366F1);color:#fff">🤖 Business VIP (₹249)</span>`;
+  return `<span class="pill" style="color:var(--dim)">Starter (₹0)</span>`;
+}
+
 function userRows(a) {
   const q = S.q.trim().toLowerCase();
   let rows = a.users.filter(u => !q || u.email.toLowerCase().includes(q) || (u.name || "").toLowerCase().includes(q));
   if (S.filter === "unconfirmed") rows = rows.filter(u => !u.verified);
   if (S.filter === "disabled") rows = rows.filter(u => u.disabled);
   if (S.filter === "admins") rows = rows.filter(u => u.role === "admin");
+  if (S.filter === "paid") rows = rows.filter(u => u.plan && u.plan !== "free");
+  if (S.filter === "creator") rows = rows.filter(u => u.plan === "creator");
+  if (S.filter === "business") rows = rows.filter(u => u.plan === "business");
   return rows.sort((x, y) => (y[S.sort] || 0) - (x[S.sort] || 0));
 }
 function drawUsers(a) {
@@ -287,18 +296,19 @@ function drawUsers(a) {
   const th = (k, l) => `<th class="num"><button data-act="sort" data-k="${k}" style="all:unset;cursor:pointer;color:${S.sort === k ? "var(--brand-deep)" : "inherit"}">${l}</button></th>`;
   const rows = userRows(a);
   return `<div class="toolbar"><input type="search" id="q" placeholder="Search by name or email" value="${esc(S.q)}" aria-label="Search accounts">
-      <div class="seg">${seg("all", "All")}${seg("unconfirmed", "Email not confirmed")}${seg("disabled", "Disabled")}${seg("admins", "Admins")}</div>
+      <div class="seg">${seg("all", "All")}${seg("paid", "Paid")}${seg("creator", "Creator Pro")}${seg("business", "Business VIP")}${seg("unconfirmed", "Email not confirmed")}${seg("disabled", "Disabled")}${seg("admins", "Admins")}</div>
       <span class="sub">${num(rows.length)} of ${num(a.users.length)}</span></div>
-    <div class="card"><div class="scroll"><table><tr><th>Account</th><th><button data-act="sort" data-k="created_at" style="all:unset;cursor:pointer;color:${S.sort === "created_at" ? "var(--brand-deep)" : "inherit"}">Joined</button></th>
+    <div class="card"><div class="scroll"><table><tr><th>Account</th><th>Plan</th><th><button data-act="sort" data-k="created_at" style="all:unset;cursor:pointer;color:${S.sort === "created_at" ? "var(--brand-deep)" : "inherit"}">Joined</button></th>
       <th><button data-act="sort" data-k="last_seen" style="all:unset;cursor:pointer;color:${S.sort === "last_seen" ? "var(--brand-deep)" : "inherit"}">Last active</button></th>
       ${th("ai_calls", "AI calls")}${th("tokens", "AI tokens")}${th("videos", "Videos")}${th("clips", "Clips")}</tr>
       ${rows.map(u => `<tr class="u" data-act="user" data-id="${esc(u.id)}"><td><b>${esc(u.name || u.email.split("@")[0])}</b>
           ${u.role === "admin" ? ` <span class="pill brand">Admin</span>` : ""}${u.disabled ? ` <span class="pill bad">Disabled</span>` : ""}${u.verified ? "" : ` <span class="pill warn">Email not confirmed</span>`}
           <div class="em">${esc(u.email)}</div></td>
+        <td>${planBadge(u.plan)}</td>
         <td class="sub">${esc(day(u.created_at))}</td><td class="sub">${esc(ago(u.last_seen))}</td>
         <td class="num">${num(u.ai_calls)}</td><td class="num">${esc(kfmt(u.tokens || 0))}</td>
         <td class="num">${num(u.videos)}</td><td class="num">${num(u.clips)}</td></tr>`).join("")
-        || `<tr><td colspan="7"><div class="empty"><b>No accounts match</b>Try another search or filter.</div></td></tr>`}</table></div></div>`;
+        || `<tr><td colspan="8"><div class="empty"><b>No accounts match</b>Try another search or filter.</div></td></tr>`}</table></div></div>`;
 }
 
 function drawActivity(a) {
@@ -366,6 +376,17 @@ async function userDialog(id) {
         ${u.role === "admin" ? "" : `<button class="btn sm ${u.disabled ? "" : "danger"}" data-act="disable" data-id="${esc(u.id)}" data-off="${u.disabled ? "0" : "1"}">${u.disabled ? "Enable account" : "Disable account"}</button>`}
         ${u.role === "admin" ? "" : `<button class="btn sm danger" data-act="deluser" data-id="${esc(u.id)}">Delete account</button>`}
         <button class="btn sm" data-act="closedlg">Close</button></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--muted);padding:10px 14px;border-radius:10px;margin:14px 0">
+      <div style="font-size:13px;font-weight:600">Subscription Plan: ${planBadge(u.plan)}</div>
+      <div class="row" style="margin:0">
+        <select id="user_plan_sel" style="width:auto;height:32px;padding:0 8px;font-size:13px;border-radius:8px">
+          <option value="free" ${u.plan === 'free' ? 'selected' : ''}>Starter (₹0 / Free)</option>
+          <option value="creator" ${u.plan === 'creator' ? 'selected' : ''}>Creator Pro (₹149/mo)</option>
+          <option value="business" ${u.plan === 'business' ? 'selected' : ''}>Business VIP (₹249/mo)</option>
+        </select>
+        <button class="btn sm primary" data-act="setuserplan" data-id="${esc(u.id)}">Update Plan</button>
+      </div>
+    </div>
     <div class="facts"><div><b>${num(row.ai_calls)}</b><span>AI calls</span></div><div><b>${esc(kfmt(row.tokens || 0))}</b><span>AI tokens</span></div>
       <div><b>${num(row.videos)}</b><span>Videos</span></div><div><b>${num(row.clips)}</b><span>Clips</span></div>
       <div><b>${esc(day(u.created_at))}</b><span>Joined</span></div><div><b>${esc(ago(u.last_seen))}</b><span>Last active</span></div>
@@ -398,6 +419,17 @@ document.addEventListener("click", async e => {
     if (a === "sort") { e.stopPropagation(); S.sort = d.k; return draw(); }
     if (a === "closedlg") return $("#dlg").close();
     if (a === "user") return userDialog(d.id);
+    if (a === "setuserplan") {
+      const plan = $("#user_plan_sel")?.value;
+      try {
+        await send(`/api/admin/users/${encodeURIComponent(d.id)}/plan`, {plan: plan});
+        toast(`Plan updated to ${plan.toUpperCase()}`, "ok");
+        await load();
+        return userDialog(d.id);
+      } catch (err) {
+        return toast(err.message || "Failed to update plan", "bad");
+      }
+    }
     if (a === "disable") {
       const off = d.off === "1", u = S.data.users.find(x => x.id === d.id); if (!u) return;
       $("#dlg").close();

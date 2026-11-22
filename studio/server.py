@@ -1586,6 +1586,25 @@ def admin_disable(request: Request, uid: str, body: dict = Body(...)):
         raise HTTPException(e.status, str(e))
 
 
+@app.post("/api/admin/users/{uid}/plan")
+def admin_set_user_plan(request: Request, uid: str, body: dict = Body(...)):
+    me_ = _admin(request)
+    plan_id = str(body.get("plan") or body.get("plan_id") or "free").lower()
+    from . import billing
+    try:
+        ok = billing.upgrade_user(
+            uid_or_email=_uid_ok(uid),
+            plan_id=plan_id,
+            duration_days=365 if plan_id != "free" else 0,
+            provider=f"admin:{me_.email}",
+        )
+        with db.engine.begin() as c:
+            admins._log(c, me_.id, f"plan:{plan_id}", uid, f"Plan changed to {plan_id}")
+        return {"ok": ok, "plan": plan_id}
+    except Exception as e:
+        raise HTTPException(400, str(e))
+
+
 @app.post("/api/admin/users/{uid}/delete")
 def admin_delete_user(request: Request, uid: str, body: dict = Body(...)):
     me_ = _admin(request)
