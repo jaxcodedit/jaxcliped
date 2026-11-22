@@ -473,13 +473,13 @@ img.av{object-fit:cover}
 .kv{margin:0 0 12px;border-top:1px solid var(--line)}
 .kv div{display:grid;grid-template-columns:180px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .kv dt{font-size:13px;color:var(--dim)}.kv dd{margin:0;font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.apps{display:flex;flex-direction:column;gap:10px}
-.appcard{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:12px}
-.applogo{flex:none;width:40px;height:40px;border-radius:10px;display:grid;place-items:center}
+.apps{display:flex;flex-direction:column;gap:12px}
+.appcard{display:flex;gap:16px;align-items:center;padding:16px 18px;border:1.5px solid var(--line);border-radius:14px;background:#fff;flex-wrap:wrap;justify-content:space-between}
+.appcard-main{display:flex;gap:14px;align-items:center;flex:1 1 260px;min-width:240px}
+.applogo{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center}
 .applogo svg{width:22px;height:22px}
-.apptx{flex:1;min-width:0}.apptx>b{display:block;font-size:15px;color:var(--brand-ink)}.apptx>span{font-size:13px;color:var(--dim)}
-.appact{flex:none}
-.appcard{flex-wrap:wrap}
+.apptx{flex:1;min-width:180px}.apptx>b{display:block;font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}.apptx>span{font-size:13px;color:var(--dim);line-height:1.4}
+.appact{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .stor-path{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .stor-path code{flex:1 1 260px;min-width:0;overflow-wrap:anywhere;font-size:13px;background:var(--muted);border-radius:8px;padding:10px 12px}
 .stor-bar{height:10px;border-radius:999px;background:var(--muted);overflow:hidden;margin:14px 0 6px}
@@ -2499,8 +2499,14 @@ async function drawSettings() {
               <label class="f">${esc(st.secret_label)}<input id="app_secret" type="password" placeholder="${st.ready ? "Saved. Paste a new one to replace it" : ""}" autocomplete="off"></label></div>
             <p class="sub">${g[3]}</p>
             <div class="row"><button class="btn primary" data-act="appsave" data-p="${pf}">Save</button><button class="btn ghost" data-act="appsetup" data-p="">Close</button></div></div>` : "";
-        return `<div class="appcard"><span class="applogo" style="background:${bg}">${logo}</span>
-          <div class="apptx"><b>${name}</b><span>${desc}</span>${listOf(accs)}</div><div class="appact">${act}</div>${panel}</div>`;
+        return `<div class="appcard">
+          <div class="appcard-main">
+            <span class="applogo" style="background:${bg}">${logo}</span>
+            <div class="apptx"><b>${name}</b><span>${desc}</span>${listOf(accs)}</div>
+          </div>
+          <div class="appact">${act}</div>
+          ${panel}
+        </div>`;
       };
       body.innerHTML = `<section class="set-sec"><h2>Connected apps</h2><p class="help">Connect the accounts JaxCliped posts clips to: press Connect, sign in on the platform's own page, and you're back here. JaxCliped never sees your passwords. Then pick which accounts each creator posts to, in that creator's Setup.</p>
         <div class="apps">
