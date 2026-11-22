@@ -1473,32 +1473,32 @@ function openCheckout(plan = "creator", method = "upi") {
   const isUPI = method === "upi";
 
   d.innerHTML = `
-    <div class="dlg checkout-dlg" style="max-width:620px;width:95vw;padding:26px 28px;text-align:center;position:relative">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;text-align:left">
+    <div class="dlg checkout-dlg" style="max-width:580px;width:95vw;max-height:92vh;overflow-y:auto;padding:20px 24px;text-align:center;position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;text-align:left">
         <div>
           <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:#E11D48;background:#FFE4E6;padding:3px 10px;border-radius:999px">🎉 90% OFF End of Year Sale</span>
-          <h2 style="font-size:22px;font-weight:800;margin-top:6px;color:var(--text);letter-spacing:-0.02em">Upgrade to ${cur.name}</h2>
+          <h2 style="font-size:20px;font-weight:800;margin-top:5px;color:var(--text);letter-spacing:-0.02em">Upgrade to ${cur.name}</h2>
           <p style="font-size:12px;color:var(--dim);margin-top:2px">${cur.features}</p>
         </div>
         <button class="icon-btn" data-act="closedlg" style="font-size:18px;border-radius:50%;background:var(--muted);width:32px;height:32px">✕</button>
       </div>
 
       <!-- Plan Switcher Pills -->
-      <div style="display:flex;gap:8px;background:var(--muted);padding:4px;border-radius:12px;margin:14px 0">
-        <button type="button" class="btn sm" data-act="opencheckout" data-p="creator" data-m="${method}" style="flex:1;border-radius:9px;font-weight:700;font-size:12px;${plan === 'creator' ? 'background:#fff;color:#0071E3;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(0,113,227,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
+      <div style="display:flex;gap:6px;background:var(--muted);padding:4px;border-radius:12px;margin:10px 0">
+        <button type="button" class="btn sm" data-act="opencheckout" data-p="creator" data-m="${method}" style="flex:1;border-radius:8px;font-weight:700;font-size:12px;${plan === 'creator' ? 'background:#fff;color:#0071E3;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(0,113,227,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
           ⭐ Creator Pro (₹1,299 / $14.90)
         </button>
-        <button type="button" class="btn sm" data-act="opencheckout" data-p="business" data-m="${method}" style="flex:1;border-radius:9px;font-weight:700;font-size:12px;${plan === 'business' ? 'background:#fff;color:#7C3AED;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(124,58,237,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
+        <button type="button" class="btn sm" data-act="opencheckout" data-p="business" data-m="${method}" style="flex:1;border-radius:8px;font-weight:700;font-size:12px;${plan === 'business' ? 'background:#fff;color:#7C3AED;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid rgba(124,58,237,0.2)' : 'background:transparent;color:var(--dim);border:0'}">
           🤖 Business VIP (₹2,199 / $24.90)
         </button>
       </div>
 
       <!-- Payment Method Tabs -->
-      <div style="display:flex;border-bottom:1.5px solid var(--line-2);margin-bottom:18px">
-        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="upi" style="flex:1;padding:10px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
+      <div style="display:flex;border-bottom:1.5px solid var(--line-2);margin-bottom:12px">
+        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="upi" style="flex:1;padding:8px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
           📱 Pay with UPI / QR Code (Instant)
         </button>
-        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="card" style="flex:1;padding:10px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${!isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${!isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
+        <button type="button" data-act="opencheckout" data-p="${plan}" data-m="card" style="flex:1;padding:8px;font-size:13px;font-weight:700;border:0;background:none;cursor:pointer;color:${!isUPI ? '#0071E3' : 'var(--dim)'};border-bottom:${!isUPI ? '2.5px solid #0071E3' : '2.5px solid transparent'};transition:all 0.15s">
           💳 Card (Stripe International)
         </button>
       </div>
@@ -1506,36 +1506,36 @@ function openCheckout(plan = "creator", method = "upi") {
       ${isUPI ? `
         <!-- UPI QR Code View -->
         <div style="text-align:center">
-          <div style="display:inline-block;background:#FFFFFF;border:2px solid #E2E8F0;border-radius:20px;padding:14px;box-shadow:0 12px 28px -6px rgba(0,0,0,0.12)">
-            <img src="/brand/upi-qr.png" alt="Scan UPI QR" style="width:200px;height:200px;display:block;border-radius:12px;object-fit:contain">
+          <div style="display:inline-block;background:#FFFFFF;border:2px solid #E2E8F0;border-radius:18px;padding:10px;box-shadow:0 8px 24px -4px rgba(0,0,0,0.1)">
+            <img src="/brand/upi-qr.png" alt="Scan UPI QR" style="width:170px;height:170px;display:block;border-radius:10px;object-fit:contain">
           </div>
 
-          <div style="margin-top:12px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px">
+          <div style="margin-top:10px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px">
             <span style="color:var(--dim);font-weight:600">UPI ID:</span>
-            <code style="font-weight:800;color:var(--text);background:#F1F5F9;padding:4px 10px;border-radius:8px;font-size:13px">8360101258@upi</code>
-            <button type="button" class="btn sm" data-act="copyupi" data-v="8360101258@upi" style="font-size:11px;padding:4px 10px;height:auto">📋 Copy</button>
+            <code style="font-weight:800;color:var(--text);background:#F1F5F9;padding:3px 9px;border-radius:6px;font-size:13px">8360101258@upi</code>
+            <button type="button" class="btn sm" data-act="copyupi" data-v="8360101258@upi" style="font-size:11px;padding:3px 8px;height:auto">📋 Copy</button>
           </div>
 
-          <div style="font-size:11px;color:var(--dim);margin-top:8px">
+          <div style="font-size:11px;color:var(--dim);margin-top:6px">
             Scan using <b>Google Pay</b>, <b>PhonePe</b>, <b>Paytm</b>, <b>BHIM</b>, or any UPI app · <b>Amount: ₹${cur.inr}</b>
           </div>
 
-          <div style="margin:12px 0">
-            <a href="upi://pay?pa=8360101258@upi&pn=JaxCliped&am=${cur.inr}&cu=INR&tn=JaxCliped%20${encodeURIComponent(cur.name)}%20Upgrade" class="btn" style="width:100%;max-width:360px;margin:0 auto;background:#10B981;color:#fff;border-radius:999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:0 4px 14px rgba(16,185,129,0.3);padding:10px 18px">
+          <div style="margin:10px 0">
+            <a href="upi://pay?pa=8360101258@upi&pn=JaxCliped&am=${cur.inr}&cu=INR&tn=JaxCliped%20${encodeURIComponent(cur.name)}%20Upgrade" class="btn" style="width:100%;max-width:340px;margin:0 auto;background:#10B981;color:#fff;border-radius:999px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;box-shadow:0 4px 14px rgba(16,185,129,0.3);padding:9px 16px;font-size:13px">
               ⚡ Open in Mobile UPI App (₹${cur.inr})
             </a>
           </div>
 
           <!-- Step 2: Verification Form -->
-          <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px 16px;margin-top:16px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:12px;padding:12px 14px;margin-top:10px;text-align:left;max-width:440px;margin-left:auto;margin-right:auto">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
               <span style="font-size:12px;font-weight:800;color:var(--text)">Step 2: Enter 12-Digit UPI UTR / Reference ID</span>
               <span style="font-size:10px;font-weight:700;color:#10B981;background:#ECFDF5;padding:2px 8px;border-radius:999px">Instant Unlock</span>
             </div>
-            <p style="font-size:11px;color:var(--dim);margin-bottom:10px">Once you pay, paste the 12-digit UTR from your payment screen below to activate immediately:</p>
+            <p style="font-size:11px;color:var(--dim);margin-bottom:8px">Once you pay, paste the 12-digit UTR from your payment screen below to activate immediately:</p>
             <div style="display:flex;gap:8px">
-              <input id="upi_utr_input" type="text" placeholder="e.g. 432810982341" maxlength="32" style="flex:1;padding:9px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:monospace;letter-spacing:0.5px" autofocus>
-              <button type="button" class="btn primary" data-act="submitupi" data-p="${plan}" style="background:#0071E3;border-radius:8px;font-weight:700;padding:9px 16px;white-space:nowrap">✓ Verify & Activate</button>
+              <input id="upi_utr_input" type="text" placeholder="e.g. 432810982341" maxlength="32" style="flex:1;padding:8px 12px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:monospace;letter-spacing:0.5px" autofocus>
+              <button type="button" class="btn primary" data-act="submitupi" data-p="${plan}" style="background:#0071E3;border-radius:8px;font-weight:700;padding:8px 14px;white-space:nowrap;font-size:13px">✓ Verify & Activate</button>
             </div>
           </div>
         </div>
