@@ -442,10 +442,20 @@ def public_config():
 
 
 # ================================================================ billing and automated payments
+def _is_local(request: Request) -> bool:
+    try:
+        host = request.headers.get("host", "").split(":")[0].lower().strip()
+        return host in ("localhost", "127.0.0.1", "::1", "0.0.0.0") or config.is_local_host(host)
+    except Exception:
+        return False
+
+
 @app.get("/api/billing/plans")
-def billing_plans():
+def billing_plans(request: Request):
     from . import billing
-    return billing.get_plans()
+    res = billing.get_plans()
+    res["is_local"] = _is_local(request)
+    return res
 
 
 @app.get("/api/billing/current")
@@ -454,7 +464,7 @@ def billing_current(request: Request):
     if not u:
         raise HTTPException(401, "Please sign in.")
     from . import billing
-    return billing.get_user_plan(u.id)
+    return billing.get_user_plan(u.id, is_local=_is_local(request))
 
 
 @app.get("/api/billing/upi-config")
@@ -465,6 +475,14 @@ def billing_upi_config():
 
 @app.post("/api/billing/upi-submit")
 def billing_upi_submit(request: Request, body: dict = Body(...)):
+    if _is_local(request):
+        return {
+            "ok": True,
+            "status": "completed",
+            "plan": "business",
+            "message": "Local Studio is Free Forever! All features are permanently active.",
+            "utr": "LOCAL_UNLIMITED",
+        }
     u = _me(request)
     if not u:
         raise HTTPException(401, "Please sign in to upgrade.")
@@ -483,6 +501,12 @@ def billing_upi_submit(request: Request, body: dict = Body(...)):
 
 @app.post("/api/billing/checkout")
 def billing_checkout(request: Request, body: dict = Body(...)):
+    if _is_local(request):
+        return {
+            "url": "/app",
+            "mode": "local",
+            "message": "Local Studio is Free Forever! All features are permanently active.",
+        }
     u = _me(request)
     if not u:
         raise HTTPException(401, "Please sign in to choose a plan.")
@@ -637,7 +661,16 @@ def status(request: Request):
     from . import notices
     from . import updates
     me_ = _me(request)
-    return {"user": auth.public(me_), "update": updates.latest() if me_.is_admin else None, "accounts": config.ACCOUNTS, "disk_full": load.disk_full(), "no_ffmpeg": bool(_tools.missing()), "links": {"repo": config.REPO_URL, "follow": config.FOLLOW_URL}, "ai": usage.brief(), "unread": notices.unread(),
+    u_pub = auth.public(me_)
+    is_local = _is_local(request)
+    if is_local and u_pub:
+        u_pub["plan"] = "business"
+        u_pub["plan_name"] = "Local Studio"
+        u_pub["plan_badge"] = "Free Forever"
+        u_pub["is_local"] = True
+        u_pub["free_forever"] = True
+
+    return {"user": u_pub, "is_local": is_local, "free_forever": is_local, "update": updates.latest() if me_.is_admin else None, "accounts": config.ACCOUNTS, "disk_full": load.disk_full(), "no_ffmpeg": bool(_tools.missing()), "links": {"repo": config.REPO_URL, "follow": config.FOLLOW_URL}, "ai": usage.brief(), "unread": notices.unread(),
             "tour": not accounts.settings()["tour_done"],
             "youtube": accounts.youtube_ready(), "connect": {p: accounts.can_connect(p) for p in accounts.PLATFORM_NAMES}, "max_upload_mb": config.MAX_UPLOAD_MB, "upload_part_mb": config.UPLOAD_PART_MB, "max_batch": config.MAX_ACTIVE_JOBS_PER_USER,
             "styles": {k: v["label"] for k, v in render.STYLES.items()}, "layouts": render.LAYOUTS,

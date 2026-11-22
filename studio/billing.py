@@ -117,8 +117,20 @@ def get_plans() -> dict:
     }
 
 
-def get_user_plan(uid: str) -> dict:
+def get_user_plan(uid: str, is_local: bool = False) -> dict:
     """Get the user's active plan, expiring status, and capability limits."""
+    if is_local or config.is_local_host():
+        meta = PLANS["business"]
+        return {
+            "plan": "business",
+            "name": "Local Studio",
+            "badge": "Free Forever",
+            "plan_until": None,
+            "is_paid": True,
+            "free_forever": True,
+            "is_local": True,
+            "meta": meta,
+        }
     with db.engine.connect() as c:
         row = c.execute(sa.select(db.users).where(db.users.c.id == uid)).first()
         if not row:

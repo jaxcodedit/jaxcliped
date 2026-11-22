@@ -156,6 +156,20 @@ HOST = env("PEAKCUT_HOST", "127.0.0.1")
 PORT = int(env("PEAKCUT_PORT") or "8765")
 PUBLIC_URL = (env("PEAKCUT_PUBLIC_URL") or f"http://127.0.0.1:{PORT}").rstrip("/")   # e.g. https://peakcut.com
 HTTPS = PUBLIC_URL.startswith("https://")
+
+
+def is_local_host(host: str = "") -> bool:
+    """Return True if host or PUBLIC_URL is localhost / 127.0.0.1 (Local Studio mode)."""
+    h = (host or "").split(":")[0].lower().strip()
+    if h in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
+        return True
+    try:
+        from urllib.parse import urlparse
+        u = urlparse(PUBLIC_URL)
+        return (u.hostname or "").lower() in ("localhost", "127.0.0.1", "::1", "0.0.0.0")
+    except Exception:
+        return False
+
 SESSION_DAYS = int(env("PEAKCUT_SESSION_DAYS", "30"))
 # Accounts are off by default: PeakCut opens straight into the dashboard, with no sign-in, which is what you want
 # on your own computer. On a server that other people can reach, set PEAKCUT_ACCOUNTS=1: everyone then signs up

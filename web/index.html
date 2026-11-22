@@ -1369,6 +1369,24 @@ function updateHow() {
 }
 function openPricing(preselect = "creator") {
   const d = $("#formdlg");
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname === "0.0.0.0" || Boolean(S.status?.is_local);
+  if (isLocal) {
+    d.innerHTML = `
+      <div class="dlg" style="max-width:500px;padding:32px 28px;text-align:center;position:relative">
+        <button class="icon-btn" data-act="closedlg" style="position:absolute;top:16px;right:16px;font-size:18px;border-radius:50%;background:var(--muted);width:32px;height:32px">✕</button>
+        <div style="font-size:46px;margin-bottom:12px">✨</div>
+        <h2 style="font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em">Local Studio Edition</h2>
+        <div style="display:inline-block;background:#ECFDF5;color:#047857;font-weight:800;font-size:12px;padding:4px 14px;border-radius:999px;margin:10px 0 14px">Free Forever · Unlocked</div>
+        <p style="font-size:13px;color:var(--dim);margin:0 auto 16px;max-width:400px;line-height:1.6">
+          You are running JaxCliped locally on your machine. All features including <b>4K 60fps export</b>, <b>Beat-synced Phonk captions</b>, <b>autonomous AI monitoring</b>, and unlimited creator workspaces are free forever. No payment required!
+        </p>
+        <button class="btn primary" data-act="closedlg" style="border-radius:999px;padding:10px 28px;font-weight:700;background:#10B981;box-shadow:0 4px 14px rgba(16,185,129,0.3)">Got it, keep creating</button>
+      </div>
+    `;
+    d.returnValue = "ok";
+    d.showModal();
+    return;
+  }
   const curPlan = S.status.user?.plan || "free";
   d.innerHTML = `
     <div class="dlg pricing-dlg" style="max-width:880px;width:95vw;padding:24px 28px;text-align:left;position:relative">
@@ -1587,12 +1605,21 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
     (S.status.user?.role === "admin" && S.status.accounts !== false ? `<h4><span>Owner</span></h4><a class="nav-item" href="/admin" title="Admin dashboard" style="text-decoration:none">${ic("shield")}<span class="label">Admin dashboard</span></a>` : ""));
   const st = S.status;
   const k = S.status.ai;
-  const uPlan = S.status.user?.plan || "free";
-  const isPaid = uPlan !== "free";
-  const pName = {free: "Starter", creator: "Creator Pro", business: "Business VIP"}[uPlan] || "Starter";
-  const planCard = S.status.user ? (isPaid
-    ? `<div class="side-card" style="margin-bottom:8px;background:rgba(0,113,227,0.06);border:1px solid rgba(0,113,227,0.18);padding:9px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:700;font-size:12px;color:var(--brand)">⭐ ${esc(pName)}</span><button class="btn sm ghost" data-act="openpricing" style="padding:2px 8px;font-size:11px;color:var(--brand);height:auto">Change</button></div></div>`
-    : `<div class="side-card" style="margin-bottom:8px;padding:9px 12px"><div style="display:flex;align-items:center;gap:6px"><span class="led mid"></span><span style="font-size:12px">Plan: <b>Starter</b></span></div><button class="btn sm primary" data-act="openpricing" data-p="creator" style="width:100%;margin-top:7px;font-size:11px;font-weight:700;border-radius:999px;background:linear-gradient(135deg,#0071E3,#818CF8);border:0;color:#fff;box-shadow:0 3px 10px rgba(0,113,227,0.3)">⭐ Claim 90% Off Sale</button></div>`) : "";
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname === "0.0.0.0" || Boolean(S.status?.is_local);
+  const uPlan = isLocal ? "business" : (S.status.user?.plan || "free");
+  const isPaid = uPlan !== "free" || isLocal;
+  const pName = isLocal ? "Local Studio" : ({free: "Starter", creator: "Creator Pro", business: "Business VIP"}[uPlan] || "Starter");
+  const planCard = S.status.user ? (isLocal
+    ? `<div class="side-card" style="margin-bottom:8px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.22);padding:9px 12px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-weight:700;font-size:12px;color:#10B981">✨ Local Studio</span>
+          <span class="pill ok" style="font-size:10px;padding:2px 7px;font-weight:700">Free Forever</span>
+        </div>
+        <div style="font-size:11px;color:var(--dim);margin-top:3px">All Pro features unlocked</div>
+      </div>`
+    : (isPaid
+      ? `<div class="side-card" style="margin-bottom:8px;background:rgba(0,113,227,0.06);border:1px solid rgba(0,113,227,0.18);padding:9px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:700;font-size:12px;color:var(--brand)">⭐ ${esc(pName)}</span><button class="btn sm ghost" data-act="openpricing" style="padding:2px 8px;font-size:11px;color:var(--brand);height:auto">Change</button></div></div>`
+      : `<div class="side-card" style="margin-bottom:8px;padding:9px 12px"><div style="display:flex;align-items:center;gap:6px"><span class="led mid"></span><span style="font-size:12px">Plan: <b>Starter</b></span></div><button class="btn sm primary" data-act="openpricing" data-p="creator" style="width:100%;margin-top:7px;font-size:11px;font-weight:700;border-radius:999px;background:linear-gradient(135deg,#0071E3,#818CF8);border:0;color:#fff;box-shadow:0 3px 10px rgba(0,113,227,0.3)">⭐ Claim 90% Off Sale</button></div>`)) : "";
 
   put($("#foot"), (k ? `<button class="ai-card ${S.view === "usage" ? "on" : ""}" data-act="go" data-v="usage" title="${k.ready ? `AI: ${esc(k.provider || "ready")}, ${k.today_calls || 0} calls today` : "The AI is not set up"}">
       <span class="ai-ic">${ic("bolt")}</span><span class="ai-tx"><small>AI</small><b>${k.ready ? esc(k.provider || "Ready") : "Not set up"}</b></span>${k.ready ? `<span class="ai-n">${(k.today_calls || 0).toLocaleString()} today</span>` : ""}</button>` : "") +
@@ -2360,6 +2387,7 @@ function aiHints() {
 async function drawSettings() {
   const box = $("#sform"); if (!box) return;
   const tab = S.stab || setTabs()[0][0], me = S.status.user;
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname === "0.0.0.0" || Boolean(S.status?.is_local);
   box.innerHTML = `<div class="set-layout"><nav class="set-nav" aria-label="Settings sections">${setTabs().map(([k, l, i, h]) =>
       `<a href="${pathFor("settings", k)}" class="set-link ${k === tab ? "on" : ""}" data-act="settab" data-k="${k}">${ic(i)}<span><b>${l}</b><small>${h}</small></span></a>`).join("")}</nav>
     <div class="set-body" id="setbody"><div class="set-load">Loading…</div></div></div>`;
@@ -2384,7 +2412,15 @@ async function drawSettings() {
       body.innerHTML = `<section class="set-sec"><h2>Profile</h2><p class="help">This is how you appear in JaxCliped.</p>
         <div class="prof">${meAvatar(me).replace('class="avatar me-pic"', 'class="avatar prof-pic"')}<div><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div></div>
         <dl class="kv"><div><dt>Email</dt><dd>${esc(me.email)} ${me.verified === false ? `<span class="pill warn">Not confirmed</span>` : `<span class="pill ok">Confirmed</span>`}</dd></div>
-          <div><dt>Subscription Plan</dt><dd><span class="pill ${me.plan && me.plan !== 'free' ? 'ok' : 'warn'}">${esc({free: 'Starter (₹0)', creator: 'Creator Pro (₹149/mo)', business: 'Business VIP (₹249/mo)'}[me.plan] || 'Starter (₹0)')}</span> <button class="btn sm ${me.plan && me.plan !== 'free' ? 'ghost' : 'primary'}" data-act="openpricing" data-p="creator" style="margin-left:8px">${me.plan && me.plan !== 'free' ? 'Change Plan' : 'Upgrade (90% OFF)'}</button></dd></div>
+          <div><dt>Subscription Plan</dt><dd>
+            ${isLocal ? `
+              <span class="pill ok" style="font-weight:700">✨ Local Studio (Free Forever)</span>
+              <span style="font-size:12px;color:var(--dim);margin-left:8px">All Pro & VIP features permanently unlocked for localhost.</span>
+            ` : `
+              <span class="pill ${me.plan && me.plan !== 'free' ? 'ok' : 'warn'}">${esc({free: 'Starter (₹0)', creator: 'Creator Pro (₹149/mo)', business: 'Business VIP (₹249/mo)'}[me.plan] || 'Starter (₹0)')}</span>
+              <button class="btn sm ${me.plan && me.plan !== 'free' ? 'ghost' : 'primary'}" data-act="openpricing" data-p="creator" style="margin-left:8px">${me.plan && me.plan !== 'free' ? 'Change Plan' : 'Upgrade (90% OFF)'}</button>
+            `}
+          </dd></div>
           <div><dt>Sign-in method</dt><dd>${me.google ? `Google${me.has_password ? " and password" : ""}` : "Email and password"}</dd></div>
           <div><dt>Account type</dt><dd>${me.is_admin ? "Admin" : "Standard"}</dd></div>
           ${joined ? `<div><dt>Member since</dt><dd>${joined}</dd></div>` : ""}</dl>
