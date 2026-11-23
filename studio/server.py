@@ -1122,11 +1122,14 @@ def preview_series_plan(body: dict = Body(...)):
     title = meta.get("title") or "Series"
     mode = str(body.get("mode") or "duration")
     duration_sec = float(body.get("duration_sec") or 60.0)
-    parts_count = int(body.get("parts_count") or 4)
+    parts_count = int(body.get("parts_count")) if body.get("parts_count") else None
     cliffhanger = bool(body.get("cliffhanger", True))
     cadence = str(body.get("cadence") or "daily")
     start_time = float(body.get("start_time")) if body.get("start_time") else None
     account_ids = body.get("account_ids") or []
+    custom_posts_per_day = float(body.get("custom_posts_per_day")) if body.get("custom_posts_per_day") else None
+    custom_hours = float(body.get("custom_hours")) if body.get("custom_hours") else None
+    max_series_duration = float(body.get("max_series_duration")) if body.get("max_series_duration") else None
 
     plan = series.plan_episodes(
         duration=dur,
@@ -1137,7 +1140,10 @@ def preview_series_plan(body: dict = Body(...)):
         cliffhanger=cliffhanger,
         cadence=cadence,
         start_time=start_time,
-        account_ids=account_ids
+        account_ids=account_ids,
+        custom_posts_per_day=custom_posts_per_day,
+        custom_hours=custom_hours,
+        max_series_duration=max_series_duration
     )
     plan["preview"] = meta
     return plan
@@ -1154,7 +1160,7 @@ def create_series_endpoint(body: dict = Body(...)):
     title = str(body.get("title") or "").strip()[:200]
     mode = str(body.get("mode") or "duration")
     duration_sec = float(body.get("duration_sec") or 60.0)
-    parts_count = int(body.get("parts_count") or 4)
+    parts_count = int(body.get("parts_count")) if body.get("parts_count") else None
     cliffhanger = bool(body.get("cliffhanger", True))
     auto_post = bool(body.get("auto_post", False))
     cadence = str(body.get("cadence") or "daily")
@@ -1162,6 +1168,9 @@ def create_series_endpoint(body: dict = Body(...)):
     account_ids = body.get("account_ids") or []
     layout = str(body.get("layout") or "crop")
     captions_style = str(body.get("style") or "phonk")
+    custom_posts_per_day = float(body.get("custom_posts_per_day")) if body.get("custom_posts_per_day") else None
+    custom_hours = float(body.get("custom_hours")) if body.get("custom_hours") else None
+    max_series_duration = float(body.get("max_series_duration")) if body.get("max_series_duration") else None
 
     res = series.create_series(
         url=url,
@@ -1175,7 +1184,10 @@ def create_series_endpoint(body: dict = Body(...)):
         start_time=start_time,
         account_ids=account_ids,
         layout=layout,
-        captions_style=captions_style
+        captions_style=captions_style,
+        custom_posts_per_day=custom_posts_per_day,
+        custom_hours=custom_hours,
+        max_series_duration=max_series_duration
     )
     return res
 
@@ -1240,7 +1252,9 @@ def update_series_schedule_endpoint(sid: str, body: dict = Body(...)):
             start_time=body.get("start_time"),
             auto_post=body.get("auto_post"),
             account_ids=body.get("account_ids"),
-            episodes_patch=body.get("episodes")
+            episodes_patch=body.get("episodes"),
+            custom_posts_per_day=float(body.get("custom_posts_per_day")) if body.get("custom_posts_per_day") else None,
+            custom_hours=float(body.get("custom_hours")) if body.get("custom_hours") else None
         )
         return {"ok": True, "series": updated}
     except Exception as e:

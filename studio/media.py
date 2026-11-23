@@ -150,7 +150,14 @@ def youtube_words(url: str):
     with _youtube_guard(url), _ydl({}) as ydl:
         i = ydl.extract_info(url, download=False)
         auto = i.get("automatic_captions") or {}
-        key = next((k for k in auto if k.endswith("-orig")), None)
+        # Prioritize English caption tracks first for English videos, then original tracks
+        key = None
+        for cand in ("en-orig", "en", "en-US", "en-GB"):
+            if cand in auto:
+                key = cand
+                break
+        if not key:
+            key = next((k for k in auto if k.endswith("-orig")), None)
         if not key and i.get("language") in auto:
             key = i["language"]
         track = next((f for f in auto.get(key) or [] if f.get("ext") == "json3" and f.get("url")), None) if key else None

@@ -2447,51 +2447,143 @@ function aiHints() {
 let curSeriesUrl = "", curSeriesPreview = null, curSeriesPlan = null;
 let curSeriesMode = "cliffhanger", curSeriesDur = 60, curSeriesParts = 4;
 let curSeriesCadence = "daily", curSeriesAutoPost = true;
+let curSeriesCustomDaily = 5, curSeriesCustomHours = 4;
+let curSeriesScope = "full", curSeriesScopeMins = 15;
 let curSeriesStartTime = "";
 let curSeriesOptsOpen = true;
 let curSeriesAnalyzing = false;
 let curAllSeries = [];
 
+function onSerCadenceChange(val) {
+  curSeriesCadence = val;
+  const wrap = $("#serCustomCadenceWrap");
+  if (!wrap) return;
+  if (val === "custom_daily") {
+    wrap.style.display = "flex";
+    wrap.innerHTML = `
+      <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Posts per Day:</label>
+      <input type="number" id="serCustomDailyInput" value="${curSeriesCustomDaily || 5}" min="1" max="48" step="1" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomDaily=parseFloat(this.value)||5">
+      <span style="font-size:12px;color:var(--dim)">e.g. 5 posts/day = 1 drop every 4.8 hrs</span>
+    `;
+  } else if (val === "custom_hours") {
+    wrap.style.display = "flex";
+    wrap.innerHTML = `
+      <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Hours Interval:</label>
+      <input type="number" id="serCustomHoursInput" value="${curSeriesCustomHours || 4}" min="0.5" max="720" step="0.5" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomHours=parseFloat(this.value)||4">
+      <span style="font-size:12px;color:var(--dim)">e.g. drops an episode every 4 hrs</span>
+    `;
+  } else {
+    wrap.style.display = "none";
+  }
+}
+
+function onSerScopeChange(val) {
+  curSeriesScope = val;
+  const wrap = $("#serScopeCustomWrap");
+  if (wrap) wrap.style.display = (val === "custom") ? "flex" : "none";
+}
+
+function onEditSchedCadenceChange(val) {
+  const wrap = $("#editSchedCustomWrap");
+  if (!wrap) return;
+  if (val === "custom_daily") {
+    wrap.style.display = "flex";
+    wrap.innerHTML = `
+      <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Posts per Day:</label>
+      <input type="number" id="editSchedCustomDaily" value="5" min="1" max="48" step="1" class="input" style="width:85px;height:32px;font-weight:700">
+      <span style="font-size:12px;color:var(--dim)">e.g. 5 posts daily = 1 drop every 4.8 hrs</span>
+    `;
+  } else if (val === "custom_hours") {
+    wrap.style.display = "flex";
+    wrap.innerHTML = `
+      <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Hours Interval:</label>
+      <input type="number" id="editSchedCustomHours" value="4" min="0.5" max="720" step="0.5" class="input" style="width:85px;height:32px;font-weight:700">
+      <span style="font-size:12px;color:var(--dim)">e.g. drops an episode every 4 hrs</span>
+    `;
+  } else {
+    wrap.style.display = "none";
+  }
+}
+
 function renderSerModeOptions() {
   const slot = $("#serOptionsSlot");
   if (!slot) return;
-  if (curSeriesMode === "duration") {
-    slot.innerHTML = `
-      <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
-        <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Target Part Length</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          ${[30, 60, 90, 120, 180].map(s => `
-            <button type="button" class="btn sm ${curSeriesDur === s ? 'primary' : 'ghost'}" data-act="serdurlen" data-d="${s}" style="border-radius:999px;font-weight:700">
-              ${s < 60 ? s + 's' : (s / 60) + ' min'}${s === 60 ? ' ⭐ (Shorts/Reels)' : ''}
-            </button>
-          `).join("")}
-        </div>
-      </div>
-    `;
-  } else if (curSeriesMode === "parts") {
-    slot.innerHTML = `
-      <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
-        <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Total Number of Episodes</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          ${[2, 3, 4, 5, 8, 10].map(n => `
-            <button type="button" class="btn sm ${curSeriesParts === n ? 'primary' : 'ghost'}" data-act="serpartscnt" data-n="${n}" style="border-radius:999px;font-weight:700">
-              ${n} Parts
-            </button>
-          `).join("")}
-        </div>
-      </div>
-    `;
-  } else if (curSeriesMode === "cliffhanger") {
-    slot.innerHTML = `
-      <div style="background:linear-gradient(135deg,rgba(0,113,227,0.06),rgba(56,189,248,0.06));border:1px solid rgba(0,113,227,0.18);padding:14px 18px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:space-between;gap:12px">
+  slot.innerHTML = `
+    <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-items:start">
+        
+        <!-- Slicing Mode Dropdown -->
         <div>
-          <b style="font-size:13px;color:var(--brand-ink)">⚡ AI Suspense Peak Cut & Cliffhanger Hook Banners</b>
-          <p style="font-size:12px;color:var(--dim);margin-top:2px">Cuts each episode right as tension rises ("Wait for Part X...") to maximize audience retention & comments.</p>
+          <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Episode Slicing Mode</label>
+          <select id="serModeSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesMode=this.value;renderSerModeOptions()">
+            <option value="cliffhanger" ${curSeriesMode==='cliffhanger'?'selected':''}>⚡ AI Cliffhanger & Suspense (Auto-detects hooks)</option>
+            <option value="parts" ${curSeriesMode==='parts'?'selected':''}>🔢 By Part Count (Split into custom N parts)</option>
+            <option value="duration" ${curSeriesMode==='duration'?'selected':''}>⏱️ By Duration (Split every X seconds)</option>
+          </select>
         </div>
-        <span class="pill ok" style="font-weight:700;font-size:11px">Auto-Active</span>
+
+        <!-- Series Scope (How much of the video to split) -->
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Series Length / Scope</label>
+          <select id="serScopeSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="onSerScopeChange(this.value)">
+            <option value="full" ${curSeriesScope==='full'?'selected':''}>🎬 Full Video (Entire length)</option>
+            <option value="300" ${curSeriesScope==='300'?'selected':''}>⏱️ First 5 Minutes</option>
+            <option value="600" ${curSeriesScope==='600'?'selected':''}>⏱️ First 10 Minutes</option>
+            <option value="900" ${curSeriesScope==='900'?'selected':''}>⏱️ First 15 Minutes</option>
+            <option value="1800" ${curSeriesScope==='1800'?'selected':''}>⏱️ First 30 Minutes</option>
+            <option value="3600" ${curSeriesScope==='3600'?'selected':''}>⏱️ First 1 Hour</option>
+            <option value="custom" ${curSeriesScope==='custom'?'selected':''}>✏️ Custom Minutes...</option>
+          </select>
+          <div id="serScopeCustomWrap" style="display:${curSeriesScope==='custom'?'flex':'none'};align-items:center;gap:8px;margin-top:8px">
+            <input type="number" id="serScopeCustomMins" value="${curSeriesScopeMins||15}" min="1" max="600" class="input" style="height:32px;width:90px;font-weight:700" placeholder="Mins" oninput="curSeriesScopeMins=parseFloat(this.value)||15">
+            <span style="font-size:12px;color:var(--dim)">minutes of video to split</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Part Count or Episode Duration Options -->
+        <div>
+          ${curSeriesMode === 'parts' ? `
+            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Total Number of Parts (Any count!)</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || 4}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" oninput="curSeriesParts=parseInt(this.value)||4">
+              <span style="font-size:12px;color:var(--dim)">parts</span>
+            </div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
+              ${[3, 4, 5, 8, 10, 15, 20, 30, 50, 100].map(n => `
+                <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n}">${n}</button>
+              `).join('')}
+            </div>
+          ` : curSeriesMode === 'duration' ? `
+            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Target Episode Duration</label>
+            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60">
+              <option value="30" ${curSeriesDur===30?'selected':''}>30s · Bite-Sized</option>
+              <option value="45" ${curSeriesDur===45?'selected':''}>45s · Medium Short</option>
+              <option value="60" ${curSeriesDur===60?'selected':''}>60s · Shorts / Reels ⭐</option>
+              <option value="90" ${curSeriesDur===90?'selected':''}>90s · Extended Short</option>
+              <option value="120" ${curSeriesDur===120?'selected':''}>120s · 2 Minutes</option>
+              <option value="180" ${curSeriesDur===180?'selected':''}>180s · 3 Minutes</option>
+            </select>
+          ` : `
+            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Target Episode Duration</label>
+            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60">
+              <option value="60" ${curSeriesDur===60?'selected':''}>~60s (Recommended for Shorts/Reels) ⭐</option>
+              <option value="30" ${curSeriesDur===30?'selected':''}>~30s (Fast-Paced Suspense)</option>
+              <option value="90" ${curSeriesDur===90?'selected':''}>~90s (Extended Cliffhangers)</option>
+              <option value="120" ${curSeriesDur===120?'selected':''}>~120s (2-Minute Parts)</option>
+            </select>
+          `}
+        </div>
+
       </div>
-    `;
-  }
+
+      ${curSeriesMode === 'cliffhanger' ? `
+        <div style="margin-top:12px;padding:8px 12px;background:rgba(0,113,227,0.05);border:1px solid rgba(0,113,227,0.15);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span style="font-size:12px;color:var(--brand-ink)">⚡ <b>AI Cliffhanger Engine:</b> Snaps cuts at emotional hooks & suspense peaks ("Wait for Part X...") to maximize audience retention.</span>
+          <span class="pill ok" style="font-size:11px;font-weight:700">Auto-Active</span>
+        </div>
+      ` : ''}
+    </div>
+  `;
 }
 
 function renderSerCalendarPreview(plan) {
@@ -2616,17 +2708,25 @@ function openSeriesScheduleModal(s) {
           </label>
         </div>
 
-        <!-- Cadence Selection (Multiple a day + Daily/Weekly) -->
+        <!-- Cadence Selection (Dropdown with Custom Posts/Day + Intervals) -->
         <div style="margin-bottom:14px">
           <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:4px">Posting Cadence (Drop Frequency)</label>
-          <div class="cadence-pills" id="editSchedCadencePills">
-            <button type="button" class="cadence-pill ${s.cadence === 'twice_daily' ? 'on' : ''}" data-act="editschedcadence" data-c="twice_daily">⚡ 2/Day (Every 12h)</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'thrice_daily' ? 'on' : ''}" data-act="editschedcadence" data-c="thrice_daily">🔥 3/Day (Every 8h)</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'four_daily' ? 'on' : ''}" data-act="editschedcadence" data-c="four_daily">🚀 4/Day (Every 6h)</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'daily' ? 'on' : ''}" data-act="editschedcadence" data-c="daily">📅 1/Day (Daily)</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'every_2_days' ? 'on' : ''}" data-act="editschedcadence" data-c="every_2_days">📆 Every 2 Days</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'weekly' ? 'on' : ''}" data-act="editschedcadence" data-c="weekly">🗓️ Once a Week</button>
-            <button type="button" class="cadence-pill ${s.cadence === 'monthly' ? 'on' : ''}" data-act="editschedcadence" data-c="monthly">🌕 Once a Month</button>
+          <select id="editSchedCadenceSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="onEditSchedCadenceChange(this.value)">
+            <option value="twice_daily" ${s.cadence === 'twice_daily' ? 'selected' : ''}>⚡ 2 Posts / Day (Every 12 hrs)</option>
+            <option value="thrice_daily" ${s.cadence === 'thrice_daily' ? 'selected' : ''}>🔥 3 Posts / Day (Every 8 hrs)</option>
+            <option value="four_daily" ${s.cadence === 'four_daily' ? 'selected' : ''}>🚀 4 Posts / Day (Every 6 hrs)</option>
+            <option value="every_4_hours" ${s.cadence === 'every_4_hours' ? 'selected' : ''}>💥 6 Posts / Day (Every 4 hrs)</option>
+            <option value="daily" ${s.cadence === 'daily' ? 'selected' : ''}>📅 1 Post / Day (Every 24 hrs)</option>
+            <option value="every_2_days" ${s.cadence === 'every_2_days' ? 'selected' : ''}>📆 Every 2 Days (48 hrs)</option>
+            <option value="weekly" ${s.cadence === 'weekly' ? 'selected' : ''}>🗓️ Once a Week</option>
+            <option value="monthly" ${s.cadence === 'monthly' ? 'selected' : ''}>🌕 Once a Month</option>
+            <option value="custom_daily" ${s.cadence === 'custom_daily' ? 'selected' : ''}>✏️ Custom Posts Per Day...</option>
+            <option value="custom_hours" ${s.cadence === 'custom_hours' ? 'selected' : ''}>⏱️ Custom Hours Interval...</option>
+          </select>
+          <div id="editSchedCustomWrap" style="display:${s.cadence === 'custom_daily' || s.cadence === 'custom_hours' ? 'flex' : 'none'};align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line-2);border-radius:6px">
+            <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Posts per Day:</label>
+            <input type="number" id="editSchedCustomDaily" value="5" min="1" max="48" step="1" class="input" style="width:85px;height:32px;font-weight:700">
+            <span style="font-size:12px;color:var(--dim)">e.g. 5 posts daily = 1 drop every 4.8 hrs</span>
           </div>
         </div>
 
@@ -2897,20 +2997,34 @@ async function drawSeries() {
                 </label>
               </div>
 
-              <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}margin-top:12px">
-                <div style="margin-bottom:12px">
-                  <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence</label>
-                  <div class="cadence-pills">
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'twice_daily' ? 'on' : ''}" data-act="sercadence" data-c="twice_daily">⚡ 2/Day (12h)</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'thrice_daily' ? 'on' : ''}" data-act="sercadence" data-c="thrice_daily">🔥 3/Day (8h)</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'four_daily' ? 'on' : ''}" data-act="sercadence" data-c="four_daily">🚀 4/Day (6h)</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'daily' ? 'on' : ''}" data-act="sercadence" data-c="daily">📅 1/Day (Daily)</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'every_2_days' ? 'on' : ''}" data-act="sercadence" data-c="every_2_days">📆 Every 2 Days</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'weekly' ? 'on' : ''}" data-act="sercadence" data-c="weekly">🗓️ Once a Week</button>
-                    <button type="button" class="cadence-pill ${curSeriesCadence === 'monthly' ? 'on' : ''}" data-act="sercadence" data-c="monthly">🌕 Once a Month</button>
+              <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}margin-top:14px">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:start">
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence (Drop Frequency)</label>
+                    <select id="serCadenceSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="onSerCadenceChange(this.value)">
+                      <option value="twice_daily" ${curSeriesCadence==='twice_daily'?'selected':''}>⚡ 2 Posts / Day (Every 12 hrs)</option>
+                      <option value="thrice_daily" ${curSeriesCadence==='thrice_daily'?'selected':''}>🔥 3 Posts / Day (Every 8 hrs)</option>
+                      <option value="four_daily" ${curSeriesCadence==='four_daily'?'selected':''}>🚀 4 Posts / Day (Every 6 hrs)</option>
+                      <option value="every_4_hours" ${curSeriesCadence==='every_4_hours'?'selected':''}>💥 6 Posts / Day (Every 4 hrs)</option>
+                      <option value="daily" ${curSeriesCadence==='daily'?'selected':''}>📅 1 Post / Day (Every 24 hrs)</option>
+                      <option value="every_2_days" ${curSeriesCadence==='every_2_days'?'selected':''}>📆 Every 2 Days (48 hrs)</option>
+                      <option value="weekly" ${curSeriesCadence==='weekly'?'selected':''}>🗓️ Once a Week</option>
+                      <option value="monthly" ${curSeriesCadence==='monthly'?'selected':''}>🌕 Once a Month</option>
+                      <option value="custom_daily" ${curSeriesCadence==='custom_daily'?'selected':''}>✏️ Custom Posts Per Day...</option>
+                      <option value="custom_hours" ${curSeriesCadence==='custom_hours'?'selected':''}>⏱️ Custom Hours Interval...</option>
+                    </select>
+                    <div id="serCustomCadenceWrap" style="display:${curSeriesCadence==='custom_daily'||curSeriesCadence==='custom_hours'?'flex':'none'};align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line-2);border-radius:6px">
+                      ${curSeriesCadence === 'custom_hours' ? `
+                        <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Hours Interval:</label>
+                        <input type="number" id="serCustomHoursInput" value="${curSeriesCustomHours||4}" min="0.5" max="720" step="0.5" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomHours=parseFloat(this.value)||4">
+                        <span style="font-size:11px;color:var(--dim)">e.g. drops an episode every 4 hrs</span>
+                      ` : `
+                        <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Posts per Day:</label>
+                        <input type="number" id="serCustomDailyInput" value="${curSeriesCustomDaily||5}" min="1" max="48" step="1" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomDaily=parseFloat(this.value)||5">
+                        <span style="font-size:11px;color:var(--dim)">e.g. 5 posts daily = 1 drop every 4.8 hrs</span>
+                      `}
+                    </div>
                   </div>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:12px">
                   <div>
                     <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">First Episode Drop Time</label>
                     <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff">
@@ -3520,6 +3634,24 @@ document.addEventListener("click", async e => {
             </div>
           </div>
         `;
+        let customPostsPerDay = null, customHours = null;
+        if (curSeriesCadence === "custom_daily") {
+          customPostsPerDay = parseFloat($("#serCustomDailyInput")?.value || curSeriesCustomDaily || 5);
+        } else if (curSeriesCadence === "custom_hours") {
+          customHours = parseFloat($("#serCustomHoursInput")?.value || curSeriesCustomHours || 4);
+        }
+        let maxSeriesDur = null;
+        if (curSeriesScope && curSeriesScope !== "full") {
+          if (curSeriesScope === "custom") {
+            const mins = parseFloat($("#serScopeCustomMins")?.value || curSeriesScopeMins || 15);
+            if (mins > 0) maxSeriesDur = mins * 60;
+          } else {
+            maxSeriesDur = parseFloat(curSeriesScope);
+          }
+        }
+        const partsVal = parseInt($("#serCustomPartsInput")?.value || curSeriesParts);
+        if (partsVal && partsVal > 0) curSeriesParts = partsVal;
+
         const plan = await send("/api/series/preview", {
           url: curSeriesUrl,
           mode: curSeriesMode,
@@ -3527,6 +3659,9 @@ document.addEventListener("click", async e => {
           parts_count: curSeriesParts,
           cliffhanger: curSeriesMode === "cliffhanger",
           cadence: curSeriesCadence,
+          custom_posts_per_day: customPostsPerDay,
+          custom_hours: customHours,
+          max_series_duration: maxSeriesDur,
           start_time: ($("#serStartTimeInput")?.value ? new Date($("#serStartTimeInput").value).getTime() / 1000 : null),
           account_ids: $$("input[name=ser_acc]:checked").map(c => c.value)
         });
@@ -3554,6 +3689,24 @@ document.addEventListener("click", async e => {
         const accIds = $$("input[name=ser_acc]:checked").map(c => c.value);
         const startVal = $("#serStartTimeInput")?.value;
         const epochStart = startVal ? new Date(startVal).getTime() / 1000 : null;
+        let customPostsPerDay = null, customHours = null;
+        if (curSeriesCadence === "custom_daily") {
+          customPostsPerDay = parseFloat($("#serCustomDailyInput")?.value || curSeriesCustomDaily || 5);
+        } else if (curSeriesCadence === "custom_hours") {
+          customHours = parseFloat($("#serCustomHoursInput")?.value || curSeriesCustomHours || 4);
+        }
+        let maxSeriesDur = null;
+        if (curSeriesScope && curSeriesScope !== "full") {
+          if (curSeriesScope === "custom") {
+            const mins = parseFloat($("#serScopeCustomMins")?.value || curSeriesScopeMins || 15);
+            if (mins > 0) maxSeriesDur = mins * 60;
+          } else {
+            maxSeriesDur = parseFloat(curSeriesScope);
+          }
+        }
+        const partsVal = parseInt($("#serCustomPartsInput")?.value || curSeriesParts);
+        if (partsVal && partsVal > 0) curSeriesParts = partsVal;
+
         await send("/api/series", {
           url,
           title: curSeriesPreview?.title || "",
@@ -3563,6 +3716,9 @@ document.addEventListener("click", async e => {
           cliffhanger: curSeriesMode === "cliffhanger",
           auto_post: curSeriesAutoPost,
           cadence: curSeriesCadence,
+          custom_posts_per_day: customPostsPerDay,
+          custom_hours: customHours,
+          max_series_duration: maxSeriesDur,
           start_time: epochStart,
           account_ids: accIds
         });
@@ -3623,10 +3779,19 @@ document.addEventListener("click", async e => {
       return;
     }
     if (a === "recalcsched") {
-      const cad = $("#editSchedCadencePills .cadence-pill.on")?.dataset.c || "daily";
+      const cad = $("#editSchedCadenceSelect")?.value || "daily";
       const startVal = $("#editSchedStartTime")?.value;
       if (!startVal) return toast("Pick a start time first.", "bad");
-      const stepSec = {"twice_daily": 43200, "thrice_daily": 28800, "four_daily": 21600, "every_4_hours": 14400, "daily": 86400, "every_2_days": 172800, "weekly": 604800, "monthly": 2592000}[cad] || 86400;
+      let stepSec = 86400;
+      if (cad === "custom_daily") {
+        const ppd = parseFloat($("#editSchedCustomDaily")?.value || 5);
+        stepSec = Math.max(300, Math.round(86400 / ppd));
+      } else if (cad === "custom_hours") {
+        const hrs = parseFloat($("#editSchedCustomHours")?.value || 4);
+        stepSec = Math.max(300, Math.round(hrs * 3600));
+      } else {
+        stepSec = {"twice_daily": 43200, "thrice_daily": 28800, "four_daily": 21600, "every_4_hours": 14400, "daily": 86400, "every_2_days": 172800, "weekly": 604800, "monthly": 2592000}[cad] || 86400;
+      }
       let curMs = new Date(startVal).getTime();
       $$(".editsched-ep-row").forEach(row => {
         const inp = row.querySelector(".ep-due-input");
@@ -3645,7 +3810,14 @@ document.addEventListener("click", async e => {
       try {
         const sid = d.sid;
         const auto_post = $("#editSchedAutoPost")?.checked ?? true;
-        const cadence = $("#editSchedCadencePills .cadence-pill.on")?.dataset.c || "daily";
+        const cadence = $("#editSchedCadenceSelect")?.value || "daily";
+        let custom_posts_per_day = null;
+        let custom_hours = null;
+        if (cadence === "custom_daily") {
+          custom_posts_per_day = parseFloat($("#editSchedCustomDaily")?.value || 5);
+        } else if (cadence === "custom_hours") {
+          custom_hours = parseFloat($("#editSchedCustomHours")?.value || 4);
+        }
         const startVal = $("#editSchedStartTime")?.value;
         const start_time = startVal ? new Date(startVal).getTime() / 1000 : null;
         const account_ids = $$("input[name=editsched_acc]:checked").map(c => c.value);
@@ -3663,6 +3835,8 @@ document.addEventListener("click", async e => {
         await send(`/api/series/${sid}/schedule`, {
           auto_post,
           cadence,
+          custom_posts_per_day,
+          custom_hours,
           start_time,
           account_ids,
           episodes

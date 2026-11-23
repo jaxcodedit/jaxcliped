@@ -75,15 +75,59 @@ CADENCE_SECONDS = {
 }
 
 CADENCE_LABELS = {
-    "twice_daily": "2 Each Day (Every 12 hrs)",
-    "thrice_daily": "3 Each Day (Every 8 hrs)",
-    "four_daily": "4 Each Day (Every 6 hrs)",
-    "every_4_hours": "6 Each Day (Every 4 hrs)",
-    "daily": "1 Each Day (Daily)",
-    "every_2_days": "Every 2 Days",
+    "twice_daily": "2 Posts / Day (Every 12 hrs)",
+    "thrice_daily": "3 Posts / Day (Every 8 hrs)",
+    "four_daily": "4 Posts / Day (Every 6 hrs)",
+    "every_4_hours": "6 Posts / Day (Every 4 hrs)",
+    "daily": "1 Post / Day (Every 24 hrs)",
+    "every_2_days": "Every 2 Days (48 hrs)",
     "weekly": "Once a Week",
     "monthly": "Once a Month",
 }
+
+
+def resolve_cadence_step(cadence: str = "daily", custom_posts_per_day: float = None, custom_hours: float = None) -> tuple:
+    """Returns (step_seconds, readable_label) for any preset or customized cadence."""
+    if custom_posts_per_day is not None and float(custom_posts_per_day) > 0:
+        ppd = float(custom_posts_per_day)
+        sec = round(86400.0 / ppd)
+        hrs = round(sec / 3600.0, 1)
+        hrs_str = f"{int(hrs)}h" if hrs == int(hrs) else f"{hrs}h"
+        return max(300, sec), f"{ppd:g} Posts / Day (every {hrs_str})"
+
+    if custom_hours is not None and float(custom_hours) > 0:
+        hrs = float(custom_hours)
+        sec = round(hrs * 3600.0)
+        return max(300, sec), f"Every {hrs:g} Hours"
+
+    cad = str(cadence or "daily").strip()
+    if cad.startswith("custom_per_day:") or cad.startswith("custom_daily:"):
+        try:
+            ppd = float(cad.split(":", 1)[1])
+            sec = round(86400.0 / ppd)
+            hrs = round(sec / 3600.0, 1)
+            hrs_str = f"{int(hrs)}h" if hrs == int(hrs) else f"{hrs}h"
+            return max(300, sec), f"{ppd:g} Posts / Day (every {hrs_str})"
+        except Exception:
+            pass
+    elif cad.startswith("custom_hours:"):
+        try:
+            hrs = float(cad.split(":", 1)[1])
+            sec = round(hrs * 3600.0)
+            return max(300, sec), f"Every {hrs:g} Hours"
+        except Exception:
+            pass
+    elif cad.startswith("custom:") or cad.isdigit():
+        try:
+            sec = int(cad.split(":", 1)[-1])
+            hrs = round(sec / 3600.0, 1)
+            return max(300, sec), f"Every {hrs:g} Hours"
+        except Exception:
+            pass
+
+    sec = CADENCE_SECONDS.get(cad, 86400)
+    label = CADENCE_LABELS.get(cad, "1 Post / Day (Every 24 hrs)")
+    return sec, label
 
 
 def _default_start_time() -> float:
@@ -94,33 +138,41 @@ def _default_start_time() -> float:
 
 
 def plan_episodes(duration: float, title: str = "", mode: str = "duration",
-                  duration_sec: float = 60.0, parts_count: int = 4,
+                  duration_sec: float = 60.0, parts_count: int = None,
                   cliffhanger: bool = True, cadence: str = "daily",
                   start_time: float = None, account_ids: list = None,
-                  words: list = None) -> dict:
+                  words: list = None, custom_posts_per_day: float = None,
+                  custom_hours: float = None, max_series_duration: float = None) -> dict:
     """Calculates episode boundaries, cliffhanger hooks, and the schedule calendar."""
     duration = max(5.0, float(duration))
-    step = CADENCE_SECONDS.get(cadence, 86400)
+    if max_series_duration and float(max_series_duration) > 0:
+        duration = min(duration, float(max_series_duration))
+
+    step, cadence_label = resolve_cadence_step(cadence, custom_posts_per_day, custom_hours)
     t_start = float(start_time) if start_time else _default_start_time()
 
-    # Determine part count and target duration
-    if mode == "parts":
-        n_parts = max(2, min(50, int(parts_count)))
+    # Determine part count and target duration (supports any part count up to 500)
+    has_custom_parts = parts_count is not None and int(parts_count) > 0
+    if mode == "parts" or (has_custom_parts and mode != "duration"):
+        n_parts = max(2, min(500, int(parts_count or 4)))
         target_len = duration / n_parts
     elif mode == "duration":
-        target_len = max(15.0, min(180.0, float(duration_sec or 60.0)))
-        n_parts = max(2, int(math.ceil(duration / target_len)))
+        target_len = max(10.0, float(duration_sec or 60.0))
+        if has_custom_parts:
+            n_parts = max(2, min(500, int(parts_count)))
+            target_len = duration / n_parts
+        else:
+            n_parts = max(2, min(500, int(math.ceil(duration / target_len))))
     elif mode == "cliffhanger":
-        target_len = max(30.0, min(90.0, float(duration_sec or 60.0)))
-        n_parts = max(2, int(math.ceil(duration / target_len)))
+        target_len = max(15.0, float(duration_sec or 60.0))
+        if has_custom_parts:
+            n_parts = max(2, min(500, int(parts_count)))
+            target_len = duration / n_parts
+        else:
+            n_parts = max(2, min(500, int(math.ceil(duration / target_len))))
     else:
         target_len = 60.0
-        n_parts = max(2, int(math.ceil(duration / target_len)))
-
-    # Keep parts reasonable
-    if n_parts > 30:
-        n_parts = 30
-        target_len = duration / n_parts
+        n_parts = max(2, min(500, int(math.ceil(duration / target_len))))
 
     episodes = []
     cur_start = 0.0
@@ -193,7 +245,8 @@ def plan_episodes(duration: float, title: str = "", mode: str = "duration",
         "mode": mode,
         "cliffhanger": cliffhanger,
         "cadence": cadence,
-        "cadence_label": CADENCE_LABELS.get(cadence, "1 Each Day (Daily)"),
+        "cadence_label": cadence_label,
+        "cadence_step": step,
         "start_time": t_start,
         "start_formatted": datetime.fromtimestamp(t_start).strftime("%a, %b %d · %I:%M %p"),
         "account_ids": account_ids or [],
@@ -204,7 +257,9 @@ def plan_episodes(duration: float, title: str = "", mode: str = "duration",
 def create_series(url: str, title: str, mode: str, duration_sec: float,
                   parts_count: int, cliffhanger: bool, auto_post: bool,
                   cadence: str, start_time: float, account_ids: list,
-                  layout: str = "crop", captions_style: str = "phonk") -> dict:
+                  layout: str = "crop", captions_style: str = "phonk",
+                  custom_posts_per_day: float = None, custom_hours: float = None,
+                  max_series_duration: float = None) -> dict:
     """Creates a series job, computes episodes, and kicks off rendering and scheduling."""
     uid = ctx.uid()
     sid = "ser_" + time.strftime("%Y%m%d_%H%M%S_") + secrets.token_hex(4)
@@ -224,7 +279,10 @@ def create_series(url: str, title: str, mode: str, duration_sec: float,
         cliffhanger=cliffhanger,
         cadence=cadence,
         start_time=start_time,
-        account_ids=account_ids
+        account_ids=account_ids,
+        custom_posts_per_day=custom_posts_per_day,
+        custom_hours=custom_hours,
+        max_series_duration=max_series_duration
     )
 
     # 3. Create underlying jobs.py job with kind="series"
@@ -277,6 +335,7 @@ def create_series(url: str, title: str, mode: str, duration_sec: float,
         "cliffhanger": cliffhanger,
         "auto_post": auto_post,
         "cadence": cadence,
+        "cadence_label": plan.get("cadence_label"),
         "start_time": plan["start_time"],
         "account_ids": account_ids or [],
         "account_labels": acc_labels,
@@ -324,7 +383,8 @@ def on_series_clip_done(job: dict, clip: dict):
 
 def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
                       auto_post: bool = None, account_ids: list = None,
-                      episodes_patch: list = None, user_id: str = None) -> dict:
+                      episodes_patch: list = None, user_id: str = None,
+                      custom_posts_per_day: float = None, custom_hours: float = None) -> dict:
     """Updates an ongoing series schedule: adjusts future drop times, cadence, accounts, and auto-post settings."""
     uid = user_id or ctx.uid()
     s = get_series(sid, uid)
@@ -348,12 +408,13 @@ def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
         s["account_labels"] = acc_labels
 
     # 3. Update cadence if provided
-    if cadence and cadence in CADENCE_SECONDS:
-        s["cadence"] = cadence
+    step, cad_label = resolve_cadence_step(cadence or s.get("cadence", "daily"), custom_posts_per_day, custom_hours)
+    if cadence or custom_posts_per_day is not None or custom_hours is not None:
+        s["cadence"] = cadence or s.get("cadence", "daily")
+        s["cadence_label"] = cad_label
 
     # 4. Handle bulk recalculation of unposted episodes if cadence or start_time changed
-    if start_time is not None or (cadence and cadence in CADENCE_SECONDS):
-        step = CADENCE_SECONDS.get(s.get("cadence", "daily"), 86400)
+    if start_time is not None or cadence or custom_posts_per_day is not None or custom_hours is not None:
         cur_t = float(start_time) if start_time is not None else float(s.get("start_time") or time.time())
         if cur_t < time.time() - 300:
             cur_t = time.time() + 60
@@ -387,6 +448,7 @@ def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
         "account_ids": s.get("account_ids", []),
         "account_labels": s.get("account_labels", []),
         "cadence": s.get("cadence", "daily"),
+        "cadence_label": s.get("cadence_label"),
         "start_time": s.get("start_time"),
         "episodes": s.get("episodes", [])
     }, uid)
