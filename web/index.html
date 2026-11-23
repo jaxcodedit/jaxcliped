@@ -1987,7 +1987,10 @@ function onLink(input) {
 }
 document.addEventListener("input", e => { if (e.target.id === "url") onLink(e.target);
   if (e.target.closest?.("#cform") && e.target.dataset.k && !/checkbox|radio/.test(e.target.type)) dirty(true); });
-document.addEventListener("keydown", e => { if (e.target.id === "url" && e.key === "Enter" && e.target.value.trim() && looksLink(e.target.value.trim())) { e.preventDefault(); clearTimeout(linkTimer); takeLink(att(), e.target.value.trim(), e.target); } });
+document.addEventListener("keydown", e => {
+  if (e.target.id === "url" && e.key === "Enter" && e.target.value.trim() && looksLink(e.target.value.trim())) { e.preventDefault(); clearTimeout(linkTimer); takeLink(att(), e.target.value.trim(), e.target); }
+  if (e.target.id === "serUrlInput" && e.key === "Enter") { e.preventDefault(); $("#serPreviewBtn")?.click(); }
+});
 document.addEventListener("click", e => {
   const r = e.target.closest("[data-rm]"), A = att(); if (!r || A.busy) return;
   if (r.dataset.rm === "link") A.links = A.links.filter(l => l.id !== r.dataset.id);
@@ -2705,23 +2708,24 @@ async function drawSeries() {
         <p>Slice long YouTube videos into serialized multi-part Shorts & Reels. Snaps each episode to high-suspense cliffhangers with an automated publishing calendar.</p>
 
         <div class="composer big" id="serComposer" style="margin-top:18px">
-          <div class="composer-input">
+          <div class="composer-input" style="position:relative;display:flex;align-items:center;padding-right:12px">
             ${ic("link")}
-            <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a YouTube video link to split into a series..." autocomplete="off" spellcheck="false">
-          </div>
-
-          <div class="composer-bar">
-            <button type="button" class="chip ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Mode</button>
-            <button type="button" class="chip ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ By Duration</button>
-            <button type="button" class="chip ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">🔢 By Part Count</button>
-            <button type="button" class="chip ${curSeriesOptsOpen ? 'on' : ''}" data-act="sertoggleopts">${ic("sliders")}Schedule & Options</button>
-            <span class="grow"></span>
-            <button class="btn primary" id="serPreviewBtn" data-act="serpreview" ${curSeriesAnalyzing ? 'disabled' : ''}>
+            <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a YouTube video link to split into a series..." autocomplete="off" spellcheck="false" style="padding-right:130px">
+            <button class="btn primary" id="serPreviewBtn" data-act="serpreview" ${curSeriesAnalyzing ? 'disabled' : ''} style="position:absolute;right:10px;top:50%;transform:translateY(-50%);height:42px;padding:0 22px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,113,227,0.25);flex:none;cursor:pointer">
               ${curSeriesAnalyzing ? `${ic("spin")} Analyzing…` : `${ic("bolt")}Analyze`}
             </button>
           </div>
 
-          <div class="composer-opts" id="serOptsPanel" style="${curSeriesOptsOpen ? 'display:block;padding:16px 18px;border-top:1px solid var(--line-2);' : 'display:none;'}">
+          <div class="composer-bar" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 14px 12px;border-top:1px solid var(--line-2)">
+            <span style="font-size:12px;font-weight:700;color:var(--dim);margin-right:2px">Mode:</span>
+            <button type="button" class="chip ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Mode</button>
+            <button type="button" class="chip ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ By Duration</button>
+            <button type="button" class="chip ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">🔢 By Part Count</button>
+            <span style="flex:1"></span>
+            <button type="button" class="chip ${curSeriesOptsOpen ? 'on' : ''}" data-act="sertoggleopts" style="display:inline-flex;align-items:center;gap:6px">${ic("sliders")}Schedule & Options</button>
+          </div>
+
+          <div id="serOptsPanel" style="${curSeriesOptsOpen ? 'display:block;' : 'display:none;'}padding:16px 18px;border-top:1px solid var(--line-2);background:#fff;border-radius:0 0 var(--r-lg) var(--r-lg);opacity:1">
             <div id="serOptionsSlot"></div>
 
             <!-- Schedule & Destinations -->
@@ -2765,7 +2769,22 @@ async function drawSeries() {
         </div>
       </div>
 
-      <div id="serPreviewSlot"></div>
+      <div id="serPreviewSlot">
+        ${!curSeriesPlan ? `
+          <div style="background:#fff;border:1px dashed var(--line);border-radius:var(--r);padding:28px 20px;text-align:center;margin-top:20px">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px">✂️</div>
+            <h4 style="font-size:15px;font-weight:700;color:var(--brand-ink);margin:0 0 6px">Turn 1 Long Video Into a Viral Multi-Episode Series</h4>
+            <p style="font-size:13px;color:var(--dim);max-width:500px;margin:0 auto 14px;line-height:1.5">
+              Paste any YouTube video link above and click <b>Analyze</b>. JaxCliped automatically splits the video into serialized episodes, identifies high-suspense cliffhangers, and generates an automated release calendar.
+            </p>
+            <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">1️⃣ Paste YouTube Link</span>
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">2️⃣ Click Analyze</span>
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">3️⃣ Split & Launch Schedule</span>
+            </div>
+          </div>
+        ` : ''}
+      </div>
       <div id="serCalPreview"></div>
 
       <!-- Active & Scheduled Series -->
@@ -3290,7 +3309,7 @@ document.addEventListener("click", async e => {
     if (a === "report") return openFeedback("bug", d.ctx);
     if (a === "sermode") {
       curSeriesMode = d.m;
-      $$(".series-mode-card").forEach(c => c.classList.toggle("on", c.dataset.m === d.m));
+      $$("[data-act=sermode]").forEach(c => c.classList.toggle("on", c.dataset.m === d.m));
       renderSerModeOptions();
       if (curSeriesUrl) updateSerPlan();
       return;
@@ -3321,7 +3340,7 @@ document.addEventListener("click", async e => {
     if (a === "sertoggleopts") {
       curSeriesOptsOpen = !curSeriesOptsOpen;
       const p = $("#serOptsPanel"), btn = $("[data-act=sertoggleopts]");
-      if (p) p.style.display = curSeriesOptsOpen ? "" : "none";
+      if (p) p.style.display = curSeriesOptsOpen ? "block" : "none";
       if (btn) btn.classList.toggle("on", curSeriesOptsOpen);
       return;
     }
@@ -3329,13 +3348,14 @@ document.addEventListener("click", async e => {
       const url = ($("#serUrlInput")?.value || "").trim();
       if (!url) return toast("Paste a YouTube link first.", "bad");
       b.disabled = true;
+      b.innerHTML = `${ic("spin")} Analyzing…`;
       curSeriesAnalyzing = true;
       try {
         curSeriesUrl = url;
         $("#serPreviewSlot").innerHTML = `
-          <div style="margin:14px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+          <div style="margin:20px 0;padding:20px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,0.02)">
             <div class="bar"><i style="width:100%"></i></div>
-            <div class="progress-meta">
+            <div class="progress-meta" style="margin-top:10px">
               <span><span class="progress-pulse"></span>Analyzing speech rhythm & detecting cliffhanger hooks…</span>
               <span style="font-feature-settings:'tnum'">Please wait…</span>
             </div>
@@ -3362,6 +3382,7 @@ document.addEventListener("click", async e => {
       } finally {
         curSeriesAnalyzing = false;
         b.disabled = false;
+        b.innerHTML = `${ic("bolt")}Analyze`;
       }
       return;
     }
