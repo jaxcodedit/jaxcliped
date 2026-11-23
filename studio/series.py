@@ -64,10 +64,25 @@ def update_series(sid: str, updates: dict, uid: str = None) -> dict:
 
 
 CADENCE_SECONDS = {
-    "daily": 86400,
-    "every_2_days": 86400 * 2,
-    "weekly": 86400 * 7,
-    "monthly": 86400 * 30,
+    "twice_daily": 43200,      # 2 per day (every 12 hrs)
+    "thrice_daily": 28800,     # 3 per day (every 8 hrs)
+    "four_daily": 21600,       # 4 per day (every 6 hrs)
+    "every_4_hours": 14400,    # 6 per day (every 4 hrs)
+    "daily": 86400,            # 1 each day (daily)
+    "every_2_days": 86400 * 2, # every 2 days
+    "weekly": 86400 * 7,       # once a week
+    "monthly": 86400 * 30,     # once a month
+}
+
+CADENCE_LABELS = {
+    "twice_daily": "2 Each Day (Every 12 hrs)",
+    "thrice_daily": "3 Each Day (Every 8 hrs)",
+    "four_daily": "4 Each Day (Every 6 hrs)",
+    "every_4_hours": "6 Each Day (Every 4 hrs)",
+    "daily": "1 Each Day (Daily)",
+    "every_2_days": "Every 2 Days",
+    "weekly": "Once a Week",
+    "monthly": "Once a Month",
 }
 
 
@@ -178,7 +193,7 @@ def plan_episodes(duration: float, title: str = "", mode: str = "duration",
         "mode": mode,
         "cliffhanger": cliffhanger,
         "cadence": cadence,
-        "cadence_label": {"daily": "1 each day", "every_2_days": "Every 2 days", "weekly": "Once a week", "monthly": "Once a month"}.get(cadence, "Daily"),
+        "cadence_label": CADENCE_LABELS.get(cadence, "1 Each Day (Daily)"),
         "start_time": t_start,
         "start_formatted": datetime.fromtimestamp(t_start).strftime("%a, %b %d · %I:%M %p"),
         "account_ids": account_ids or [],
@@ -305,6 +320,105 @@ def on_series_clip_done(job: dict, clip: dict):
             print(f"[Series AutoPost] Failed to enqueue clip {clip['id']}: {e}", flush=True)
 
     update_series(sid, {"episodes": s.get("episodes", []), "status": "active"}, uid)
+
+
+def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
+                      auto_post: bool = None, account_ids: list = None,
+                      episodes_patch: list = None, user_id: str = None) -> dict:
+    """Updates an ongoing series schedule: adjusts future drop times, cadence, accounts, and auto-post settings."""
+    uid = user_id or ctx.uid()
+    s = get_series(sid, uid)
+    if not s:
+        raise ValueError("Series not found")
+
+    job = jobs.get(s.get("job_id")) if s.get("job_id") else None
+
+    # 1. Update auto-post if provided
+    if auto_post is not None:
+        s["auto_post"] = bool(auto_post)
+
+    # 2. Update accounts if provided
+    if account_ids is not None:
+        s["account_ids"] = list(account_ids)
+        acc_labels = []
+        for aid in s["account_ids"]:
+            a = accounts.get(aid)
+            if a:
+                acc_labels.append(f"{a['name']} ({a['platform'].title()})")
+        s["account_labels"] = acc_labels
+
+    # 3. Update cadence if provided
+    if cadence and cadence in CADENCE_SECONDS:
+        s["cadence"] = cadence
+
+    # 4. Handle bulk recalculation of unposted episodes if cadence or start_time changed
+    if start_time is not None or (cadence and cadence in CADENCE_SECONDS):
+        step = CADENCE_SECONDS.get(s.get("cadence", "daily"), 86400)
+        cur_t = float(start_time) if start_time is not None else float(s.get("start_time") or time.time())
+        if cur_t < time.time() - 300:
+            cur_t = time.time() + 60
+        s["start_time"] = cur_t
+
+        for ep in s.get("episodes", []):
+            p_list = list(ep.get("posts", {}).values())
+            is_posted = any(p.get("status") == "posted" for p in p_list)
+            if not is_posted:
+                ep["due_at"] = cur_t
+                ep["due_formatted"] = datetime.fromtimestamp(cur_t).strftime("%a, %b %d · %I:%M %p")
+                cur_t += step
+
+    # 5. Handle fine-grained individual episode patches
+    if episodes_patch and isinstance(episodes_patch, list):
+        ep_map = {e.get("cid"): e for e in s.get("episodes", [])}
+        for patch in episodes_patch:
+            cid = patch.get("cid")
+            if cid in ep_map:
+                ep = ep_map[cid]
+                if "due_at" in patch and patch["due_at"]:
+                    new_due = float(patch["due_at"])
+                    ep["due_at"] = new_due
+                    ep["due_formatted"] = datetime.fromtimestamp(new_due).strftime("%a, %b %d · %I:%M %p")
+                if "title" in patch and patch["title"]:
+                    ep["title"] = str(patch["title"])[:200]
+
+    # 6. Save updated series record
+    update_series(sid, {
+        "auto_post": s.get("auto_post", True),
+        "account_ids": s.get("account_ids", []),
+        "account_labels": s.get("account_labels", []),
+        "cadence": s.get("cadence", "daily"),
+        "start_time": s.get("start_time"),
+        "episodes": s.get("episodes", [])
+    }, uid)
+
+    # 7. Sync with underlying job and posting queue
+    if job:
+        job_clips_map = {c["id"]: c for c in job.get("clips", [])}
+        for ep in s.get("episodes", []):
+            c = job_clips_map.get(ep["cid"])
+            if c:
+                c["scheduled_due_at"] = ep["due_at"] if s.get("auto_post") else None
+                c["target_accounts"] = s.get("account_ids", [])
+                c["title"] = ep["title"]
+        jobs.save(job)
+
+        # Update active scheduled posts in posting.py
+        user_posts = posting._mine()
+        for p in user_posts:
+            if p.get("job") == job["id"]:
+                matching_ep = next((e for e in s.get("episodes", []) if e["cid"] == p.get("clip")), None)
+                if matching_ep and p.get("status") == "scheduled":
+                    if not s.get("auto_post"):
+                        try:
+                            posting.cancel(p["id"])
+                        except Exception:
+                            pass
+                    else:
+                        p["due_at"] = matching_ep["due_at"]
+                        posting._save()
+                        posting._mirror(p)
+
+    return s
 
 
 if on_series_clip_done not in jobs.on_clip_ready:

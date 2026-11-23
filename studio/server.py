@@ -1227,6 +1227,26 @@ def delete_series_endpoint(sid: str):
     return {"ok": True}
 
 
+@app.put("/api/series/{sid}/schedule")
+def update_series_schedule_endpoint(sid: str, body: dict = Body(...)):
+    _need_verified()
+    s = series.get_series(sid)
+    if not s:
+        raise HTTPException(404, "Series not found")
+    try:
+        updated = series.reschedule_series(
+            sid=sid,
+            cadence=body.get("cadence"),
+            start_time=body.get("start_time"),
+            auto_post=body.get("auto_post"),
+            account_ids=body.get("account_ids"),
+            episodes_patch=body.get("episodes")
+        )
+        return {"ok": True, "series": updated}
+    except Exception as e:
+        raise HTTPException(400, f"Could not update schedule: {safe.friendly(e, 200)}")
+
+
 
 @app.get("/api/clips.zip")
 def clips_zip(ids: str = ""):
