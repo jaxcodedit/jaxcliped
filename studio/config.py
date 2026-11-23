@@ -248,6 +248,15 @@ def google_client() -> tuple:
 def _read_google_client() -> tuple:
     if env("GOOGLE_CLIENT_ID") and env("GOOGLE_CLIENT_SECRET"):
         return env("GOOGLE_CLIENT_ID").strip(), env("GOOGLE_CLIENT_SECRET").strip()
+    try:
+        apps_file = DATA_DIR / "apps.json"
+        if apps_file.exists():
+            data = json.loads(apps_file.read_text(encoding="utf-8"))
+            g = data.get("google") or {}
+            if g.get("id") and g.get("secret"):
+                return str(g["id"]).strip(), str(g["secret"]).strip()
+    except Exception:
+        pass
     path = env("GOOGLE_CLIENT_FILE")
     if path and Path(path).exists():
         try:

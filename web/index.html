@@ -952,42 +952,19 @@ dialog[open]{animation:fadein .16s ease}
   .btn-github-pro, .btn-wp-pro, .btn-insta-pro{padding:0 8px;font-size:11px;height:32px}
 }
 
-.series-hero{background:linear-gradient(135deg,rgba(0,113,227,0.05) 0%,rgba(56,189,248,0.06) 100%);border:1px solid rgba(0,113,227,0.16);border-radius:24px;padding:26px 28px;margin-bottom:28px;position:relative;box-shadow:0 8px 32px rgba(0,113,227,0.06)}
-.series-hero h2{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:flex;align-items:center;gap:10px}
-.series-hero p{font-size:14px;color:var(--dim);margin:6px 0 20px;line-height:1.5}
-.series-box{background:#fff;border-radius:18px;border:1px solid var(--line);padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03)}
-.series-url-row{display:flex;gap:10px;align-items:center}
-.series-url-row input{flex:1;min-width:0;height:44px;font-size:14px;border-radius:12px;border:1px solid var(--line);padding:0 16px;background:var(--muted);outline:none;transition:border-color .2s,background .2s}
-.series-url-row input:focus{border-color:var(--brand);background:#fff}
-.series-preview-card{display:flex;gap:16px;align-items:center;padding:14px;background:rgba(0,113,227,0.03);border:1px solid rgba(0,113,227,0.12);border-radius:14px;margin-top:16px}
-.series-preview-card img{width:110px;height:66px;border-radius:10px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.series-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0}
-.series-mode-card{padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:all .18s ease;position:relative}
-.series-mode-card:hover{border-color:rgba(0,113,227,0.4);background:rgba(0,113,227,0.01)}
-.series-mode-card.on{border-color:var(--brand);background:linear-gradient(180deg,#fff 0%,rgba(0,113,227,0.04) 100%);box-shadow:0 4px 16px rgba(0,113,227,0.12)}
-.series-mode-card h4{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--text)}
-.series-mode-card p{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.4}
-.cadence-pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.cadence-pill{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .15s}
-.cadence-pill:hover{border-color:var(--brand);color:var(--brand)}
-.cadence-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
-.cal-preview-box{background:linear-gradient(180deg,#FAFBFD 0%,#F3F7FC 100%);border:1px solid rgba(0,113,227,0.15);border-radius:16px;padding:16px;margin:18px 0}
-.cal-preview-box h4{font-size:14px;font-weight:700;color:var(--brand-ink);display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.cal-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
-.cal-card-head{display:flex;align-items:center;justify-content:space-between}
-.cal-badge{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(0,113,227,0.1);color:var(--brand)}
+.series-job{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;margin-bottom:28px;box-shadow:0 2px 14px rgba(0,0,0,0.03);transition:border-color .2s ease}
+.series-job:hover{border-color:rgba(0,113,227,0.3)}
+.cal-preview-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-top:16px;box-shadow:0 2px 12px rgba(0,0,0,0.03)}
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:14px}
+.cal-card{background:var(--muted);border:1px solid var(--line-2);border-radius:var(--r-sm);padding:12px 14px;display:flex;flex-direction:column;gap:6px;transition:all .15s ease}
+.cal-card:hover{border-color:var(--brand);background:#fff}
+.cal-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(0,113,227,0.1);color:var(--brand)}
 .cal-badge.cliff{background:#FEF3C7;color:#D97706}
 .cal-badge.finale{background:#DCFCE7;color:#16A34A}
-.cal-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
-.cal-time{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px}
-.series-list-head{display:flex;align-items:center;justify-content:space-between;margin:24px 0 16px}
-.series-item{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,0.03)}
-.series-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}
-.series-episodes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.ep-card{background:#FAFAFA;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
-.ep-card video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;background:#000}
-.ep-hook{font-size:11px;font-weight:800;letter-spacing:0.3px;color:#0071E3;background:rgba(0,113,227,0.08);padding:3px 8px;border-radius:6px;display:inline-block}
+.cadence-pills{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.cadence-pill{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .15s ease}
+.cadence-pill:hover{border-color:var(--brand);color:var(--brand)}
+.cadence-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
 </style>
 </head>
 <body>
@@ -2468,13 +2445,15 @@ let curSeriesUrl = "", curSeriesPreview = null, curSeriesPlan = null;
 let curSeriesMode = "cliffhanger", curSeriesDur = 60, curSeriesParts = 4;
 let curSeriesCadence = "daily", curSeriesAutoPost = true;
 let curSeriesStartTime = "";
+let curSeriesOptsOpen = true;
+let curSeriesAnalyzing = false;
 
 function renderSerModeOptions() {
   const slot = $("#serOptionsSlot");
   if (!slot) return;
   if (curSeriesMode === "duration") {
     slot.innerHTML = `
-      <div style="background:var(--muted);padding:14px;border-radius:12px">
+      <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
         <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Target Part Length</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           ${[30, 60, 90, 120, 180].map(s => `
@@ -2487,7 +2466,7 @@ function renderSerModeOptions() {
     `;
   } else if (curSeriesMode === "parts") {
     slot.innerHTML = `
-      <div style="background:var(--muted);padding:14px;border-radius:12px">
+      <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
         <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Total Number of Episodes</label>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           ${[2, 3, 4, 5, 8, 10].map(n => `
@@ -2500,10 +2479,10 @@ function renderSerModeOptions() {
     `;
   } else if (curSeriesMode === "cliffhanger") {
     slot.innerHTML = `
-      <div style="background:linear-gradient(135deg,rgba(0,113,227,0.06),rgba(255,149,0,0.06));border:1px solid rgba(0,113,227,0.18);padding:14px;border-radius:12px;display:flex;align-items:center;justify-content:space-between">
+      <div style="background:linear-gradient(135deg,rgba(0,113,227,0.06),rgba(56,189,248,0.06));border:1px solid rgba(0,113,227,0.18);padding:14px 18px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:space-between;gap:12px">
         <div>
           <b style="font-size:13px;color:var(--brand-ink)">⚡ AI Suspense Peak Cut & Cliffhanger Hook Banners</b>
-          <p style="font-size:12px;color:var(--dim);margin-top:2px">Cuts each episode right as tension rises ("Wait for Part X...") to maximize retention & comments.</p>
+          <p style="font-size:12px;color:var(--dim);margin-top:2px">Cuts each episode right as tension rises ("Wait for Part X...") to maximize audience retention & comments.</p>
         </div>
         <span class="pill ok" style="font-weight:700;font-size:11px">Auto-Active</span>
       </div>
@@ -2515,21 +2494,30 @@ function renderSerCalendarPreview(plan) {
   const slot = $("#serCalPreview");
   if (!slot || !plan || !plan.episodes) return;
   slot.innerHTML = `
-    <div class="cal-preview-box">
-      <h4><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Release Schedule Calendar (${plan.episodes.length} Episodes)
-      </h4>
+    <div class="cal-preview-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-2);padding-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          ${plan.preview?.thumb ? `<img src="${esc(plan.preview.thumb)}" alt="Thumb" style="width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:8px">` : ''}
+          <div>
+            <h4 style="font-size:14px;font-weight:700;color:var(--brand-ink);margin:0">${esc(plan.preview?.title || plan.title)}</h4>
+            <span style="font-size:12px;color:var(--dim)">⏱️ ${Math.round(plan.duration)}s duration · ${plan.episodes.length} episodes planned · Cadence: <b>${plan.cadence_label || plan.cadence}</b></span>
+          </div>
+        </div>
+        <button class="btn primary" id="serLaunchBtn" data-act="serlaunch" style="height:38px;padding:0 20px;font-weight:700;border-radius:10px">
+          ${ic("scissors")} Split & Schedule Series
+        </button>
+      </div>
       <div class="cal-grid">
         ${plan.episodes.map(ep => `
           <div class="cal-card">
-            <div class="cal-card-head">
+            <div style="display:flex;align-items:center;justify-content:space-between">
               <span class="cal-badge ${ep.cliffhanger ? 'cliff' : (ep.part === plan.episodes.length ? 'finale' : '')}">
                 Part ${ep.part} ${ep.cliffhanger ? '⚡ Cliffhanger' : (ep.part === plan.episodes.length ? '🏆 Finale' : '')}
               </span>
               <span style="font-size:11px;font-weight:600;color:var(--dim)">${ep.duration}s</span>
             </div>
-            <div class="cal-title">${esc(ep.title)}</div>
-            <div class="cal-time">
+            <div style="font-size:13px;font-weight:600;color:var(--brand-ink);line-height:1.3;margin:4px 0">${esc(ep.title)}</div>
+            <div style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px;margin-top:auto">
               <span>📅</span> <b>${esc(ep.due_formatted)}</b>
             </div>
           </div>
@@ -2542,10 +2530,10 @@ function renderSerCalendarPreview(plan) {
 function drawSeriesList(allSeries) {
   if (!allSeries || !allSeries.length) {
     return `
-      <div style="background:#fff;border:1px dashed var(--line);border-radius:18px;padding:36px;text-align:center;color:var(--dim)">
-        <div style="font-size:32px;margin-bottom:8px">🎬</div>
-        <h4 style="font-size:16px;font-weight:700;color:var(--text)">No series created yet</h4>
-        <p style="font-size:13px;max-width:380px;margin:6px auto 0">Paste a YouTube link above to automatically slice it into multi-part cliffhanger episodes with a scheduled calendar!</p>
+      <div class="card" style="padding:48px 24px;text-align:center;color:var(--dim);border-radius:var(--r)">
+        <div style="font-size:36px;margin-bottom:10px">🎬</div>
+        <h4 style="font-size:16px;font-weight:700;color:var(--brand-ink)">No series created yet</h4>
+        <p style="font-size:13px;max-width:420px;margin:6px auto 0;color:var(--dim)">Paste any YouTube link above to automatically slice it into multi-part cliffhanger episodes with automated release scheduling!</p>
       </div>
     `;
   }
@@ -2553,78 +2541,109 @@ function drawSeriesList(allSeries) {
   return allSeries.map(s => {
     const isDone = s.job_status === "done";
     const isRunning = s.job_status === "running" || s.job_status === "queued";
-    const statusPill = isDone ? `<span class="pill ok">✅ Ready & Active</span>` : isRunning ? `<span class="pill warn">⚙️ ${esc(s.job_stage || "Rendering...")} (${Math.round((s.job_progress || 0) * 100)}%)</span>` : `<span class="pill">${esc(s.status || "Ready")}</span>`;
-    const cadenceName = {"daily":"Daily Drops","every_2_days":"Every 2 Days","weekly":"Weekly Drops","monthly":"Monthly Drops"}[s.cadence] || "Daily";
+    const statusPill = isDone ? `<span class="pill ok">✅ Active</span>` : isRunning ? `<span class="pill warn">⚙️ ${esc(s.job_stage || "Rendering episodes...")}</span>` : `<span class="pill">${esc(s.status || "Ready")}</span>`;
+    const cadenceName = {"daily":"1 Each Day (Daily)","every_2_days":"Every 2 Days","weekly":"Once a Week","monthly":"Once a Month"}[s.cadence] || "Daily";
+
+    // Calculate publishing counts
+    let publishedCount = 0;
+    (s.episodes || []).forEach(ep => {
+      const pList = Object.values(ep.posts || {});
+      if (pList.some(p => p.status === "posted")) publishedCount++;
+    });
+    const totalEps = (s.episodes || []).length || 1;
+    const publishedPct = Math.round((publishedCount / totalEps) * 100);
+    const renderPct = Math.max(6, Math.min(100, Math.round((s.job_progress || 0) * 100)));
 
     return `
-      <div class="series-item">
-        <div class="series-item-head">
-          <div>
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <h3 style="font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.02em">${esc(s.title)}</h3>
-              ${statusPill}
-              <span class="pill" style="background:var(--muted);font-weight:700">📅 ${cadenceName}</span>
-            </div>
-            <div style="font-size:12px;color:var(--dim);margin-top:4px">
-              ${s.episodes.length} Episodes · Mode: <b>${s.cliffhanger ? '⚡ Cliffhanger' : s.mode}</b> · Destinations: <b>${esc((s.account_labels || []).join(", ") || "Manual / Queue")}</b>
+      <section class="job series-job">
+        <div class="job-head">
+          <div class="jt">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <h3 style="font-size:16px;font-weight:700;color:var(--brand-ink);margin:0">${esc(s.title)}</h3>
+                ${statusPill}
+                <span class="pill" style="font-weight:600">📅 ${cadenceName}</span>
+              </div>
+              <p class="sub" style="margin:4px 0 0;font-size:12px;color:var(--dim)">
+                ${s.episodes.length} Episodes · Mode: <b>${s.cliffhanger ? '⚡ Cliffhanger' : s.mode}</b> · Destinations: <b>${esc((s.account_labels || []).join(", ") || "Queue")}</b>
+              </p>
             </div>
           </div>
-          <button class="btn sm danger" data-act="serdelete" data-sid="${esc(s.id)}" title="Delete Series">${ic("trash")}Delete</button>
+          <div class="row">
+            <button class="btn sm icon ghost" data-act="serdelete" data-sid="${esc(s.id)}" title="Delete Series" aria-label="Delete series">${ic("trash")}</button>
+          </div>
         </div>
 
-        <div class="series-episodes-grid">
-          ${s.episodes.map(ep => {
+        <!-- PROGRESS BARS -->
+        ${isRunning ? `
+          <div class="bar">
+            <i style="width:${renderPct}%"></i>
+          </div>
+          <div class="progress-meta">
+            <span><span class="progress-pulse"></span>${esc(s.job_stage || "Splitting and rendering episodes…")}</span>
+            <span style="font-feature-settings:'tnum'">${renderPct}%</span>
+          </div>
+        ` : `
+          <div class="bar" style="background:rgba(52,199,89,0.12);height:8px">
+            <i style="width:${Math.max(4, publishedPct)}%;background:linear-gradient(90deg, #34C759, #30B0C7)"></i>
+          </div>
+          <div class="progress-meta" style="color:var(--text);font-size:12px">
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#34C759;margin-right:6px"></span><b>${publishedCount} of ${s.episodes.length}</b> Episodes Published (${s.episodes.length - publishedCount} Scheduled Drops)</span>
+            <span style="font-feature-settings:'tnum';color:var(--dim);font-weight:700">${publishedPct}%</span>
+          </div>
+        `}
+
+        <!-- EPISODES GRID -->
+        <div class="grid" style="margin-top:16px">
+          ${(s.episodes || []).map(ep => {
             const epDone = ep.render_status === "done" || ep.status === "ready" || ep.video_url;
-            const postMap = ep.posts || {};
-            const postList = Object.values(postMap);
-            const isPosted = postList.some(p => p.status === "posted");
-            const isScheduled = postList.some(p => p.status === "scheduled") || (!isPosted && s.auto_post);
+            const pList = Object.values(ep.posts || {});
+            const isPosted = pList.some(p => p.status === "posted");
+            const isScheduled = pList.some(p => p.status === "scheduled") || (!isPosted && s.auto_post);
 
             return `
-              <div class="ep-card">
-                <div>
-                  <div style="position:relative">
-                    ${ep.video_url ? `
-                      <video src="${esc(ep.video_url)}" preload="metadata" controls playsinline></video>
-                    ` : `
-                      <div style="width:100%;aspect-ratio:9/16;background:#1D1D1F;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:6px">
-                        <span style="font-size:24px">${ep.render_status === 'error' ? '❌' : '⚙️'}</span>
-                        <span style="font-size:11px;color:rgba(255,255,255,0.7)">${ep.render_status === 'error' ? 'Error' : 'Rendering Part...'}</span>
-                      </div>
-                    `}
-                    <span style="position:absolute;top:8px;left:8px" class="cal-badge ${ep.cliffhanger ? 'cliff' : ''}">Part ${ep.part}</span>
-                  </div>
-                  <div style="margin-top:8px">
-                    <span class="ep-hook">${esc(ep.hook)}</span>
-                    <h5 style="font-size:13px;font-weight:700;color:var(--text);margin:6px 0 2px;line-height:1.3">${esc(ep.title)}</h5>
-                    <div style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:4px">
-                      <span>📅</span> <b>${esc(ep.due_formatted)}</b>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px">
-                  ${isPosted ? `
-                    <span class="pill ok" style="font-size:11px;font-weight:700">✅ Published</span>
-                  ` : isScheduled ? `
-                    <span class="pill" style="font-size:11px;background:#EFF6FF;color:#0071E3;font-weight:700">📅 Scheduled</span>
-                  ` : ''}
-                  ${epDone && !isPosted ? `
-                    <button class="btn sm primary" data-act="serpostnow" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" style="font-size:11px;padding:0 8px;height:28px">
-                      ${ic("send")}Post now
-                    </button>
-                  ` : ''}
+              <article class="clip">
+                <div class="shot">
                   ${ep.video_url ? `
-                    <a class="btn sm ghost" href="${esc(ep.video_url)}" download="${esc(ep.title)}.mp4" style="font-size:11px;padding:0 8px;height:28px">
-                      ${ic("down")}Save
-                    </a>
-                  ` : ''}
+                    <video src="${esc(ep.video_url)}" preload="metadata" playsinline controls style="width:100%;height:100%;object-fit:cover"></video>
+                  ` : `
+                    <span class="making">
+                      <span class="progress-pulse"></span>
+                      ${ep.render_status === 'error' ? 'Could not render' : `Making Part ${ep.part}…`}
+                    </span>
+                  `}
+                  <span class="badge l ${ep.cliffhanger ? 's-hi' : ''}">Part ${ep.part} ${ep.cliffhanger ? '⚡' : ''}</span>
+                  <span class="badge r">${fmt(ep.duration || (ep.end - ep.start))}</span>
                 </div>
-              </div>
+                <div class="clip-body">
+                  <div class="hook">${esc(ep.hook || "Part " + ep.part)}</div>
+                  <div class="ttl">${esc(ep.title)}</div>
+                  <div class="row" style="gap:4px;margin-top:4px">
+                    ${isPosted ? `
+                      <span class="pill ok" style="font-size:11px;font-weight:700">✅ Published</span>
+                    ` : isScheduled ? `
+                      <span class="pill" style="font-size:11px;background:rgba(0,113,227,0.08);color:var(--brand);font-weight:600">📅 ${esc(ep.due_formatted)}</span>
+                    ` : `
+                      <span class="pill" style="font-size:11px">Ready</span>
+                    `}
+                  </div>
+                  <div class="clip-foot">
+                    ${ep.video_url ? `
+                      <a class="btn sm icon ghost" href="${esc(ep.video_url)}" download="${esc(ep.title)}.mp4" title="Download">${ic("down")}</a>
+                    ` : ''}
+                    <span class="grow"></span>
+                    ${epDone && !isPosted ? `
+                      <button class="btn sm primary" data-act="serpostnow" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" style="font-size:11px;height:28px">
+                        ${ic("send")}Post now
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+              </article>
             `;
           }).join("")}
         </div>
-      </div>
+      </section>
     `;
   }).join("");
 }
@@ -2672,7 +2691,6 @@ async function drawSeries() {
   }
 
   const accList = S.accounts || [];
-
   const accountsHtml = accList.length ? accList.map(a => `
     <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer">
       <input type="checkbox" name="ser_acc" value="${esc(a.id)}" checked style="accent-color:var(--brand)">
@@ -2681,96 +2699,84 @@ async function drawSeries() {
   `).join("") : `<span style="font-size:12px;color:var(--dim)">No accounts connected. <a href="/app/settings/apps" data-act="go" data-v="settings" data-tab="apps" style="color:var(--brand);font-weight:600">Connect Instagram or YouTube</a></span>`;
 
   box.innerHTML = `
-    <div class="series-hero">
-      <h2><span>✨ Series Studio & Cliffhanger Splitter</span></h2>
-      <p>Divide any YouTube video or stream into multi-episode Shorts & Reels. End each part on a high-suspense cliffhanger and automatically post them on your release schedule.</p>
+    <div style="max-width:1100px;margin:0 auto;padding-bottom:60px">
+      <div class="hero" style="padding-top:16px;padding-bottom:28px">
+        <h2>✨ Series Splitter & Cliffhanger Studio</h2>
+        <p>Slice long YouTube videos into serialized multi-part Shorts & Reels. Snaps each episode to high-suspense cliffhangers with an automated publishing calendar.</p>
 
-      <div class="series-box">
-        <label style="font-size:13px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">YouTube Video Link</label>
-        <div class="series-url-row">
-          <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a full YouTube link (e.g. https://www.youtube.com/watch?v=...)" spellcheck="false">
-          <button class="btn primary" id="serPreviewBtn" data-act="serpreview" style="height:44px;padding:0 18px;font-weight:700">${ic("bolt")}Analyze</button>
-        </div>
-
-        <div id="serPreviewSlot"></div>
-
-        <div style="margin-top:20px">
-          <label style="font-size:13px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Splitting Mode</label>
-          <div class="series-modes">
-            <div class="series-mode-card ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">
-              <h4><span>⚡ AI Cliffhanger Mode</span> <span class="pill ok" style="font-size:9px;padding:2px 6px">PRO</span></h4>
-              <p>AI detects suspense peaks, dramatic pauses, and unanswered questions to cut each part right at the cliffhanger with hook banners.</p>
-            </div>
-            <div class="series-mode-card ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">
-              <h4><span>⏱️ By Part Length</span></h4>
-              <p>Split video into equal length parts (e.g. 60s Shorts, 90s Reels) snapping smoothly to speech pauses.</p>
-            </div>
-            <div class="series-mode-card ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">
-              <h4><span>🔢 By Part Count</span></h4>
-              <p>Divide the whole video evenly into an exact number of episodes (e.g. 3 Parts, 5 Parts, 10 Parts).</p>
-            </div>
-          </div>
-        </div>
-
-        <div id="serOptionsSlot" style="margin-top:14px"></div>
-
-        <!-- Auto-Post Schedule Section -->
-        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <div>
-              <b style="font-size:15px;color:var(--brand-ink);display:flex;align-items:center;gap:6px">📅 Automated Publishing Schedule</b>
-              <p style="font-size:12px;color:var(--dim);margin-top:2px">JaxCliped will automatically post each episode to your connected accounts at the scheduled calendar times.</p>
-            </div>
-            <label style="position:relative;display:inline-block;width:44px;height:24px">
-              <input type="checkbox" id="serAutoPost" ${curSeriesAutoPost ? 'checked' : ''} data-act="serautopost" style="opacity:0;width:0;height:0">
-              <span style="position:absolute;cursor:pointer;inset:0;background:${curSeriesAutoPost ? 'var(--brand)' : '#ccc'};border-radius:24px;transition:.2s">
-                <span style="position:absolute;content:'';height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;transform:${curSeriesAutoPost ? 'translateX(20px)' : 'none'}"></span>
-              </span>
-            </label>
+        <div class="composer big" id="serComposer" style="margin-top:18px">
+          <div class="composer-input">
+            ${ic("link")}
+            <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a YouTube video link to split into a series..." autocomplete="off" spellcheck="false">
           </div>
 
-          <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}">
-            <div style="margin:14px 0">
-              <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence</label>
-              <div class="cadence-pills">
-                <button type="button" class="cadence-pill ${curSeriesCadence === 'daily' ? 'on' : ''}" data-act="sercadence" data-c="daily">⚡ 1 Each Day (Daily)</button>
-                <button type="button" class="cadence-pill ${curSeriesCadence === 'every_2_days' ? 'on' : ''}" data-act="sercadence" data-c="every_2_days">📅 Every 2 Days</button>
-                <button type="button" class="cadence-pill ${curSeriesCadence === 'weekly' ? 'on' : ''}" data-act="sercadence" data-c="weekly">📆 Once a Week</button>
-                <button type="button" class="cadence-pill ${curSeriesCadence === 'monthly' ? 'on' : ''}" data-act="sercadence" data-c="monthly">🗓️ Once a Month</button>
-              </div>
-            </div>
+          <div class="composer-bar">
+            <button type="button" class="chip ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Mode</button>
+            <button type="button" class="chip ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ By Duration</button>
+            <button type="button" class="chip ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">🔢 By Part Count</button>
+            <button type="button" class="chip ${curSeriesOptsOpen ? 'on' : ''}" data-act="sertoggleopts">${ic("sliders")}Schedule & Options</button>
+            <span class="grow"></span>
+            <button class="btn primary" id="serPreviewBtn" data-act="serpreview" ${curSeriesAnalyzing ? 'disabled' : ''}>
+              ${curSeriesAnalyzing ? `${ic("spin")} Analyzing…` : `${ic("bolt")}Analyze`}
+            </button>
+          </div>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:14px 0">
-              <div>
-                <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">First Episode Release Time</label>
-                <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff">
+          <div class="composer-opts" id="serOptsPanel" style="${curSeriesOptsOpen ? 'display:block;padding:16px 18px;border-top:1px solid var(--line-2);' : 'display:none;'}">
+            <div id="serOptionsSlot"></div>
+
+            <!-- Schedule & Destinations -->
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div>
+                  <b style="font-size:14px;color:var(--brand-ink);display:flex;align-items:center;gap:6px">📅 Automated Publishing Schedule</b>
+                  <p style="font-size:12px;color:var(--dim);margin-top:2px">JaxCliped will automatically post each episode to your connected accounts at the scheduled calendar times.</p>
+                </div>
+                <label style="cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+                  <input type="checkbox" id="serAutoPost" ${curSeriesAutoPost ? 'checked' : ''} data-act="serautopost" style="accent-color:var(--brand);width:16px;height:16px">
+                  <span style="font-size:13px;font-weight:600">Auto-Post</span>
+                </label>
               </div>
-              <div>
-                <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Target Destinations</label>
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  ${accountsHtml}
+
+              <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}margin-top:12px">
+                <div style="margin-bottom:12px">
+                  <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence</label>
+                  <div class="cadence-pills">
+                    <button type="button" class="cadence-pill ${curSeriesCadence === 'daily' ? 'on' : ''}" data-act="sercadence" data-c="daily">⚡ 1 Each Day (Daily)</button>
+                    <button type="button" class="cadence-pill ${curSeriesCadence === 'every_2_days' ? 'on' : ''}" data-act="sercadence" data-c="every_2_days">📅 Every 2 Days</button>
+                    <button type="button" class="cadence-pill ${curSeriesCadence === 'weekly' ? 'on' : ''}" data-act="sercadence" data-c="weekly">📆 Once a Week</button>
+                    <button type="button" class="cadence-pill ${curSeriesCadence === 'monthly' ? 'on' : ''}" data-act="sercadence" data-c="monthly">🗓️ Once a Month</button>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:12px">
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">First Episode Drop Time</label>
+                    <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Target Destinations</label>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                      ${accountsHtml}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div id="serCalPreview"></div>
           </div>
         </div>
+      </div>
 
-        <div style="margin-top:24px;display:flex;justify-content:flex-end">
-          <button class="btn primary lg" id="serLaunchBtn" data-act="serlaunch" style="height:48px;padding:0 28px;font-size:15px;font-weight:700;border-radius:12px;box-shadow:0 4px 18px rgba(0,113,227,0.3)">
-            🚀 Split & Launch Series Schedule
-          </button>
+      <div id="serPreviewSlot"></div>
+      <div id="serCalPreview"></div>
+
+      <!-- Active & Scheduled Series -->
+      <div style="margin-top:36px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:17px;font-weight:700;color:var(--brand-ink);letter-spacing:-0.02em">Active & Scheduled Series (${allSeries.length})</h3>
+        </div>
+        <div id="serListSlot">
+          ${drawSeriesList(allSeries)}
         </div>
       </div>
-    </div>
-
-    <!-- Existing Series List -->
-    <div class="series-list-head">
-      <h3 style="font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.02em">Your Multi-Part Series (${allSeries.length})</h3>
-    </div>
-    <div id="serListSlot">
-      ${drawSeriesList(allSeries)}
     </div>
   `;
 
@@ -2977,6 +2983,7 @@ async function tick() {
     if (got.ai) S.status.ai = got.ai;
     if (got.unread != null) S.status.unread = got.unread;
     if (S.view === "overview") { S.overview = await api("/api/overview"); S.ovAt = Date.now(); }
+    if (S.view === "series") { api("/api/series").then(allSeries => { const slot = $("#serListSlot"); if (slot) slot.innerHTML = drawSeriesList(allSeries); }).catch(() => {}); }
     if (creatorId() && !creator()) return go("overview");
     render();
   } catch {}
@@ -3311,13 +3318,29 @@ document.addEventListener("click", async e => {
       if (curSeriesUrl) updateSerPlan();
       return;
     }
+    if (a === "sertoggleopts") {
+      curSeriesOptsOpen = !curSeriesOptsOpen;
+      const p = $("#serOptsPanel"), btn = $("[data-act=sertoggleopts]");
+      if (p) p.style.display = curSeriesOptsOpen ? "" : "none";
+      if (btn) btn.classList.toggle("on", curSeriesOptsOpen);
+      return;
+    }
     if (a === "serpreview") {
       const url = ($("#serUrlInput")?.value || "").trim();
       if (!url) return toast("Paste a YouTube link first.", "bad");
       b.disabled = true;
+      curSeriesAnalyzing = true;
       try {
         curSeriesUrl = url;
-        $("#serPreviewSlot").innerHTML = `<div style="padding:14px;color:var(--dim);display:flex;align-items:center;gap:8px">${ic("spin")} Fetching video metadata…</div>`;
+        $("#serPreviewSlot").innerHTML = `
+          <div style="margin:14px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+            <div class="bar"><i style="width:100%"></i></div>
+            <div class="progress-meta">
+              <span><span class="progress-pulse"></span>Analyzing speech rhythm & detecting cliffhanger hooks…</span>
+              <span style="font-feature-settings:'tnum'">Please wait…</span>
+            </div>
+          </div>
+        `;
         const plan = await send("/api/series/preview", {
           url: curSeriesUrl,
           mode: curSeriesMode,
@@ -3330,23 +3353,14 @@ document.addEventListener("click", async e => {
         });
         curSeriesPlan = plan;
         curSeriesPreview = plan.preview;
-        $("#serPreviewSlot").innerHTML = `
-          <div class="series-preview-card">
-            ${plan.preview?.thumb ? `<img src="${esc(plan.preview.thumb)}" alt="Thumb">` : ''}
-            <div>
-              <b style="font-size:14px;color:var(--brand-ink);display:block">${esc(plan.preview?.title || plan.title)}</b>
-              <span style="font-size:12px;color:var(--dim);margin-top:3px;display:block">
-                ⏱️ Duration: <b>${Math.round(plan.duration)}s</b> (${Math.round(plan.duration / 60)} min) · by ${esc(plan.preview?.uploader || "YouTube")}
-              </span>
-            </div>
-          </div>
-        `;
+        $("#serPreviewSlot").innerHTML = "";
         renderSerCalendarPreview(plan);
         toast(`✅ Found video: ${plan.episodes.length} episodes planned!`, "ok");
       } catch (err) {
         $("#serPreviewSlot").innerHTML = `<div class="note" style="margin-top:10px">${ic("warn")}<span>${esc(err.message)}</span></div>`;
         toast(err.message, "bad");
       } finally {
+        curSeriesAnalyzing = false;
         b.disabled = false;
       }
       return;
