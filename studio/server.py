@@ -36,7 +36,7 @@ def _quiet(fn):
 
 app = FastAPI(title="JaxCliped", docs_url=None, redoc_url=None, openapi_url=None)
 WEB = config.ROOT / "web"
-OPEN = ("/api/auth/", "/pub/", "/api/public", "/auth/google/", "/auth/verify", "/brand/", "/assets/", "/healthz", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/api/billing/plans", "/api/billing/upi-config", "/api/billing/webhook")
+OPEN = ("/api/auth/", "/oauth/", "/auth/", "/pub/", "/api/public", "/brand/", "/assets/", "/healthz", "/favicon.ico", "/robots.txt", "/sitemap.xml", "/api/billing/plans", "/api/billing/upi-config", "/api/billing/webhook")
 PAGES = {"/": "landing_jaxcliped.html", "/login": "auth_jaxcliped.html", "/signup": "auth_jaxcliped.html", "/reset": "reset.html",
          "/privacy": "legal.html", "/terms": "legal.html", "/acceptable-use": "legal.html"}
 VIDEO_TYPES = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".ts", ".flv"}
@@ -645,7 +645,10 @@ def google_start(next: str = "/app"):
 
 @app.get("/auth/google/callback")
 def google_callback(request: Request, code: str = "", state: str = "", error: str = ""):
-    if error or not code or not state or not hmac.compare_digest(request.cookies.get("g_state", ""), state):
+    if error or not code or not state:
+        return RedirectResponse("/login?error=google", 303)
+    cookie_state = request.cookies.get("g_state", "")
+    if cookie_state and not hmac.compare_digest(cookie_state, state):
         return RedirectResponse("/login?error=google", 303)
     try:
         auth.throttle("google:" + _ip(request), 30, 600)
@@ -1607,8 +1610,14 @@ def connect_callback(request: Request, platform: str, code: str = "", state: str
         why = "you cancelled" if error in ("access_denied",) or error_reason == "user_denied" else (error_description or error or "no sign-in code came back")
         return _back(connect_error=f"{name} was not connected: {why[:160]}.")
     try:
-        _throttle("connect:" + ctx.uid(), 30, 600)
-        acc = accounts.connect_finish(platform, code, state)
+        target_uid = ctx.uid_or_none()
+        if not target_uid and state in accounts._states:
+            target_uid = accounts._states[state][0]
+        if not target_uid:
+            return RedirectResponse("/login", 303)
+        with ctx.as_user(target_uid):
+            _throttle("connect:" + target_uid, 30, 600)
+            acc = accounts.connect_finish(platform, code, state)
     except HTTPException:
         raise
     except Exception as e:  # noqa: BLE001
