@@ -358,20 +358,21 @@ def google_url(next_path: str = "/app") -> tuple:
         next_path = next_path[:200]
         _states[state] = (time.time(), next_path if re.fullmatch(r"/(?![/\\])[^\\\t\r\n]*", next_path) else "/app")
     return "https://accounts.google.com/o/oauth2/v2/auth?" + urlencode({
-        "client_id": cid, "redirect_uri": config.PUBLIC_URL + "/auth/google/callback", "response_type": "code",
+        "client_id": cid, "redirect_uri": config.PUBLIC_URL + "/oauth/youtube/callback", "response_type": "code",
         "scope": "openid email profile", "state": state, "prompt": "select_account"}), state
 
 
-def google_finish(code: str, state: str):
+def google_finish(code: str, state: str, redirect_uri: str = None):
     """Returns (user, is_first_user, next path)."""
     with _lock:
         st = _states.pop(state, None)
     if not st:
         raise AuthError("That sign-in link has expired. Try again.")
     cid, secret = config.google_client()
+    redir = redirect_uri or (config.PUBLIC_URL + "/oauth/youtube/callback")
     tok = httpx.post("https://oauth2.googleapis.com/token", timeout=30, data={
         "code": code, "client_id": cid, "client_secret": secret, "grant_type": "authorization_code",
-        "redirect_uri": config.PUBLIC_URL + "/auth/google/callback"})
+        "redirect_uri": redir})
     if tok.status_code != 200:
         raise AuthError("Google sign-in failed. Try again.")
     info = httpx.get("https://openidconnect.googleapis.com/v1/userinfo", timeout=30,

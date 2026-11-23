@@ -639,7 +639,7 @@ def google_start(next: str = "/app"):
     url, state = auth.google_url(next)
     resp = RedirectResponse(url)
     # the sign-in can only be finished by the browser that started it
-    resp.set_cookie("g_state", state, max_age=900, httponly=True, samesite="lax", secure=config.HTTPS, path="/auth/google")
+    resp.set_cookie("g_state", state, max_age=900, httponly=True, samesite="lax", secure=config.HTTPS, path="/")
     return resp
 
 
@@ -649,7 +649,8 @@ def google_callback(request: Request, code: str = "", state: str = "", error: st
         return RedirectResponse("/login?error=google", 303)
     try:
         auth.throttle("google:" + _ip(request), 30, 600)
-        user, first, nxt = auth.google_finish(code, state)
+        redir = f"{config.PUBLIC_URL}{request.url.path}"
+        user, first, nxt = auth.google_finish(code, state, redirect_uri=redir)
     except auth.AuthError:
         return RedirectResponse("/login?error=google", 303)
     return _signed_in(request, user, first, redirect=nxt)
@@ -1595,8 +1596,10 @@ def connect_start(platform: str):
 
 
 @app.get("/oauth/{platform}/callback")
-def connect_callback(platform: str, code: str = "", state: str = "", error: str = "", error_description: str = "",
+def connect_callback(request: Request, platform: str, code: str = "", state: str = "", error: str = "", error_description: str = "",
                      error_reason: str = ""):
+    if platform == "youtube" and state in auth._states:
+        return google_callback(request, code=code, state=state, error=error)
     if platform not in accounts.PLATFORM_NAMES:
         raise HTTPException(404)
     name = accounts.PLATFORM_NAMES[platform]
