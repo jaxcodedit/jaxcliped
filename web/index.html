@@ -2067,11 +2067,7 @@ function clipHtml(j, c) {
         <button class="btn sm icon ghost" data-act="copy" ${a} title="Copy post text" aria-label="Copy post text">${ic("copy")}</button>
         ${busyClip ? "" : `<button class="btn sm icon ghost" data-act="delclip" ${a} title="Delete this clip" aria-label="Delete this clip">${ic("trash")}</button>`}
         <span class="grow"></span>
-        ${c.status === "done" ? `
-          <button class="btn sm" data-act="quickupload" data-platform="youtube" ${a} title="1-Click Upload to YouTube Shorts" style="background:#FF0000;color:#fff;border:0;padding:0 8px;font-size:11px;font-weight:700">▶️ Shorts</button>
-          <button class="btn sm" data-act="quickupload" data-platform="instagram" ${a} title="1-Click Upload to Instagram Reels" style="background:linear-gradient(45deg,#F58529,#DD2A7B);color:#fff;border:0;padding:0 8px;font-size:11px;font-weight:700">📸 Reels</button>
-          <button class="btn sm" data-act="openclip" ${a}>${ic("send")}Edit/Post</button>
-        ` : ""}
+        ${c.status === "done" ? `<button class="btn sm" data-act="openclip" ${a}>${ic("send")}Post</button>` : ""}
       </div>
     </div></article>`;
 }
@@ -2549,16 +2545,7 @@ function drawClipDlg(full) {
         <label class="f">Title<input data-f="title" value="${esc(c.title)}"></label>
         <label class="f">Description<textarea data-f="description" rows="2">${esc(c.description)}</textarea></label>
         <button class="btn" data-act="remake">${ic("scissors")}Save and re-make clip</button>
-        <h3>⚡ 1-Click Instant Upload</h3>
-        <div class="row" style="gap:8px;margin-bottom:12px">
-          <button class="btn sm primary" data-act="quickupload" data-platform="youtube" data-j="${j.id}" data-c="${esc(c.id)}" style="background:#FF0000;border:0;font-weight:700;padding:6px 14px">
-            ▶️ 1-Click YouTube Shorts
-          </button>
-          <button class="btn sm primary" data-act="quickupload" data-platform="instagram" data-j="${j.id}" data-c="${esc(c.id)}" style="background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF);border:0;font-weight:700;padding:6px 14px">
-            📸 1-Click Instagram Reels
-          </button>
-        </div>
-        <h3>Post Queue</h3>
+        <h3>Post it</h3>
         <div id="dposts" class="row" style="gap:4px"></div>
         ${S.accounts.length ? `<div class="row">${S.accounts.map(a => `<label class="ck"><input type="checkbox" data-pacc value="${esc(a.id)}">${esc(a.label)} · ${esc(a.name)}</label>`).join("")}</div>
           <div class="row"><button class="btn primary" data-act="postnow">${ic("send")}Post now</button><button class="btn" data-act="postqueue">Add to queue</button></div>`

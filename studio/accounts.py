@@ -181,8 +181,12 @@ def connect_url(platform: str) -> str:
             "client_id": cid, "redirect_uri": redirect, "response_type": "code", "scope": YT_SCOPES,
             "access_type": "offline", "prompt": "consent", "state": state})
     if platform == "instagram":
-        return "https://www.instagram.com/oauth/authorize?" + urlencode({
-            "client_id": cid, "redirect_uri": redirect, "response_type": "code", "scope": IG_SCOPES, "state": state})
+        cfg = (config.env("PEAKCUT_IG_CONFIG_ID") or "1166177699115755").strip()
+        params = {"client_id": cid, "redirect_uri": redirect, "response_type": "code", "state": state}
+        if cfg:
+            params["config_id"] = cfg
+            return "https://www.facebook.com/v21.0/dialog/oauth?" + urlencode(params)
+        return "https://www.instagram.com/oauth/authorize?" + urlencode({**params, "scope": IG_SCOPES})
     return "https://www.tiktok.com/v2/auth/authorize/?" + urlencode({
         "client_key": cid, "redirect_uri": redirect, "response_type": "code", "scope": TT_SCOPES, "state": state})
 
@@ -366,29 +370,78 @@ def youtube_views(acc, ids: list) -> dict:
     return out
 
 
-# ------------------------------------------------------------------ Instagram (Instagram Login, professional accounts)
+# ------------------------------------------------------------------ Instagram (Unified Login / Instagram Graph API)
 def _instagram_finish(code: str) -> dict:
     cid, secret = app_keys("instagram")
-    short = _check(httpx.post("https://api.instagram.com/oauth/access_token", data={
-        "client_id": cid, "client_secret": secret, "grant_type": "authorization_code",
-        "redirect_uri": redirect_for("instagram"), "code": code}, timeout=30), "Instagram sign-in").json()
-    if isinstance(short.get("data"), list) and short["data"]:
-        short = short["data"][0]
-    if "instagram_business_content_publish" not in str(short.get("permissions", "instagram_business_content_publish")):
-        raise ValueError("PeakCut needs permission to publish. Connect again and leave every box ticked.")
-    long = _check(httpx.get(f"{IG}/access_token", params={"grant_type": "ig_exchange_token", "client_secret": secret,
-                                                         "access_token": short["access_token"]}, timeout=30),
-                  "Keeping the Instagram sign-in").json()
-    return _instagram_save(long["access_token"])
+    token = ""
+    # Try Meta Graph API (Unified Login)
+    try:
+        r = httpx.post("https://graph.facebook.com/v21.0/oauth/access_token", data={
+            "client_id": cid, "client_secret": secret, "grant_type": "authorization_code",
+            "redirect_uri": redirect_for("instagram"), "code": code}, timeout=30)
+        if r.status_code == 200:
+            token = r.json().get("access_token", "")
+    except Exception:
+        pass
+
+    # Fallback to legacy Instagram endpoint if needed
+    if not token:
+        short = _check(httpx.post("https://api.instagram.com/oauth/access_token", data={
+            "client_id": cid, "client_secret": secret, "grant_type": "authorization_code",
+            "redirect_uri": redirect_for("instagram"), "code": code}, timeout=30), "Instagram sign-in").json()
+        if isinstance(short.get("data"), list) and short["data"]:
+            short = short["data"][0]
+        long = _check(httpx.get(f"{IG}/access_token", params={"grant_type": "ig_exchange_token", "client_secret": secret,
+                                                             "access_token": short["access_token"]}, timeout=30),
+                      "Keeping the Instagram sign-in").json()
+        token = long["access_token"]
+
+    return _instagram_save(token)
 
 
 def _instagram_save(token: str) -> dict:
-    me = _check(httpx.get(f"{IG}/me", params={"fields": "user_id,username,account_type"},
-                          headers={"Authorization": f"Bearer {token}"}, timeout=30), "Reading the Instagram account").json()
-    kind = str(me.get("account_type") or "")
-    acc = {"id": f"ig_{me['user_id']}", "platform": "instagram", "name": "@" + me["username"], "added": time.time(),
-           "user_id": str(me["user_id"]), "token": token, "token_time": time.time(),
-           "detail": {"BUSINESS": "Business account", "MEDIA_CREATOR": "Creator account"}.get(kind.upper(), "")}
+    # 1. Try direct Instagram me
+    try:
+        me_resp = httpx.get(f"{IG}/me", params={"fields": "user_id,username,account_type"},
+                            headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if me_resp.status_code == 200:
+            me = me_resp.json()
+            if me.get("user_id"):
+                kind = str(me.get("account_type") or "")
+                acc = {"id": f"ig_{me['user_id']}", "platform": "instagram", "name": "@" + me.get("username", me["user_id"]), "added": time.time(),
+                       "user_id": str(me["user_id"]), "token": token, "token_time": time.time(),
+                       "detail": {"BUSINESS": "Business account", "MEDIA_CREATOR": "Creator account"}.get(kind.upper(), "")}
+                _put(acc)
+                return acc
+    except Exception:
+        pass
+
+    # 2. Try Meta Graph API accounts (for Unified Login)
+    try:
+        r = httpx.get("https://graph.facebook.com/v21.0/me/accounts",
+                      params={"fields": "instagram_business_account{id,username,name},name"},
+                      headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        if r.status_code == 200:
+            for item in r.json().get("data", []):
+                ig = item.get("instagram_business_account")
+                if ig and ig.get("id"):
+                    acc = {"id": f"ig_{ig['id']}", "platform": "instagram", "name": "@" + ig.get("username", ig["id"]), "added": time.time(),
+                           "user_id": str(ig["id"]), "token": token, "token_time": time.time(),
+                           "detail": "Creator or Business account"}
+                    _put(acc)
+                    return acc
+    except Exception:
+        pass
+
+    # 3. Direct Meta Graph API inspect
+    r = _check(httpx.get("https://graph.facebook.com/v21.0/me",
+                         params={"fields": "id,name"},
+                         headers={"Authorization": f"Bearer {token}"}, timeout=30), "Reading account")
+    info = r.json()
+    acc = {"id": f"ig_{info.get('id', 'user')}", "platform": "instagram",
+           "name": "@" + info.get("name", "Instagram Account"), "added": time.time(),
+           "user_id": str(info.get("id", "")), "token": token, "token_time": time.time(),
+           "detail": "Professional Account"}
     _put(acc)
     return acc
 
