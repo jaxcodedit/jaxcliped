@@ -730,6 +730,10 @@ def _run_job(job):
         words += [dict(w, s=round(w["s"] + shift, 2), e=round(w["e"] + shift, 2)) for w in bw]
         (d / "words.json").write_text(json.dumps(words), encoding="utf-8")
         _set(job, stage="Finding the best moments" + where, word_count=len(words))
+        if job.get("kind") == "series":
+            job["done_blocks"] = bi + 1
+            save(job)
+            continue
         left = int(o["max_clips"]) - len(job["clips"])
         if left <= 0 or len(bw) < 8:
             job["done_blocks"] = bi + 1
@@ -769,6 +773,14 @@ def _run_job(job):
             futures.append((renders.submit(ctx.bind(make), c, list(words)), c))
         job["ai"] = {"model": model, "tokens": tokens, "note": "", "log": notes[-5:]}
         job["done_blocks"] = bi + 1       # a restart from here on carries on with the next part
+        save(job)
+    if job.get("kind") == "series":
+        _set(job, stage="Rendering series episodes", progress=0.88)
+        for c in job["clips"]:
+            if c.get("status") not in ("done", "error"):
+                c.update(style=o.get("style", "phonk"), layout=o.get("layout", "crop"),
+                         captions=o.get("captions", True), status="queued", version=0)
+                futures.append((renders.submit(ctx.bind(make), c, list(words)), c))
         save(job)
     if futures:
         _set(job, stage="Finishing the clips", progress=max(job["progress"], 0.92))

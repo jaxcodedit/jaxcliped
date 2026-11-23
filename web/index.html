@@ -941,6 +941,53 @@ dialog[open]{animation:fadein .16s ease}
   .set-sec h2{font-size:16px}
   .ai-big{font-size:24px}
 }
+
+/* ---------- Topbar Mobile Account Button & Series Studio Styles */
+.topbar-me-btn{display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;background:transparent;cursor:pointer;flex:none;margin-left:4px}
+.topbar-me-btn .avatar{width:32px;height:32px;font-size:12px;border:2px solid rgba(0,113,227,0.3);box-shadow:0 2px 8px rgba(0,113,227,0.18);transition:transform .15s ease}
+.topbar-me-btn:hover .avatar{transform:scale(1.06)}
+@media (max-width:560px){
+  .topbar{padding:8px 12px;gap:8px}
+  .topbar .titles{max-width:calc(100% - 130px)}
+  .btn-github-pro, .btn-wp-pro, .btn-insta-pro{padding:0 8px;font-size:11px;height:32px}
+}
+
+.series-hero{background:linear-gradient(135deg,rgba(0,113,227,0.05) 0%,rgba(56,189,248,0.06) 100%);border:1px solid rgba(0,113,227,0.16);border-radius:24px;padding:26px 28px;margin-bottom:28px;position:relative;box-shadow:0 8px 32px rgba(0,113,227,0.06)}
+.series-hero h2{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:flex;align-items:center;gap:10px}
+.series-hero p{font-size:14px;color:var(--dim);margin:6px 0 20px;line-height:1.5}
+.series-box{background:#fff;border-radius:18px;border:1px solid var(--line);padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03)}
+.series-url-row{display:flex;gap:10px;align-items:center}
+.series-url-row input{flex:1;min-width:0;height:44px;font-size:14px;border-radius:12px;border:1px solid var(--line);padding:0 16px;background:var(--muted);outline:none;transition:border-color .2s,background .2s}
+.series-url-row input:focus{border-color:var(--brand);background:#fff}
+.series-preview-card{display:flex;gap:16px;align-items:center;padding:14px;background:rgba(0,113,227,0.03);border:1px solid rgba(0,113,227,0.12);border-radius:14px;margin-top:16px}
+.series-preview-card img{width:110px;height:66px;border-radius:10px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.series-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0}
+.series-mode-card{padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:all .18s ease;position:relative}
+.series-mode-card:hover{border-color:rgba(0,113,227,0.4);background:rgba(0,113,227,0.01)}
+.series-mode-card.on{border-color:var(--brand);background:linear-gradient(180deg,#fff 0%,rgba(0,113,227,0.04) 100%);box-shadow:0 4px 16px rgba(0,113,227,0.12)}
+.series-mode-card h4{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--text)}
+.series-mode-card p{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.4}
+.cadence-pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.cadence-pill{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .15s}
+.cadence-pill:hover{border-color:var(--brand);color:var(--brand)}
+.cadence-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.cal-preview-box{background:linear-gradient(180deg,#FAFBFD 0%,#F3F7FC 100%);border:1px solid rgba(0,113,227,0.15);border-radius:16px;padding:16px;margin:18px 0}
+.cal-preview-box h4{font-size:14px;font-weight:700;color:var(--brand-ink);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.cal-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
+.cal-card-head{display:flex;align-items:center;justify-content:space-between}
+.cal-badge{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(0,113,227,0.1);color:var(--brand)}
+.cal-badge.cliff{background:#FEF3C7;color:#D97706}
+.cal-badge.finale{background:#DCFCE7;color:#16A34A}
+.cal-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.cal-time{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px}
+.series-list-head{display:flex;align-items:center;justify-content:space-between;margin:24px 0 16px}
+.series-item{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,0.03)}
+.series-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}
+.series-episodes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.ep-card{background:#FAFAFA;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.ep-card video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;background:#000}
+.ep-hook{font-size:11px;font-weight:800;letter-spacing:0.3px;color:#0071E3;background:rgba(0,113,227,0.08);padding:3px 8px;border-radius:6px;display:inline-block}
 </style>
 </head>
 <body>
@@ -1275,10 +1322,23 @@ function closePops(except) { ["bellpop", "acctpop"].forEach(id => { const p = $(
   $$('[data-act="acctmenu"]').forEach(b => b.setAttribute("aria-expanded", String(except?.id === "acctpop"))); }
 function openPop(p, anchor) {
   closePops(p); p.hidden = false;
-  // beside the sidebar, bottom lined up with the button that opened it
   const side = $(".side").getBoundingClientRect(), a = anchor?.getBoundingClientRect();
-  if (innerWidth > 900) { p.style.left = side.right + 8 + "px"; p.style.bottom = Math.max(12, innerHeight - (a ? a.bottom + 6 : side.bottom - 12)) + "px"; }
-  else { p.style.left = ""; p.style.bottom = ""; }
+  if (innerWidth > 900) {
+    p.style.top = ""; p.style.right = "";
+    p.style.left = side.right + 8 + "px";
+    p.style.bottom = Math.max(12, innerHeight - (a ? a.bottom + 6 : side.bottom - 12)) + "px";
+  } else {
+    if (a && a.top < 120) {
+      p.style.top = Math.round(a.bottom + 8) + "px";
+      p.style.right = "12px";
+      p.style.left = "auto";
+      p.style.bottom = "auto";
+    } else {
+      p.style.top = ""; p.style.right = "";
+      p.style.left = "12px";
+      p.style.bottom = "74px";
+    }
+  }
   requestAnimationFrame(() => p.classList.add("open"));
 }
 async function openBell() {
@@ -1296,15 +1356,20 @@ async function openBell() {
   } catch (e) { p.innerHTML = `<div class="pop-head"><h3>Notifications</h3></div><div class="pop-empty">${esc(e.message)}</div>`; }
 }
 async function markRead() { try { await send("/api/notifications/read"); S.status.unread = 0; drawShell(); } catch {} }
-function openAcct() {
+function openAcct(anchor) {
   const p = $("#acctpop");
   if (!p.hidden) return closePops();
   const u = S.status.user;
   const on = S.status.accounts !== false;
   p.innerHTML = `${on ? `<div class="who2"><b>${esc(u.name)}</b><span>${esc(u.email)}</span></div>` : ""}
-    <button data-act="go" data-v="settings">${ic("cog")}Settings</button><button data-act="go" data-v="usage">${ic("chart")}AI usage</button><button data-act="tour">${ic("play")}Take the tour</button>${S.status.links?.follow ? `<button data-act="feedback">${ic("chat")}Send feedback</button>` : ""}
+    <button data-act="go" data-v="settings" data-tab="apps">${ic("plug")}Connected accounts</button>
+    <button data-act="go" data-v="settings">${ic("cog")}Settings</button>
+    <button data-act="go" data-v="series"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 3v18M17 3v18M3 9h18M3 15h18"/></svg>Series Splitter</button>
+    <button data-act="go" data-v="usage">${ic("chart")}AI usage</button>
+    <button data-act="tour">${ic("play")}Take the tour</button>
+    ${S.status.links?.follow ? `<button data-act="feedback">${ic("chat")}Send feedback</button>` : ""}
     ${on ? `<button class="danger" data-act="logout">${ic("signout")}Sign out</button>` : ""}`;
-  openPop(p, $("[data-act=acctmenu]"));
+  openPop(p, anchor || $("[data-act=acctmenu]"));
 }
 document.addEventListener("click", e => { if (!e.target.closest(".pop, [data-act=bell], [data-act=acctmenu]")) closePops(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closePops(); });
@@ -1598,12 +1663,16 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
   put($("#nav"), nav("overview", navIc("home", "overview"), "Home") +
     nav("library", navIc("film", "library"), "All videos", (() => { const w = S.jobs.filter(j => ["queued", "running"].includes(j.status)).length;
       return w ? `<span class="working" title="${w} working now"><i></i>${w} working</span>` : S.jobs.length ? `<span class="count">${S.jobs.length}</span>` : ""; })()) +
+    nav("series", `<svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 3v18M17 3v18M3 9h18M3 15h18"/></svg>`, "Series Splitter", `<span class="pill ok" style="font-size:9px;padding:1px 6px;margin-left:auto;font-weight:700">New</span>`) +
     `<h4><span>Creators</span></h4>` +
     S.creators.map(c => nav("c:" + c.id, cav(c), c.name,
       c.live_job ? `<span class="sb-tag rec" title="Recording now"><i></i>Rec</span>`
         : liveOn(c).length ? `<span class="sb-tag" title="Live on ${esc(liveOn(c).map(([k]) => PLAT[k].name).join(" and "))}"><i></i>Live</span>` : "")).join("") +
     `<button class="nav-item" data-act="newcreator" title="New creator">${ic("plusc")}<span class="label">New creator</span></button>` +
-    (S.status.user?.role === "admin" && S.status.accounts !== false ? `<h4><span>Owner</span></h4><a class="nav-item" href="/admin" title="Admin dashboard" style="text-decoration:none">${ic("shield")}<span class="label">Admin dashboard</span></a>` : ""));
+    (S.status.user?.role === "admin" && S.status.accounts !== false ? `<h4><span>Owner</span></h4><a class="nav-item" href="/admin" title="Admin dashboard" style="text-decoration:none">${ic("shield")}<span class="label">Admin dashboard</span></a>` : "") +
+    `<h4><span>Account & Setup</span></h4>` +
+    `<button class="nav-item ${S.view === "settings" && S.stab === "apps" ? "on" : ""}" data-act="go" data-v="settings" data-tab="apps" title="Connected accounts">${ic("plug")}<span class="label">Connected accounts</span></button>` +
+    `<button class="nav-item ${S.view === "settings" && (!S.stab || S.stab !== "apps") ? "on" : ""}" data-act="go" data-v="settings" title="Settings">${ic("cog")}<span class="label">Settings</span></button>`);
   const st = S.status;
   const k = S.status.ai;
   const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname === "0.0.0.0" || Boolean(S.status?.is_local);
@@ -1630,10 +1699,11 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
       <button class="icon-btn bell" data-act="bell" title="Notifications" aria-label="Notifications${S.status.unread ? `, ${S.status.unread} new` : ""}" aria-haspopup="dialog">${ic("bell")}${S.status.unread ? `<span class="dotn">${S.status.unread > 9 ? "9+" : S.status.unread}</span>` : ""}</button></div>` : ""));
   const c = creator();
   const recording = S.creators.filter(x => x.live_job).length;
-  let title = {overview:"Home", library:"All videos", settings:"Settings", usage:"AI usage"}[S.view] || "", sub = "", act = "";
+  let title = {overview:"Home", library:"All videos", series:"Series Splitter", settings:"Settings", usage:"AI usage"}[S.view] || "", sub = "", act = "";
   if (S.view === "usage") sub = "What the AI has been used for.";
   if (S.view === "overview") sub = `${greeting()}. ${S.creators.length} creator${S.creators.length === 1 ? "" : "s"}${recording ? `, ${recording} recording now` : ""}.`;
   if (S.view === "library") sub = "Every video and recording, across all creators.";
+  if (S.view === "series") sub = "Turn any video or stream into multi-episode cliffhanger shorts with automated publishing schedule.";
   if (S.view === "settings") sub = (S.status.accounts === false ? "Your AI key and connected apps." : "Your profile, security and connected apps.");
   let pic = "", subHtml = null, tabs = "";
   if (c) {
@@ -1646,6 +1716,8 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
     act = c.live_job ? `<button class="btn danger" data-act="stoplive" data-j="${esc(c.live_job)}">${ic("stop")}Stop recording</button>`
                      : `<button class="btn primary" data-act="golive"><span class="rdot"></span>${liveOn(c).length ? "Record live stream" : "Start recording"}</button>`;
   }
+  const me = S.status.user;
+  const acctTopBtn = me ? `<button class="topbar-me-btn" data-act="acctmenu" title="Account & Settings" aria-label="Account & Settings">${meAvatar(me)}</button>` : "";
   if (S.view === "overview" || S.view === "library") {
     const L = S.status.links || {};
     const repoUrl = L.repo || "https://github.com/jaxcodedit/jaxcliped";
@@ -1656,7 +1728,9 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
     const instaBtn = (L.follow ? `<a class="btn-insta-pro" href="${esc(L.follow)}" target="_blank" rel="noopener" title="Follow JaxCliped on Instagram"><span class="btn-icon-float">${ic("instagram")}</span>Instagram</a>` : "");
 
     const primaryBtn = isLocal ? ghBtn : wpBtn;
-    act = `<div style="display:flex;gap:12px;align-items:center">${primaryBtn}${instaBtn}</div>`;
+    act = `<div style="display:flex;gap:10px;align-items:center">${primaryBtn}${instaBtn}${acctTopBtn}</div>`;
+  } else if (!act) {
+    act = acctTopBtn;
   }
   const me = S.status.user;
   const kk = S.status.ai;
@@ -1675,10 +1749,11 @@ function drawShell() {  const nav = (v, icon, label, extra = "") => `<button cla
   put($("#title"), `<span>${esc(title)}</span>`); put($("#subtitle"), subHtml ?? esc(sub)); put($("#actions"), act);
 }
 
-const ROUTES = {overview: "", library: "videos", settings: "settings", usage: "usage"};
+const ROUTES = {overview: "", library: "videos", series: "series", settings: "settings", usage: "usage"};
 function pathFor(v, tab) {
   if (v.startsWith("c:")) return `/app/creators/${encodeURIComponent(v.slice(2))}${tab && tab !== "clips" ? "/" + tab : ""}`;
   if (v === "settings") return "/app/settings" + (tab ? "/" + tab : "");
+  if (v === "series") return "/app/series";
   return "/app" + (ROUTES[v] ? "/" + ROUTES[v] : "");
 }
 function fromPath(path) {
@@ -1686,6 +1761,7 @@ function fromPath(path) {
   if (m) return ["c:" + decodeURIComponent(m[1]), m[2] || "clips"];
   const st = path.match(/^\/app\/settings(?:\/(ai|profile|security|apps|storage))?\/?$/);
   if (st) return ["settings", st[1] || null];
+  if (path.replace(/\/$/, "") === "/app/series") return ["series", null];
   const k = Object.keys(ROUTES).find(x => ROUTES[x] && path.replace(/\/$/, "") === "/app/" + ROUTES[x]);
   return [k || "overview", "clips"];
 }
@@ -1707,12 +1783,14 @@ function go(v, tab, fromHistory) {
       <p>Paste a link or drop in videos. You get captioned shorts back.</p><div id="add"></div></section>` : "";
   if (v === "overview") view.innerHTML = `<div id="ov"></div>`;
   else if (v === "library") view.innerHTML = `<div id="add"></div><div id="jobs"></div>`;
+  else if (v === "series") view.innerHTML = `<div id="seriesView"></div>`;
   else if (v === "settings") view.innerHTML = `<div id="sform"></div>`;
   else if (v === "usage") { view.innerHTML = `<div id="usage"></div>`; loadUsage(); }
   else view.innerHTML = `<div id="stream"></div><div id="cbody"></div>`;   // the live player stays put across tabs: no restart, no rebuffer
   if ($("#add")) drawAdd(v === "overview" ? "hero" : "compact");
   if (v === "overview" && window.GradientASCII) { try { window._gaStop = GradientASCII($("#appAscii"), {colors: ["#ffb27a", "#ffffff", "#ffd2ae", "#ffe0c2", "#fff1e6"], shape: "horizon", lightMode: true, cellSize: 16, density: 0.8, glyphOpacity: 0.26, gradientOpacity: 0.32, glow: 0.06, grain: 0.06, mouseInteraction: false, clickEffect: "none"}); } catch {} }
   if (v === "settings") drawSettings();
+  if (v === "series") drawSeries();
   if (v.startsWith("c:")) setTab(S.ctab);
   $("#main").scrollTo(0, 0); render();
   if (v === "overview") loadOverview();
@@ -2385,6 +2463,322 @@ function aiHints() {
   $("#ai_base").placeholder = pv.address || "http://127.0.0.1:1234/v1";
   $("#ai_basewrap").hidden = pv.id !== "custom" && !(same && k.base_url);
 }
+
+/* ============================================================ Series Studio & Splitter */
+let curSeriesUrl = "", curSeriesPreview = null, curSeriesPlan = null;
+let curSeriesMode = "cliffhanger", curSeriesDur = 60, curSeriesParts = 4;
+let curSeriesCadence = "daily", curSeriesAutoPost = true;
+let curSeriesStartTime = "";
+
+function renderSerModeOptions() {
+  const slot = $("#serOptionsSlot");
+  if (!slot) return;
+  if (curSeriesMode === "duration") {
+    slot.innerHTML = `
+      <div style="background:var(--muted);padding:14px;border-radius:12px">
+        <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Target Part Length</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${[30, 60, 90, 120, 180].map(s => `
+            <button type="button" class="btn sm ${curSeriesDur === s ? 'primary' : 'ghost'}" data-act="serdurlen" data-d="${s}" style="border-radius:999px;font-weight:700">
+              ${s < 60 ? s + 's' : (s / 60) + ' min'}${s === 60 ? ' ⭐ (Shorts/Reels)' : ''}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  } else if (curSeriesMode === "parts") {
+    slot.innerHTML = `
+      <div style="background:var(--muted);padding:14px;border-radius:12px">
+        <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Total Number of Episodes</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${[2, 3, 4, 5, 8, 10].map(n => `
+            <button type="button" class="btn sm ${curSeriesParts === n ? 'primary' : 'ghost'}" data-act="serpartscnt" data-n="${n}" style="border-radius:999px;font-weight:700">
+              ${n} Parts
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  } else if (curSeriesMode === "cliffhanger") {
+    slot.innerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(0,113,227,0.06),rgba(255,149,0,0.06));border:1px solid rgba(0,113,227,0.18);padding:14px;border-radius:12px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <b style="font-size:13px;color:var(--brand-ink)">⚡ AI Suspense Peak Cut & Cliffhanger Hook Banners</b>
+          <p style="font-size:12px;color:var(--dim);margin-top:2px">Cuts each episode right as tension rises ("Wait for Part X...") to maximize retention & comments.</p>
+        </div>
+        <span class="pill ok" style="font-weight:700;font-size:11px">Auto-Active</span>
+      </div>
+    `;
+  }
+}
+
+function renderSerCalendarPreview(plan) {
+  const slot = $("#serCalPreview");
+  if (!slot || !plan || !plan.episodes) return;
+  slot.innerHTML = `
+    <div class="cal-preview-box">
+      <h4><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Release Schedule Calendar (${plan.episodes.length} Episodes)
+      </h4>
+      <div class="cal-grid">
+        ${plan.episodes.map(ep => `
+          <div class="cal-card">
+            <div class="cal-card-head">
+              <span class="cal-badge ${ep.cliffhanger ? 'cliff' : (ep.part === plan.episodes.length ? 'finale' : '')}">
+                Part ${ep.part} ${ep.cliffhanger ? '⚡ Cliffhanger' : (ep.part === plan.episodes.length ? '🏆 Finale' : '')}
+              </span>
+              <span style="font-size:11px;font-weight:600;color:var(--dim)">${ep.duration}s</span>
+            </div>
+            <div class="cal-title">${esc(ep.title)}</div>
+            <div class="cal-time">
+              <span>📅</span> <b>${esc(ep.due_formatted)}</b>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function drawSeriesList(allSeries) {
+  if (!allSeries || !allSeries.length) {
+    return `
+      <div style="background:#fff;border:1px dashed var(--line);border-radius:18px;padding:36px;text-align:center;color:var(--dim)">
+        <div style="font-size:32px;margin-bottom:8px">🎬</div>
+        <h4 style="font-size:16px;font-weight:700;color:var(--text)">No series created yet</h4>
+        <p style="font-size:13px;max-width:380px;margin:6px auto 0">Paste a YouTube link above to automatically slice it into multi-part cliffhanger episodes with a scheduled calendar!</p>
+      </div>
+    `;
+  }
+
+  return allSeries.map(s => {
+    const isDone = s.job_status === "done";
+    const isRunning = s.job_status === "running" || s.job_status === "queued";
+    const statusPill = isDone ? `<span class="pill ok">✅ Ready & Active</span>` : isRunning ? `<span class="pill warn">⚙️ ${esc(s.job_stage || "Rendering...")} (${Math.round((s.job_progress || 0) * 100)}%)</span>` : `<span class="pill">${esc(s.status || "Ready")}</span>`;
+    const cadenceName = {"daily":"Daily Drops","every_2_days":"Every 2 Days","weekly":"Weekly Drops","monthly":"Monthly Drops"}[s.cadence] || "Daily";
+
+    return `
+      <div class="series-item">
+        <div class="series-item-head">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.02em">${esc(s.title)}</h3>
+              ${statusPill}
+              <span class="pill" style="background:var(--muted);font-weight:700">📅 ${cadenceName}</span>
+            </div>
+            <div style="font-size:12px;color:var(--dim);margin-top:4px">
+              ${s.episodes.length} Episodes · Mode: <b>${s.cliffhanger ? '⚡ Cliffhanger' : s.mode}</b> · Destinations: <b>${esc((s.account_labels || []).join(", ") || "Manual / Queue")}</b>
+            </div>
+          </div>
+          <button class="btn sm danger" data-act="serdelete" data-sid="${esc(s.id)}" title="Delete Series">${ic("trash")}Delete</button>
+        </div>
+
+        <div class="series-episodes-grid">
+          ${s.episodes.map(ep => {
+            const epDone = ep.render_status === "done" || ep.status === "ready" || ep.video_url;
+            const postMap = ep.posts || {};
+            const postList = Object.values(postMap);
+            const isPosted = postList.some(p => p.status === "posted");
+            const isScheduled = postList.some(p => p.status === "scheduled") || (!isPosted && s.auto_post);
+
+            return `
+              <div class="ep-card">
+                <div>
+                  <div style="position:relative">
+                    ${ep.video_url ? `
+                      <video src="${esc(ep.video_url)}" preload="metadata" controls playsinline></video>
+                    ` : `
+                      <div style="width:100%;aspect-ratio:9/16;background:#1D1D1F;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:6px">
+                        <span style="font-size:24px">${ep.render_status === 'error' ? '❌' : '⚙️'}</span>
+                        <span style="font-size:11px;color:rgba(255,255,255,0.7)">${ep.render_status === 'error' ? 'Error' : 'Rendering Part...'}</span>
+                      </div>
+                    `}
+                    <span style="position:absolute;top:8px;left:8px" class="cal-badge ${ep.cliffhanger ? 'cliff' : ''}">Part ${ep.part}</span>
+                  </div>
+                  <div style="margin-top:8px">
+                    <span class="ep-hook">${esc(ep.hook)}</span>
+                    <h5 style="font-size:13px;font-weight:700;color:var(--text);margin:6px 0 2px;line-height:1.3">${esc(ep.title)}</h5>
+                    <div style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:4px">
+                      <span>📅</span> <b>${esc(ep.due_formatted)}</b>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px">
+                  ${isPosted ? `
+                    <span class="pill ok" style="font-size:11px;font-weight:700">✅ Published</span>
+                  ` : isScheduled ? `
+                    <span class="pill" style="font-size:11px;background:#EFF6FF;color:#0071E3;font-weight:700">📅 Scheduled</span>
+                  ` : ''}
+                  ${epDone && !isPosted ? `
+                    <button class="btn sm primary" data-act="serpostnow" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" style="font-size:11px;padding:0 8px;height:28px">
+                      ${ic("send")}Post now
+                    </button>
+                  ` : ''}
+                  ${ep.video_url ? `
+                    <a class="btn sm ghost" href="${esc(ep.video_url)}" download="${esc(ep.title)}.mp4" style="font-size:11px;padding:0 8px;height:28px">
+                      ${ic("down")}Save
+                    </a>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function updateSerPlan() {
+  if (!curSeriesUrl) return;
+  try {
+    const accIds = $$("input[name=ser_acc]:checked").map(c => c.value);
+    const startVal = $("#serStartTimeInput")?.value || curSeriesStartTime;
+    const epochStart = startVal ? new Date(startVal).getTime() / 1000 : null;
+
+    curSeriesPlan = await send("/api/series/preview", {
+      url: curSeriesUrl,
+      mode: curSeriesMode,
+      duration_sec: curSeriesDur,
+      parts_count: curSeriesParts,
+      cliffhanger: curSeriesMode === "cliffhanger",
+      cadence: curSeriesCadence,
+      start_time: epochStart,
+      account_ids: accIds
+    });
+    renderSerCalendarPreview(curSeriesPlan);
+  } catch (e) {
+    console.error("Plan update error:", e);
+  }
+}
+
+async function drawSeries() {
+  const box = $("#seriesView");
+  if (!box) return;
+  box.innerHTML = `<div style="text-align:center;padding:40px;color:var(--dim)">${ic("spin")} Loading Series Studio…</div>`;
+
+  if (!curSeriesStartTime) {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(18, 0, 0, 0);
+    curSeriesStartTime = d.toISOString().slice(0, 16);
+  }
+
+  let allSeries = [];
+  try {
+    allSeries = await api("/api/series");
+  } catch (e) {
+    console.error("Failed to load series:", e);
+  }
+
+  const accList = S.accounts || [];
+
+  const accountsHtml = accList.length ? accList.map(a => `
+    <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer">
+      <input type="checkbox" name="ser_acc" value="${esc(a.id)}" checked style="accent-color:var(--brand)">
+      <span>${esc(a.name)} <small style="color:var(--dim)">(${esc(a.platform)})</small></span>
+    </label>
+  `).join("") : `<span style="font-size:12px;color:var(--dim)">No accounts connected. <a href="/app/settings/apps" data-act="go" data-v="settings" data-tab="apps" style="color:var(--brand);font-weight:600">Connect Instagram or YouTube</a></span>`;
+
+  box.innerHTML = `
+    <div class="series-hero">
+      <h2><span>✨ Series Studio & Cliffhanger Splitter</span></h2>
+      <p>Divide any YouTube video or stream into multi-episode Shorts & Reels. End each part on a high-suspense cliffhanger and automatically post them on your release schedule.</p>
+
+      <div class="series-box">
+        <label style="font-size:13px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">YouTube Video Link</label>
+        <div class="series-url-row">
+          <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a full YouTube link (e.g. https://www.youtube.com/watch?v=...)" spellcheck="false">
+          <button class="btn primary" id="serPreviewBtn" data-act="serpreview" style="height:44px;padding:0 18px;font-weight:700">${ic("bolt")}Analyze</button>
+        </div>
+
+        <div id="serPreviewSlot"></div>
+
+        <div style="margin-top:20px">
+          <label style="font-size:13px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:8px">Splitting Mode</label>
+          <div class="series-modes">
+            <div class="series-mode-card ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">
+              <h4><span>⚡ AI Cliffhanger Mode</span> <span class="pill ok" style="font-size:9px;padding:2px 6px">PRO</span></h4>
+              <p>AI detects suspense peaks, dramatic pauses, and unanswered questions to cut each part right at the cliffhanger with hook banners.</p>
+            </div>
+            <div class="series-mode-card ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">
+              <h4><span>⏱️ By Part Length</span></h4>
+              <p>Split video into equal length parts (e.g. 60s Shorts, 90s Reels) snapping smoothly to speech pauses.</p>
+            </div>
+            <div class="series-mode-card ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">
+              <h4><span>🔢 By Part Count</span></h4>
+              <p>Divide the whole video evenly into an exact number of episodes (e.g. 3 Parts, 5 Parts, 10 Parts).</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="serOptionsSlot" style="margin-top:14px"></div>
+
+        <!-- Auto-Post Schedule Section -->
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div>
+              <b style="font-size:15px;color:var(--brand-ink);display:flex;align-items:center;gap:6px">📅 Automated Publishing Schedule</b>
+              <p style="font-size:12px;color:var(--dim);margin-top:2px">JaxCliped will automatically post each episode to your connected accounts at the scheduled calendar times.</p>
+            </div>
+            <label style="position:relative;display:inline-block;width:44px;height:24px">
+              <input type="checkbox" id="serAutoPost" ${curSeriesAutoPost ? 'checked' : ''} data-act="serautopost" style="opacity:0;width:0;height:0">
+              <span style="position:absolute;cursor:pointer;inset:0;background:${curSeriesAutoPost ? 'var(--brand)' : '#ccc'};border-radius:24px;transition:.2s">
+                <span style="position:absolute;content:'';height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;transform:${curSeriesAutoPost ? 'translateX(20px)' : 'none'}"></span>
+              </span>
+            </label>
+          </div>
+
+          <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}">
+            <div style="margin:14px 0">
+              <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence</label>
+              <div class="cadence-pills">
+                <button type="button" class="cadence-pill ${curSeriesCadence === 'daily' ? 'on' : ''}" data-act="sercadence" data-c="daily">⚡ 1 Each Day (Daily)</button>
+                <button type="button" class="cadence-pill ${curSeriesCadence === 'every_2_days' ? 'on' : ''}" data-act="sercadence" data-c="every_2_days">📅 Every 2 Days</button>
+                <button type="button" class="cadence-pill ${curSeriesCadence === 'weekly' ? 'on' : ''}" data-act="sercadence" data-c="weekly">📆 Once a Week</button>
+                <button type="button" class="cadence-pill ${curSeriesCadence === 'monthly' ? 'on' : ''}" data-act="sercadence" data-c="monthly">🗓️ Once a Month</button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:14px 0">
+              <div>
+                <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">First Episode Release Time</label>
+                <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff">
+              </div>
+              <div>
+                <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Target Destinations</label>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  ${accountsHtml}
+                </div>
+              </div>
+            </div>
+
+            <div id="serCalPreview"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;display:flex;justify-content:flex-end">
+          <button class="btn primary lg" id="serLaunchBtn" data-act="serlaunch" style="height:48px;padding:0 28px;font-size:15px;font-weight:700;border-radius:12px;box-shadow:0 4px 18px rgba(0,113,227,0.3)">
+            🚀 Split & Launch Series Schedule
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Existing Series List -->
+    <div class="series-list-head">
+      <h3 style="font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.02em">Your Multi-Part Series (${allSeries.length})</h3>
+    </div>
+    <div id="serListSlot">
+      ${drawSeriesList(allSeries)}
+    </div>
+  `;
+
+  renderSerModeOptions();
+  if (curSeriesPlan) renderSerCalendarPreview(curSeriesPlan);
+}
+
 async function drawSettings() {
   const box = $("#sform"); if (!box) return;
   const tab = S.stab || setTabs()[0][0], me = S.status.user;
@@ -2888,7 +3282,140 @@ document.addEventListener("click", async e => {
     if (a === "bell") return openBell();
     if (a === "feedback") return openFeedback("bug");
     if (a === "report") return openFeedback("bug", d.ctx);
-    if (a === "acctmenu") return openAcct();
+    if (a === "sermode") {
+      curSeriesMode = d.m;
+      $$(".series-mode-card").forEach(c => c.classList.toggle("on", c.dataset.m === d.m));
+      renderSerModeOptions();
+      if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "sercadence") {
+      curSeriesCadence = d.c;
+      $$(".cadence-pill").forEach(p => p.classList.toggle("on", p.dataset.c === d.c));
+      if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "serautopost") {
+      curSeriesAutoPost = $("#serAutoPost").checked;
+      $("#serScheduleSection").style.display = curSeriesAutoPost ? "" : "none";
+      return;
+    }
+    if (a === "serdurlen") {
+      curSeriesDur = Number(d.d);
+      $$("[data-act=serdurlen]").forEach(b => { b.className = `btn sm ${Number(b.dataset.d) === curSeriesDur ? 'primary' : 'ghost'}`; });
+      if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "serpartscnt") {
+      curSeriesParts = Number(d.n);
+      $$("[data-act=serpartscnt]").forEach(b => { b.className = `btn sm ${Number(b.dataset.n) === curSeriesParts ? 'primary' : 'ghost'}`; });
+      if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "serpreview") {
+      const url = ($("#serUrlInput")?.value || "").trim();
+      if (!url) return toast("Paste a YouTube link first.", "bad");
+      b.disabled = true;
+      try {
+        curSeriesUrl = url;
+        $("#serPreviewSlot").innerHTML = `<div style="padding:14px;color:var(--dim);display:flex;align-items:center;gap:8px">${ic("spin")} Fetching video metadata…</div>`;
+        const plan = await send("/api/series/preview", {
+          url: curSeriesUrl,
+          mode: curSeriesMode,
+          duration_sec: curSeriesDur,
+          parts_count: curSeriesParts,
+          cliffhanger: curSeriesMode === "cliffhanger",
+          cadence: curSeriesCadence,
+          start_time: ($("#serStartTimeInput")?.value ? new Date($("#serStartTimeInput").value).getTime() / 1000 : null),
+          account_ids: $$("input[name=ser_acc]:checked").map(c => c.value)
+        });
+        curSeriesPlan = plan;
+        curSeriesPreview = plan.preview;
+        $("#serPreviewSlot").innerHTML = `
+          <div class="series-preview-card">
+            ${plan.preview?.thumb ? `<img src="${esc(plan.preview.thumb)}" alt="Thumb">` : ''}
+            <div>
+              <b style="font-size:14px;color:var(--brand-ink);display:block">${esc(plan.preview?.title || plan.title)}</b>
+              <span style="font-size:12px;color:var(--dim);margin-top:3px;display:block">
+                ⏱️ Duration: <b>${Math.round(plan.duration)}s</b> (${Math.round(plan.duration / 60)} min) · by ${esc(plan.preview?.uploader || "YouTube")}
+              </span>
+            </div>
+          </div>
+        `;
+        renderSerCalendarPreview(plan);
+        toast(`✅ Found video: ${plan.episodes.length} episodes planned!`, "ok");
+      } catch (err) {
+        $("#serPreviewSlot").innerHTML = `<div class="note" style="margin-top:10px">${ic("warn")}<span>${esc(err.message)}</span></div>`;
+        toast(err.message, "bad");
+      } finally {
+        b.disabled = false;
+      }
+      return;
+    }
+    if (a === "serlaunch") {
+      const url = ($("#serUrlInput")?.value || "").trim();
+      if (!url) return toast("Paste a YouTube link first.", "bad");
+      b.disabled = true;
+      b.innerHTML = `${ic("spin")} Splitting & Queuing…`;
+      try {
+        const accIds = $$("input[name=ser_acc]:checked").map(c => c.value);
+        const startVal = $("#serStartTimeInput")?.value;
+        const epochStart = startVal ? new Date(startVal).getTime() / 1000 : null;
+        await send("/api/series", {
+          url,
+          title: curSeriesPreview?.title || "",
+          mode: curSeriesMode,
+          duration_sec: curSeriesDur,
+          parts_count: curSeriesParts,
+          cliffhanger: curSeriesMode === "cliffhanger",
+          auto_post: curSeriesAutoPost,
+          cadence: curSeriesCadence,
+          start_time: epochStart,
+          account_ids: accIds
+        });
+        toast("🚀 Series launched! Episodes are being split and auto-scheduled.", "ok");
+        curSeriesUrl = ""; curSeriesPreview = null; curSeriesPlan = null;
+        await tick();
+        return drawSeries();
+      } catch (err) {
+        toast(err.message, "bad");
+      } finally {
+        b.disabled = false;
+        b.innerHTML = "🚀 Split & Launch Series Schedule";
+      }
+      return;
+    }
+    if (a === "serpostnow") {
+      b.disabled = true;
+      b.innerHTML = `${ic("spin")} Posting…`;
+      try {
+        await send(`/api/series/${d.sid}/post_now`, {cid: d.cid});
+        toast("🚀 Episode queued for immediate publishing!", "ok");
+        await tick();
+        return drawSeries();
+      } catch (err) {
+        toast(err.message, "bad");
+      } finally {
+        b.disabled = false;
+      }
+      return;
+    }
+    if (a === "serdelete") {
+      if (!confirm("Delete this series and cancel all waiting posts?")) return;
+      b.disabled = true;
+      try {
+        await api(`/api/series/${d.sid}`, {method:"DELETE"});
+        toast("Series deleted.", "ok");
+        await tick();
+        return drawSeries();
+      } catch (err) {
+        toast(err.message, "bad");
+      } finally {
+        b.disabled = false;
+      }
+      return;
+    }
+    if (a === "acctmenu") return openAcct(b);
     if (a === "bellread") { await markRead(); return openBell().then(openBell); }
     if (a === "ntgo") { closePops(); const l = d.link || ""; if (l.startsWith("/app")) { const [v, tab] = fromPath(l); return go(v, tab); } if (l.startsWith("/")) location.href = l; return; }
     if (a === "csave") return void await saveCreator();

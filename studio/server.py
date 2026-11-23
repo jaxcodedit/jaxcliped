@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Redirect
 from . import admin as admins
 from . import account, load
 from . import (accounts, ai, alerts, auth, config, creators, ctx, db, jobs, live, media, posting,
-               profiles, render, safe, transcribe, usage)
+               profiles, render, safe, series, transcribe, usage)
 
 from . import tools as _tools  # noqa: E402
 
@@ -1076,6 +1076,152 @@ def bulk_delete(body: dict = Body(...)):
     vids = [x for x in (body.get("videos") if isinstance(body.get("videos"), list) else [])[:300]
             if isinstance(x, str) and re.fullmatch(r"[\w\-]{8,60}", x)]
     return account.delete_many(vids, _pairs(body.get("clips")))
+
+
+# ================================================================ Series Studio & Episodes
+@app.get("/api/series")
+def list_user_series():
+    _need_verified()
+    all_s = series.list_series()
+    for s in all_s:
+        job = jobs.get(s.get("job_id"))
+        if job:
+            s["job_status"] = job.get("status")
+            s["job_progress"] = job.get("progress", 0.0)
+            s["job_stage"] = job.get("stage", "")
+            clip_map = {c["id"]: c for c in job.get("clips", [])}
+            for ep in s.get("episodes", []):
+                c = clip_map.get(ep.get("cid"))
+                if c:
+                    ep["render_status"] = c.get("status")
+                    if c.get("file"):
+                        ep["video_url"] = f"/media/{job['id']}/clips/{c['file']}"
+                    if c.get("thumb"):
+                        ep["thumb_url"] = f"/media/{job['id']}/clips/{c['thumb']}"
+                    if c.get("posts"):
+                        ep["posts"] = c["posts"]
+    return all_s
+
+
+@app.post("/api/series/preview")
+def preview_series_plan(body: dict = Body(...)):
+    _need_verified()
+    url = str(body.get("url", "")).strip()[:500]
+    if not media.site_allowed(url):
+        raise HTTPException(400, "Paste a valid link to a YouTube video.")
+    try:
+        meta = media.preview(url)
+    except Exception as e:
+        raise HTTPException(422, f"Could not open that video: {safe.friendly(e, 200)}")
+
+    dur = float(meta.get("duration") or 300.0)
+    title = meta.get("title") or "Series"
+    mode = str(body.get("mode") or "duration")
+    duration_sec = float(body.get("duration_sec") or 60.0)
+    parts_count = int(body.get("parts_count") or 4)
+    cliffhanger = bool(body.get("cliffhanger", True))
+    cadence = str(body.get("cadence") or "daily")
+    start_time = float(body.get("start_time")) if body.get("start_time") else None
+    account_ids = body.get("account_ids") or []
+
+    plan = series.plan_episodes(
+        duration=dur,
+        title=title,
+        mode=mode,
+        duration_sec=duration_sec,
+        parts_count=parts_count,
+        cliffhanger=cliffhanger,
+        cadence=cadence,
+        start_time=start_time,
+        account_ids=account_ids
+    )
+    plan["preview"] = meta
+    return plan
+
+
+@app.post("/api/series")
+def create_series_endpoint(body: dict = Body(...)):
+    _need_verified()
+    _quota()
+    url = str(body.get("url", "")).strip()[:500]
+    if not media.site_allowed(url):
+        raise HTTPException(400, "Paste a valid link to a YouTube video.")
+
+    title = str(body.get("title") or "").strip()[:200]
+    mode = str(body.get("mode") or "duration")
+    duration_sec = float(body.get("duration_sec") or 60.0)
+    parts_count = int(body.get("parts_count") or 4)
+    cliffhanger = bool(body.get("cliffhanger", True))
+    auto_post = bool(body.get("auto_post", False))
+    cadence = str(body.get("cadence") or "daily")
+    start_time = float(body.get("start_time")) if body.get("start_time") else None
+    account_ids = body.get("account_ids") or []
+    layout = str(body.get("layout") or "crop")
+    captions_style = str(body.get("style") or "phonk")
+
+    res = series.create_series(
+        url=url,
+        title=title,
+        mode=mode,
+        duration_sec=duration_sec,
+        parts_count=parts_count,
+        cliffhanger=cliffhanger,
+        auto_post=auto_post,
+        cadence=cadence,
+        start_time=start_time,
+        account_ids=account_ids,
+        layout=layout,
+        captions_style=captions_style
+    )
+    return res
+
+
+@app.post("/api/series/{sid}/post_now")
+def series_post_now(sid: str, body: dict = Body(...)):
+    _need_verified()
+    s = series.get_series(sid)
+    if not s:
+        raise HTTPException(404, "Series not found")
+    cid = str(body.get("cid", ""))
+    job = jobs.get(s["job_id"])
+    if not job:
+        raise HTTPException(404, "Job not found")
+    clip = next((c for c in job.get("clips", []) if c["id"] == cid), None)
+    if not clip or clip.get("status") != "done":
+        raise HTTPException(400, "This episode is still rendering. Wait for it to finish.")
+
+    target_accounts = s.get("account_ids", [])
+    if not target_accounts:
+        target_accounts = [a["id"] for a in accounts.list_accounts()]
+    if not target_accounts:
+        raise HTTPException(400, "No connected accounts found. Connect Instagram or YouTube in Settings > Connected Accounts.")
+
+    made = posting.enqueue(job, clip, target_accounts, now=True)
+    return {"ok": True, "posted": len(made)}
+
+
+@app.delete("/api/series/{sid}")
+def delete_series_endpoint(sid: str):
+    _need_verified()
+    s = series.get_series(sid)
+    if not s:
+        raise HTTPException(404, "Series not found")
+    for ep in s.get("episodes", []):
+        for p in posting._mine():
+            if p.get("job") == s["job_id"] and p.get("clip") == ep.get("cid") and p.get("status") == "scheduled":
+                try:
+                    posting.cancel(p["id"])
+                except Exception:
+                    pass
+    all_s = [x for x in series.list_series() if x.get("id") != sid]
+    series.save_series_list(all_s)
+    if s.get("job_id"):
+        try:
+            jobs.delete(s["job_id"])
+        except Exception:
+            pass
+    return {"ok": True}
+
 
 
 @app.get("/api/clips.zip")
