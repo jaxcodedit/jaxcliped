@@ -594,8 +594,8 @@ def _run_job(job):
             _set(job, thumb=True)
         usage.set_context(job["creator"], meta["title"])
         span = (o["range_end"] or meta["duration"]) - (o["range_start"] or 0)
-        pieces = span > LONG_VIDEO or meta["duration"] <= 0
-        if not pieces:  # shorter video: fetch all of it in the background while the audio is worked on
+        pieces = (span > LONG_VIDEO or meta["duration"] <= 0) and job.get("kind") != "series"
+        if not pieces:  # shorter video or series: fetch all of it in the background while the audio is worked on
             video = fetch.submit(media.download, src["url"], d, int(o["quality"]))
         audio_file = media.download_audio(src["url"], d, lambda p: _set(job, progress=0.03 + 0.1 * p))
     else:
@@ -625,15 +625,16 @@ def _run_job(job):
         """Wait for the background download once; retry it, or give up and use pieces."""
         with vlock:
             if "path" not in vstate:
-                path = None
-                try:
-                    path = video.result()
-                except Exception as e:  # noqa: BLE001 - sites sometimes refuse a download
-                    notes.append(f"Video download refused once ({str(e)[-80:]}), retrying")
+                path = (d / "source.mp4") if (d / "source.mp4").is_file() else None
+                if not path and video:
                     try:
-                        path = media.download(src["url"], d, int(o["quality"]))
-                    except Exception as e2:  # noqa: BLE001
-                        notes.append(f"Whole-video download failed ({str(e2)[-80:]}), fetching clip parts instead")
+                        path = video.result()
+                    except Exception as e:  # noqa: BLE001 - sites sometimes refuse a download
+                        notes.append(f"Video download refused once ({str(e)[-80:]}), retrying")
+                        try:
+                            path = media.download(src["url"], d, int(o["quality"]))
+                        except Exception as e2:  # noqa: BLE001
+                            notes.append(f"Whole-video download failed ({str(e2)[-80:]}), fetching clip parts instead")
                 if path:
                     info = media.probe(path)
                     job.update(source_path=str(path), width=info["width"], height=info["height"])
@@ -646,7 +647,8 @@ def _run_job(job):
 
     def make(clip, words_now):
         began[clip["id"]] = time.time()
-        if src["type"] == "url" and (pieces or not whole_video()):
+        wv = whole_video() if (not pieces or (d / "source.mp4").is_file()) else None
+        if src["type"] == "url" and not wv and not clip.get("src"):
             _fetch_piece(job, clip, audio)
         if clip["status"] != "error" and clip.get("captions", True) and yt and yt[1].lower().startswith("en"):
             # The clip was found with YouTube's transcript. What is shown on screen comes from our own model,
