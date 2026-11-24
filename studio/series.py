@@ -386,13 +386,16 @@ def restart_series_job(sid: str, user_id: str = None) -> dict:
         # Pre-populate job clips matching the existing planned episodes
         job_clips = []
         for ep in s.get("episodes", []):
+            is_done = bool(ep.get("video_file"))
             job_clips.append({
                 "id": ep["cid"],
                 "title": ep["title"],
                 "hook": ep.get("hook", f"Part {ep.get('part')}"),
                 "start": ep["start"],
                 "end": ep["end"],
-                "status": "queued",
+                "status": "done" if is_done else "queued",
+                "file": ep.get("video_file"),
+                "thumb": ep.get("thumb_file"),
                 "score": 95,
                 "scheduled_due_at": ep.get("due_at") if auto_post else None,
                 "target_accounts": account_ids if auto_post else [],
@@ -419,12 +422,17 @@ def on_series_clip_done(job: dict, clip: dict):
     if not s:
         return
 
-    # Update episode in series record
+    # Update episode in series record so it is immediately playable & ready to post
     for ep in s.get("episodes", []):
         if ep["cid"] == clip["id"]:
             ep["status"] = "ready"
+            ep["render_status"] = "done"
             ep["video_file"] = clip.get("file")
             ep["thumb_file"] = clip.get("thumb")
+            if clip.get("file"):
+                ep["video_url"] = f"/media/{job['id']}/clips/{clip['file']}"
+            if clip.get("thumb"):
+                ep["thumb_url"] = f"/media/{job['id']}/clips/{clip['thumb']}"
             break
 
     # If auto-post enabled and not yet posted/scheduled in posting.py

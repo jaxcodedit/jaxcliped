@@ -778,16 +778,34 @@ def _run_job(job):
         job["done_blocks"] = bi + 1       # a restart from here on carries on with the next part
         save(job)
     if job.get("kind") == "series":
-        _set(job, stage="Rendering series episodes", progress=0.88)
-        for c in job["clips"]:
-            if c.get("status") not in ("done", "error"):
-                c.update(style=o.get("style", "phonk"), layout=o.get("layout", "crop"),
-                         captions=o.get("captions", True), status="queued", version=0)
-                futures.append((renders.submit(ctx.bind(make), c, list(words)), c))
-        save(job)
-    if futures:
-        _set(job, stage="Finishing the clips", progress=max(job["progress"], 0.92))
-    _wait_for_clips(job, futures, began, renders._max_workers)
+        total_ser = len(job["clips"])
+        for idx, c in enumerate(job["clips"]):
+            if c.get("status") in ("done", "error"):
+                continue
+            part_num = idx + 1
+            # Mark this single episode as actively rendering so the UI shows "Making Part X…"
+            c.update(style=o.get("style", "phonk"), layout=o.get("layout", "crop"),
+                     captions=o.get("captions", True), status="rendering", version=0)
+            _set(job, stage=f"Rendering Part {part_num} of {total_ser}…",
+                 progress=round(0.15 + 0.83 * (idx / max(1, total_ser)), 2))
+            save(job)
+
+            # Render Part X sequentially with 100% CPU so it finishes and is ready to post immediately
+            try:
+                make(c, list(words))
+            except Exception as e:
+                c.update(status="error", error=safe.friendly(e, 400))
+                creators.log(job["creator"], f"Part {part_num} failed: {safe.friendly(e, 200)}")
+
+            save(job)
+            done_cnt = len([x for x in job["clips"] if x.get("status") == "done"])
+            _set(job, stage=f"Part {part_num} ready to post · {done_cnt}/{total_ser} episodes ready",
+                 progress=round(0.15 + 0.83 * ((idx + 1) / max(1, total_ser)), 2))
+            save(job)
+    else:
+        if futures:
+            _set(job, stage="Finishing the clips", progress=max(job["progress"], 0.92))
+        _wait_for_clips(job, futures, began, renders._max_workers)
     if exact:           # keep our own words for the clips in the saved transcript, so editing a clip later uses them
         for a_s, b_s, tw in exact.values():
             words = [w for w in words if not a_s <= w["s"] < b_s] + tw
