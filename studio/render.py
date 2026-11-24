@@ -402,7 +402,17 @@ def _render_in(work: Path, src: Path, out_dir: Path, name: str, start, end, layo
     has_reactor = bool(reactor and Path(reactor).is_file())
     is_green = has_reactor and any(k in str(reactor).lower() for k in ("green", "hikaru", "speed", "girl"))
     dur = f"{end - start:.2f}"
-    fc = _filter(layout, fg_h, face, has_reactor=has_reactor, is_green_screen=is_green) + f"[v0]ass={name}.ass:fontsdir=f[v]"
+    dur_f = max(0.1, float(dur))
+    filt_base = _filter(layout, fg_h, face, has_reactor=has_reactor, is_green_screen=is_green)
+    # Animated watch-time progress bar along the bottom edge of the clip
+    show_pbar = clip.get("progress_bar", True)
+    if show_pbar:
+        fc = (filt_base +
+              f"[v0]drawbox=x=0:y=ih-12:w=iw:h=12:color=black@0.35:t=fill,"
+              f"drawbox=x=0:y=ih-12:w='min(iw\\,iw*t/{dur_f:.2f})':h=12:color=0x0071E3:t=fill[v_pbar];"
+              f"[v_pbar]ass={name}.ass:fontsdir=f[v]")
+    else:
+        fc = filt_base + f"[v0]ass={name}.ass:fontsdir=f[v]"
     base = ["ffmpeg", "-y", "-v", "error", "-ss", f"{start:.2f}", "-t", dur, "-i", str(src)]
     next_idx = 1
     if has_reactor:
