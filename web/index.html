@@ -2545,17 +2545,17 @@ function renderSerModeOptions() {
           ${curSeriesMode === 'parts' ? `
             <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Total Number of Parts (Any count!)</label>
             <div style="display:flex;align-items:center;gap:8px">
-              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || 4}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" oninput="curSeriesParts=parseInt(this.value)||4">
+              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || 4}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" oninput="curSeriesParts=parseInt(this.value)||4;const bi=$('#serBarPartsInput');if(bi)bi.value=this.value;if(curSeriesUrl)updateSerPlan()">
               <span style="font-size:12px;color:var(--dim)">parts</span>
             </div>
             <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
               ${[3, 4, 5, 8, 10, 15, 20, 30, 50, 100].map(n => `
-                <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n}">${n}</button>
+                <button type="button" class="btn sm ${curSeriesParts===n?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n};const bi=$('#serBarPartsInput');if(bi)bi.value=${n};if(curSeriesUrl)updateSerPlan()">${n}</button>
               `).join('')}
             </div>
           ` : curSeriesMode === 'duration' ? `
             <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Target Episode Duration</label>
-            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60">
+            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60;if(curSeriesUrl)updateSerPlan()">
               <option value="30" ${curSeriesDur===30?'selected':''}>30s · Bite-Sized</option>
               <option value="45" ${curSeriesDur===45?'selected':''}>45s · Medium Short</option>
               <option value="60" ${curSeriesDur===60?'selected':''}>60s · Shorts / Reels ⭐</option>
@@ -2564,13 +2564,19 @@ function renderSerModeOptions() {
               <option value="180" ${curSeriesDur===180?'selected':''}>180s · 3 Minutes</option>
             </select>
           ` : `
-            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Target Episode Duration</label>
-            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60">
-              <option value="60" ${curSeriesDur===60?'selected':''}>~60s (Recommended for Shorts/Reels) ⭐</option>
-              <option value="30" ${curSeriesDur===30?'selected':''}>~30s (Fast-Paced Suspense)</option>
-              <option value="90" ${curSeriesDur===90?'selected':''}>~90s (Extended Cliffhangers)</option>
-              <option value="120" ${curSeriesDur===120?'selected':''}>~120s (2-Minute Parts)</option>
-            </select>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <label style="font-size:12px;font-weight:700;color:var(--brand-ink);margin:0">Number of Cliffhanger Parts (Custom)</label>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || ''}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" placeholder="Auto ~60s" oninput="curSeriesParts=this.value?parseInt(this.value):null;if(curSeriesUrl)updateSerPlan()">
+              <span style="font-size:12px;color:var(--dim)">parts (or pick quick count below):</span>
+            </div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
+              <button type="button" class="btn sm ${!curSeriesParts?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=null;$('#serCustomPartsInput').value='';if(curSeriesUrl)updateSerPlan()">Auto (~60s)</button>
+              ${[3, 4, 5, 8, 10, 15, 20, 30].map(n => `
+                <button type="button" class="btn sm ${curSeriesParts===n?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n};if(curSeriesUrl)updateSerPlan()">${n} Parts</button>
+              `).join('')}
+            </div>
           `}
         </div>
 
@@ -2665,6 +2671,9 @@ function openSeriesScheduleModal(s) {
 
     return `
       <div class="editsched-ep-row" data-cid="${esc(ep.cid)}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line-2);background:#fff">
+        <div style="flex:none;display:flex;align-items:center">
+          ${isPosted ? '' : `<input type="checkbox" class="editsched-toggle-chk" ${ep.skip ? '' : 'checked'} style="width:16px;height:16px;accent-color:var(--brand);cursor:pointer;margin-right:4px" title="Uncheck to exclude this part from automated schedule">`}
+        </div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px">
             <span class="cal-badge ${ep.cliffhanger ? 'cliff' : ''}" style="font-size:10px">Part ${ep.part}</span>
@@ -2754,7 +2763,16 @@ function openSeriesScheduleModal(s) {
 
         <!-- Individual Episodes -->
         <div style="margin-bottom:14px">
-          <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Fine-Tune Individual Episode Drops (${(s.episodes || []).length} Episodes)</label>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);margin:0">Fine-Tune Episodes & Parts (${(s.episodes || []).length} Total)</label>
+            <div style="display:flex;gap:4px">
+              <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600" onclick="$$('.editsched-toggle-chk').forEach(c=>c.checked=true)">All Parts</button>
+              <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600" onclick="$$('.editsched-toggle-chk').forEach((c,i)=>c.checked=i<5)">First 5</button>
+              <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600" onclick="$$('.editsched-toggle-chk').forEach((c,i)=>c.checked=i<10)">First 10</button>
+              <button type="button" class="btn sm ghost" style="padding:2px 8px;font-size:11px;font-weight:600" onclick="$$('.editsched-toggle-chk').forEach((c,i)=>c.checked=i<15)">First 15</button>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--dim);margin:0 0 8px">Uncheck any parts you don't want published (or click <b>First 5 / First 10</b> to limit series length):</p>
           <div style="border:1px solid var(--line-2);border-radius:8px;overflow:hidden">
             ${episodesHtml}
           </div>
@@ -2977,6 +2995,10 @@ async function drawSeries() {
             <button type="button" class="chip ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Mode</button>
             <button type="button" class="chip ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ By Duration</button>
             <button type="button" class="chip ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">🔢 By Part Count</button>
+            <span id="serBarPartsWrap" style="display:${curSeriesMode==='parts'?'inline-flex':'none'};align-items:center;gap:4px;background:rgba(0,113,227,0.08);padding:3px 8px;border-radius:20px;border:1px solid rgba(0,113,227,0.25)">
+              <span style="font-size:11px;font-weight:700;color:var(--brand)">Parts:</span>
+              <input type="number" id="serBarPartsInput" value="${curSeriesParts || 4}" min="2" max="500" style="width:52px;height:24px;border:1px solid var(--line);border-radius:12px;font-weight:700;font-size:12px;text-align:center;background:#fff;color:var(--brand-ink)" oninput="curSeriesParts=parseInt(this.value)||4;const el=$('#serCustomPartsInput');if(el)el.value=this.value;if(curSeriesUrl)updateSerPlan()">
+            </span>
             <span style="flex:1"></span>
             <button type="button" class="chip ${curSeriesOptsOpen ? 'on' : ''}" data-act="sertoggleopts" style="display:inline-flex;align-items:center;gap:6px">${ic("sliders")}Schedule & Options</button>
           </div>
@@ -3583,6 +3605,15 @@ document.addEventListener("click", async e => {
     if (a === "sermode") {
       curSeriesMode = d.m;
       $$("[data-act=sermode]").forEach(c => c.classList.toggle("on", c.dataset.m === d.m));
+      const barParts = $("#serBarPartsWrap");
+      if (barParts) barParts.style.display = (d.m === "parts") ? "inline-flex" : "none";
+      if (d.m === "parts") {
+        curSeriesOptsOpen = true;
+        const panel = $("#serOptsPanel");
+        if (panel) panel.style.display = "block";
+        const btn = $("[data-act=sertoggleopts]");
+        if (btn) btn.classList.add("on");
+      }
       renderSerModeOptions();
       if (curSeriesUrl) updateSerPlan();
       return;
@@ -3825,10 +3856,12 @@ document.addEventListener("click", async e => {
           const cid = row.dataset.cid;
           const dueInput = row.querySelector(".ep-due-input");
           const titleInput = row.querySelector(".ep-title-input");
+          const chk = row.querySelector(".editsched-toggle-chk");
           return {
             cid,
             due_at: dueInput?.value ? new Date(dueInput.value).getTime() / 1000 : null,
-            title: titleInput?.value || ""
+            title: titleInput?.value || "",
+            skip: chk ? !chk.checked : false
           };
         });
 

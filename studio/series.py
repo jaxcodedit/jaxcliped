@@ -500,6 +500,8 @@ def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
                     ep["due_formatted"] = datetime.fromtimestamp(new_due).strftime("%a, %b %d · %I:%M %p")
                 if "title" in patch and patch["title"]:
                     ep["title"] = str(patch["title"])[:200]
+                if "skip" in patch:
+                    ep["skip"] = bool(patch["skip"])
 
     # 6. Save updated series record
     update_series(sid, {
@@ -518,8 +520,8 @@ def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
         for ep in s.get("episodes", []):
             c = job_clips_map.get(ep["cid"])
             if c:
-                c["scheduled_due_at"] = ep["due_at"] if s.get("auto_post") else None
-                c["target_accounts"] = s.get("account_ids", [])
+                c["scheduled_due_at"] = (ep["due_at"] if (s.get("auto_post") and not ep.get("skip")) else None)
+                c["target_accounts"] = s.get("account_ids", []) if not ep.get("skip") else []
                 c["title"] = ep["title"]
         jobs.save(job)
 
@@ -529,7 +531,7 @@ def reschedule_series(sid: str, cadence: str = None, start_time: float = None,
             if p.get("job") == job["id"]:
                 matching_ep = next((e for e in s.get("episodes", []) if e["cid"] == p.get("clip")), None)
                 if matching_ep and p.get("status") == "scheduled":
-                    if not s.get("auto_post"):
+                    if not s.get("auto_post") or matching_ep.get("skip"):
                         try:
                             posting.cancel(p["id"])
                         except Exception:
