@@ -2149,9 +2149,13 @@ function clipHtml(j, c) {
     : c.status === "error" ? `<span class="making" style="animation:none;color:var(--bad);background:var(--bad-soft)">Could not make this clip. Open it to try again.</span>`
     : `<span class="making">${c.status === "rendering" ? "Making this clip…" : "Waiting its turn…"}</span>`;
   const key = `c:${j.id}:${c.id}`, busyClip = c.status === "queued" || c.status === "rendering";
+  const partMatch = (c.hook || c.title || "").match(/PART\s+(\d+)/i) || (c.title || "").match(/Part\s+(\d+)/i);
+  const isSeries = j.kind === "series" || c.cliffhanger || Boolean(partMatch);
+  const badgeText = isSeries && partMatch ? `Part ${partMatch[1]}` : (c.score || "Hand");
+  const badgeTitle = isSeries ? `Series Episode ${partMatch ? partMatch[1] : ''} · AI Score: ${c.score || 95}` : `AI score: ${c.score || 'Hand'}`;
   return `<article class="clip ${sel().has(key) ? "picked" : ""}">
     <button class="shot" data-act="openclip" ${a} aria-label="Open clip: ${esc(c.title || c.hook)}">${body}
-      <span class="badge l ${scoreCls(c.score)}" title="AI score">${c.score || "Hand"}</span><span class="badge r">${fmt(c.end - c.start)}</span></button>
+      <span class="badge l ${scoreCls(c.score)}" title="${esc(badgeTitle)}">${badgeText}</span><span class="badge r">${fmt(c.end - c.start)}</span></button>
     <div class="clip-body">
       <div class="hook">${esc(c.hook || "Untitled clip")}</div>
       <div class="ttl">${esc(c.title)}</div>
