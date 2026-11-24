@@ -1258,6 +1258,31 @@ def delete_series_endpoint(sid: str):
     return {"ok": True}
 
 
+@app.delete("/api/series/{sid}/episodes/{cid}")
+def delete_series_episode_endpoint(sid: str, cid: str):
+    _need_verified()
+    s = series.get_series(sid)
+    if not s:
+        raise HTTPException(404, "Series not found")
+    # Cancel any scheduled post for this episode
+    for p in posting._mine():
+        if p.get("job") == s.get("job_id") and p.get("clip") == cid and p.get("status") == "scheduled":
+            try:
+                posting.cancel(p["id"])
+            except Exception:
+                pass
+    # Remove from episodes list
+    s["episodes"] = [ep for ep in s.get("episodes", []) if ep.get("cid") != cid]
+    all_s = [x if x.get("id") != sid else s for x in series.list_series()]
+    series.save_series_list(all_s)
+    if s.get("job_id"):
+        try:
+            account.delete_clip(s["job_id"], cid)
+        except Exception:
+            pass
+    return {"ok": True, "episodes": len(s["episodes"])}
+
+
 @app.put("/api/series/{sid}/schedule")
 def update_series_schedule_endpoint(sid: str, body: dict = Body(...)):
     _need_verified()

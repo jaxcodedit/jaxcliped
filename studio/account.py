@@ -28,7 +28,7 @@ def delete_clip(jid: str, cid: str) -> bool:
     if not clip:
         return False
     if clip.get("status") in ("queued", "rendering"):
-        raise Busy("This clip is still being made. Wait for it to finish first.")
+        clip["status"] = "cancelled"
     job["clips"] = [c for c in job["clips"] if c["id"] != cid]
     jobs.save(job)
     d = Path(job["dir"])

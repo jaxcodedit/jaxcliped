@@ -335,6 +335,7 @@ def delete(jid):
     with _lock:
         job = _jobs.pop(jid, None)
         if job:
+            job["cancelled"] = True
             _by_user.get(job["user"], {}).pop(jid, None)
     if job:
         ctx.bump(job["user"])
@@ -780,7 +781,9 @@ def _run_job(job):
     if job.get("kind") == "series":
         total_ser = len(job["clips"])
         for idx, c in enumerate(job["clips"]):
-            if c.get("status") in ("done", "error"):
+            if job.get("cancelled") or job["id"] not in _jobs:
+                break
+            if c.get("status") in ("done", "error", "cancelled", "skipped"):
                 continue
             part_num = idx + 1
             # Mark this single episode as actively rendering so the UI shows "Making Part X…"

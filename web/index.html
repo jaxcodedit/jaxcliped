@@ -2186,10 +2186,10 @@ function clipHtml(j, c) {
       <div class="ttl">${esc(c.title)}</div>
       ${postPills(c) ? `<div class="row" style="gap:4px">${postPills(c)}</div>` : ""}
       <div class="clip-foot">
-        ${busyClip ? "" : `<label class="selck" title="Select this clip"><input type="checkbox" data-sel="${key}" ${sel().has(key) ? "checked" : ""} aria-label="Select this clip"></label>`}
+        <label class="selck" title="Select this clip"><input type="checkbox" data-sel="${key}" ${sel().has(key) ? "checked" : ""} aria-label="Select this clip"></label>
         ${c.status === "done" ? `<a class="btn sm icon ghost" href="${m}${esc(c.file)}?download=1" title="Download" aria-label="Download">${ic("down")}</a>` : ""}
         <button class="btn sm icon ghost" data-act="copy" ${a} title="Copy post text" aria-label="Copy post text">${ic("copy")}</button>
-        ${busyClip ? "" : `<button class="btn sm icon ghost" data-act="delclip" ${a} title="Delete this clip" aria-label="Delete this clip">${ic("trash")}</button>`}
+        <button class="btn sm icon ghost danger" data-act="delclip" ${a} title="${busyClip ? 'Cancel and delete this rendering clip' : 'Delete this clip'}" aria-label="Delete clip">${ic("trash")}</button>
         <span class="grow"></span>
         ${c.status === "done" ? `<button class="btn sm" data-act="openclip" ${a}>${ic("send")}Post</button>` : ""}
       </div>
@@ -2805,11 +2805,16 @@ function openSeriesScheduleModal(s) {
         </div>
       </div>
 
-      <div class="dlg-foot" style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--line-2);padding-top:14px;margin-top:14px;flex:none">
-        <button class="btn" type="button" data-act="closedlg">Cancel</button>
-        <button class="btn primary" id="saveSchedBtn" type="button" data-act="savesched" data-sid="${esc(s.id)}" style="font-weight:700">
-          💾 Save Schedule Changes
+      <div class="dlg-foot" style="display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line-2);padding-top:14px;margin-top:14px;flex:none">
+        <button class="btn danger ghost" type="button" data-act="serdelete" data-sid="${esc(s.id)}" style="font-weight:600">
+          ${ic("trash")} Delete Series Schedule
         </button>
+        <div style="display:flex;gap:10px">
+          <button class="btn" type="button" data-act="closedlg">Cancel</button>
+          <button class="btn primary" id="saveSchedBtn" type="button" data-act="savesched" data-sid="${esc(s.id)}" style="font-weight:700">
+            💾 Save Schedule Changes
+          </button>
+        </div>
       </div>
     </form>
   `;
@@ -2873,7 +2878,9 @@ function drawSeriesList(allSeries) {
             <button class="btn sm secondary" data-act="sereditsched" data-sid="${esc(s.id)}" style="display:inline-flex;align-items:center;gap:6px;font-weight:600;border-radius:8px">
               ${ic("sliders")}Edit Schedule
             </button>
-            <button class="btn sm icon ghost" data-act="serdelete" data-sid="${esc(s.id)}" title="Delete Series" aria-label="Delete series">${ic("trash")}</button>
+            <button class="btn sm danger ghost" data-act="serdelete" data-sid="${esc(s.id)}" title="Delete this series and cancel all waiting posts" style="display:inline-flex;align-items:center;gap:5px;font-weight:600;border-radius:8px">
+              ${ic("trash")}Delete Schedule
+            </button>
           </div>
         </div>
 
@@ -2956,8 +2963,13 @@ function drawSeriesList(allSeries) {
                     ${ep.video_url ? `
                       <a class="btn sm icon ghost" href="${esc(ep.video_url)}" download="${esc(ep.title)}.mp4" title="Download">${ic("down")}</a>
                     ` : ''}
+                    <button class="btn sm icon ghost" data-act="sepepdelete" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" title="${ep.render_status === 'rendering' ? 'Cancel and skip this rendering clip' : 'Delete this part from schedule'}" aria-label="Delete part">${ic("trash")}</button>
                     <span class="grow"></span>
-                    ${epDone && !isPosted ? `
+                    ${ep.render_status === 'rendering' ? `
+                      <button class="btn sm danger ghost" data-act="sepepdelete" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" style="font-size:11px;height:28px;font-weight:600">
+                        Cancel Clip
+                      </button>
+                    ` : epDone && !isPosted ? `
                       <button class="btn sm primary" data-act="serpostnow" data-sid="${esc(s.id)}" data-cid="${esc(ep.cid)}" style="font-size:11px;height:28px">
                         ${ic("send")}Post now
                       </button>
@@ -3902,10 +3914,30 @@ document.addEventListener("click", async e => {
       try {
         await api(`/api/series/${d.sid}`, {method:"DELETE"});
         toast("Series deleted.", "ok");
+        $("#formdlg")?.close();
         await tick();
         return drawSeries();
       } catch (err) {
         toast(err.message, "bad");
+      } finally {
+        b.disabled = false;
+      }
+      return;
+    }
+    if (a === "sepepdelete") {
+      const isRendering = b.textContent.includes("Cancel") || b.title.includes("Cancel");
+      const msg = isRendering
+        ? "Cancel and stop rendering this clip? The studio will skip it and move to the next episode."
+        : "Delete this episode part from the series schedule?";
+      if (!confirm(msg)) return;
+      b.disabled = true;
+      try {
+        await api(`/api/series/${d.sid}/episodes/${d.cid}`, {method:"DELETE"});
+        toast(isRendering ? "Rendering cancelled, moving to next part." : "Episode deleted.", "ok");
+        await tick();
+        return drawSeries();
+      } catch (err) {
+        toast(err.message || "Failed to delete episode.", "bad");
       } finally {
         b.disabled = false;
       }
