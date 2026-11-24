@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg?v=jaxcliped7"/>
-  <link rel="apple-touch-icon" href="/brand/favicon.svg?v=jaxcliped7"/>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-  <title>JaxCliped — AI Clip Maker for Streams & Videos</title>
-  <meta name="description" content="JaxCliped turns Twitch, Kick and YouTube live streams into viral, captioned vertical TikToks, Reels and Shorts with beat-synced phonk captions and AI reactions."/>
+  <title>JaxCliped — #1 AI Long-to-Shorts & Series Splitter Engine</title>
+  <meta name="description" content="Turn long YouTube videos, Twitch streams, and gaming podcasts into viral 9:16 Shorts, Reels, and TikToks with AI cliffhangers, phonk beat-sync captions, and 1-click auto-posting."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -21,11 +20,13 @@
             phonk: ['"Archivo Black"', 'sans-serif'],
           },
           colors: {
-            apple: {
+            brand: {
+              cyan: '#00F0FF',
               blue: '#0071E3',
-              hover: '#0077ED',
-              dark: '#1D1D1F',
-              sub: '#86868B',
+              indigo: '#6366F1',
+              dark: '#080B11',
+              card: '#0F1523',
+              cardborder: '#1E293B',
             }
           }
         }
@@ -34,136 +35,135 @@
   </script>
   <style>
     body {
-      background-color: #FBFBFD;
-      color: #1D1D1F;
+      background-color: #07090E;
+      color: #F1F5F9;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* iOS Frosted Glass */
-    .ios-glass {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(35px) saturate(190%);
-      -webkit-backdrop-filter: blur(35px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      box-shadow: 
-        0 20px 40px -15px rgba(0, 0, 0, 0.05),
-        0 0 1px 1px rgba(255, 255, 255, 0.9) inset;
+    /* Subtle background grid */
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    .ios-glass-card {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(25px) saturate(180%);
-      -webkit-backdrop-filter: blur(25px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 
-        0 15px 35px -10px rgba(0, 0, 0, 0.04),
-        0 0 1px 1px rgba(255, 255, 255, 0.8) inset;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Sleek Dark Glassmorphism */
+    .dark-glass {
+      background: rgba(15, 21, 35, 0.75);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     }
-    .ios-glass-card:hover {
+
+    .dark-card {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.8) 0%, rgba(13, 18, 30, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dark-card:hover {
       transform: translateY(-4px);
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 
-        0 25px 50px -12px rgba(0, 113, 227, 0.12),
-        0 0 1px 1px rgba(255, 255, 255, 1) inset;
+      border-color: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 20px 40px -12px rgba(0, 240, 255, 0.15);
     }
 
-    /* Organic Apple Wallpaper Flowing Blobs */
-    .hero-glow-1 {
+    /* Ambient glowing orbs */
+    .ambient-glow-1 {
       position: absolute;
-      top: -100px;
-      left: 10%;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, rgba(191, 219, 254, 0.7) 0%, rgba(224, 231, 255, 0.3) 60%, transparent 100%);
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .hero-glow-2 {
-      position: absolute;
-      top: 50px;
-      right: 5%;
+      top: -120px;
+      left: 15%;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(254, 205, 211, 0.6) 0%, rgba(233, 213, 255, 0.35) 60%, transparent 100%);
-      filter: blur(90px);
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.14) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 80%);
+      filter: blur(100px);
       pointer-events: none;
       z-index: 0;
     }
-    .hero-glow-3 {
+    .ambient-glow-2 {
       position: absolute;
-      top: 550px;
-      left: 35%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(186, 230, 253, 0.5) 0%, rgba(243, 232, 255, 0.25) 70%, transparent 100%);
-      filter: blur(90px);
+      top: 250px;
+      right: 5%;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(217, 70, 239, 0.06) 50%, transparent 80%);
+      filter: blur(110px);
       pointer-events: none;
       z-index: 0;
     }
 
-    /* Word Pop Animation */
-    @keyframes wordPop {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); color: #00F0FF; text-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+    /* Phonk dynamic pulse text */
+    @keyframes phonkPop {
+      0%, 100% { transform: scale(1); text-shadow: 0 0 15px rgba(0,240,255,0.7); color: #00F0FF; }
+      50% { transform: scale(1.1); text-shadow: 0 0 25px rgba(0,240,255,1), 0 0 40px rgba(0,113,227,0.8); color: #FFFFFF; }
     }
-    .animate-word-pop {
-      animation: wordPop 1.8s infinite ease-in-out;
+    .animate-phonk {
+      animation: phonkPop 1.8s infinite ease-in-out;
+    }
+
+    /* Animated Watch Time Progress Bar */
+    @keyframes watchProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .animate-watch-pbar {
+      animation: watchProgress 6s linear infinite;
     }
   </style>
 </head>
-<body class="selection:bg-blue-100 selection:text-blue-900">
+<body class="bg-[#07090E] bg-grid text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
 
   <!-- Ambient Light Blobs -->
-  <div class="hero-glow-1"></div>
-  <div class="hero-glow-2"></div>
-  <div class="hero-glow-3"></div>
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
 
-  <!-- Navigation Bar (iOS Glass Pill) -->
-  <header class="fixed top-4 left-0 right-0 z-50 px-4 sm:px-6 max-w-5xl mx-auto">
-    <nav class="ios-glass rounded-full px-5 py-3 flex items-center justify-between">
+  <!-- Top Announcement Bar -->
+  <aside aria-label="Announcement" class="relative z-50 bg-gradient-to-r from-cyan-900/40 via-indigo-900/50 to-blue-900/40 border-b border-cyan-500/20 py-2 px-4 text-center text-xs font-semibold text-cyan-200">
+    <div class="max-w-5xl mx-auto flex items-center justify-center gap-2">
+      <span class="inline-block px-2 py-0.5 rounded-full bg-cyan-400 text-black font-extrabold text-[10px] uppercase tracking-wider">Launch Sale</span>
+      <span>90% OFF Creator & Business Tiers · All Plans in Rupees (₹) with Instant UPI</span>
+      <a href="#pricing" class="underline hover:text-white ml-1">View Pricing &rarr;</a>
+    </div>
+  </aside>
+
+  <!-- Sticky Navbar -->
+  <header class="fixed top-8 left-0 right-0 z-50 px-4 sm:px-6 max-w-5xl mx-auto">
+    <nav class="dark-glass rounded-full px-5 py-3 flex items-center justify-between border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
       
-      <!-- Brand Logo -->
+      <!-- Logo -->
       <a href="/" class="flex items-center gap-2.5 group">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0071E3] via-[#38BDF8] to-[#818CF8] p-0.5 shadow-md flex items-center justify-center transition-transform group-hover:scale-105">
-          <div class="w-full h-full bg-white/20 backdrop-blur-md rounded-[10px] flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-[0_0_15px_rgba(0,240,255,0.4)] flex items-center justify-center transition-transform group-hover:scale-105">
+          <div class="w-full h-full bg-[#090D14] rounded-[10px] flex items-center justify-center">
+            <svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
               <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm9.64-10.36L22 3h-3l-5 5 1.64 1.64z"/>
             </svg>
           </div>
         </div>
-        <span class="text-lg font-bold tracking-tight text-[#1D1D1F]">Jax<span class="text-[#0071E3]">Cliped</span></span>
+        <span class="text-lg font-bold tracking-tight text-white">Jax<span class="text-cyan-400">Cliped</span></span>
       </a>
 
-      <!-- Menu Links (Desktop Only) -->
-      <div class="hidden md:flex items-center gap-6 text-xs font-semibold text-[#86868B]">
-        <a href="#features" class="hover:text-[#1D1D1F] transition">Features</a>
-        <a href="#pricing" class="text-[#0071E3] font-bold hover:text-[#0077ED] transition flex items-center gap-1">Pricing <span class="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-extrabold animate-pulse">90% OFF</span></a>
-        <a href="#phonk" class="hover:text-[#1D1D1F] transition">Phonk Styling</a>
-        <a href="#faq" class="hover:text-[#1D1D1F] transition">FAQ</a>
-        <a href="https://github.com/jaxcodedit/jaxcliped" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-[#1D1D1F] font-bold hover:text-[#0071E3] transition">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          GitHub ⭐
-        </a>
-        <a href="https://wa.me/918360101258?text=Hi%20JaxCliped%20Team%2C%20I%20want%20the%20JaxCliped%20source%20code" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-emerald-600 font-bold hover:text-emerald-700 transition">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.55 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.18 8.18 0 0 1-5.82 2.41h-.01c-1.42 0-2.82-.37-4.05-1.07l-.29-.17-3.01.79.8-2.93-.19-.3a8.212 8.212 0 0 1-1.25-4.57c0-4.54 3.7-8.24 8.25-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.22.89 2.41 1.02 2.58.12.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.18-.47-.3z"/></svg>
-          WhatsApp
-        </a>
-        <a href="https://www.instagram.com/jaxcliped/" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-pink-600 font-bold hover:text-pink-700 transition">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          @jaxcliped
-        </a>
+      <!-- Menu Links -->
+      <div class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-400">
+        <a href="#features" class="hover:text-cyan-400 transition">Features</a>
+        <a href="#series" class="hover:text-cyan-400 transition">Series Splitter</a>
+        <a href="#comparison" class="hover:text-cyan-400 transition">Why JaxCliped</a>
+        <a href="#pricing" class="hover:text-cyan-400 transition">Pricing (₹)</a>
+        <a href="#faq" class="hover:text-cyan-400 transition">FAQ</a>
       </div>
 
-      <!-- Auth Actions -->
-      <div class="flex items-center gap-2 shrink-0">
-        <a href="/login" class="hidden sm:inline-block px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#1D1D1F] hover:bg-black/5 transition">
+      <!-- Quick Social + Auth Actions -->
+      <div class="flex items-center gap-2.5">
+        <a href="https://wa.me/918360101258?text=Hi%20JaxCliped%20Support%2C%20I%20have%20a%20question%20about%20plans" target="_blank" rel="noopener" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.55 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.18 8.18 0 0 1-5.82 2.41h-.01c-1.42 0-2.82-.37-4.05-1.07l-.29-.17-3.01.79.8-2.93-.19-.3a8.212 8.212 0 0 1-1.25-4.57c0-4.54 3.7-8.24 8.25-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.22.89 2.41 1.02 2.58.12.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.18-.47-.3z"/></svg>
+          WhatsApp
+        </a>
+        <a href="/login?next=/app?select_plan=1" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition">
           Sign In
         </a>
-        <a href="/app" class="px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-semibold shadow-[0_4px_12px_rgba(0,113,227,0.3)] transition active:scale-95 flex items-center gap-1.5 whitespace-nowrap">
-          <span>Open Studio</span>
+        <a href="/signup?next=/app?select_plan=1" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-xs shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all active:scale-95 flex items-center gap-1">
+          <span>Start Free</span>
           <span class="material-symbols-rounded text-sm">arrow_forward</span>
         </a>
       </div>
@@ -172,381 +172,639 @@
   </header>
 
   <!-- Hero Section -->
-  <main class="relative z-10 pt-32 sm:pt-40 pb-20 px-4 sm:px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
+  <main class="relative z-10 pt-36 sm:pt-44 pb-24 px-4 sm:px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
     
-    <!-- Floating Tag -->
-    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 border border-white/80 shadow-[0_2px_10px_rgba(0,0,0,0.03)] backdrop-blur-md mb-6">
-      <span class="w-2 h-2 rounded-full bg-[#0071E3] animate-ping"></span>
-      <span class="text-xs font-semibold tracking-wide text-[#1D1D1F]">Next-Gen AI Stream Clipper</span>
+    <!-- Top Pill Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.15)] mb-6">
+      <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+      <span class="text-xs font-bold tracking-wide">Next-Gen AI Long-to-Shorts & Series Splitter</span>
     </div>
 
     <!-- Main Headline -->
-    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-[#1D1D1F] max-w-4xl leading-[1.08]">
-      Turn Raw Streams Into <br/>
-      <span class="bg-gradient-to-r from-[#0071E3] via-[#0284C7] to-[#7C3AED] bg-clip-text text-transparent">Viral Vertical Clips.</span>
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08]">
+      Turn Any Long Video Into <br/>
+      <span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">Viral Multi-Part Shorts.</span>
     </h1>
 
     <!-- Subtitle -->
-    <p class="text-base sm:text-lg text-[#86868B] max-w-2xl mt-5 font-normal leading-relaxed">
-      JaxCliped watches Twitch, Kick, and YouTube live streams, pinpoints hype moments with audio and speech AI, and crafts beat-synced 9:16 Shorts with phonk captions & reactions.
+    <p class="text-base sm:text-lg text-slate-400 max-w-2xl mt-5 font-normal leading-relaxed">
+      JaxCliped pinpoints peak retention moments from YouTube streams, podcasts, and gaming VODs, splits them into suspenseful cliffhanger episodes, and generates beat-synced phonk captions.
     </p>
 
-    <!-- Interactive URL Box (iOS Liquid Glass) -->
+    <!-- Paste URL & Create Form -->
     <div class="w-full max-w-2xl mt-10">
-      <form onsubmit="handleStart(event)" class="ios-glass p-2 rounded-[28px] flex flex-col sm:flex-row items-center gap-2 shadow-[0_20px_50px_rgba(0,0,0,0.06)]">
+      <form onsubmit="handleStart(event)" class="dark-glass p-2 rounded-3xl flex flex-col sm:flex-row items-center gap-2 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)]">
         <div class="flex items-center gap-3 w-full px-4 py-2 sm:py-0">
-          <span class="material-symbols-rounded text-black/30">link</span>
-          <input type="text" id="stream-url" placeholder="Paste YouTube, Twitch, or Kick link..." class="w-full bg-transparent text-sm text-[#1D1D1F] placeholder-black/35 font-medium outline-none"/>
+          <span class="material-symbols-rounded text-cyan-400 text-xl">link</span>
+          <input type="text" id="stream-url" placeholder="Paste YouTube, Twitch, or Kick URL..." class="w-full bg-transparent text-sm text-white placeholder-slate-500 font-medium outline-none"/>
         </div>
-        <button type="submit" class="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-sm font-semibold shadow-[0_4px_16px_rgba(0,113,227,0.35)] transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
-          <span>Clip Now</span>
+        <button type="submit" class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-black font-extrabold text-sm shadow-[0_0_25px_rgba(0,240,255,0.4)] transition-all active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+          <span>Create Clips Free</span>
           <span class="material-symbols-rounded text-base">bolt</span>
         </button>
       </form>
-      <div class="flex items-center justify-center gap-6 mt-4 text-xs font-medium text-[#86868B]">
-        <span class="flex items-center gap-1.5"><span class="material-symbols-rounded text-emerald-500 text-sm">check_circle</span> No Watermarks</span>
-        <span class="flex items-center gap-1.5"><span class="material-symbols-rounded text-emerald-500 text-sm">check_circle</span> 100% Free Forever</span>
-        <span class="flex items-center gap-1.5"><span class="material-symbols-rounded text-emerald-500 text-sm">check_circle</span> 24/7 Cloud Powered</span>
+      
+      <!-- Sample Video Link -->
+      <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-4 text-xs font-semibold text-slate-400">
+        <button type="button" onclick="loadSampleVideo()" class="text-cyan-400 hover:underline flex items-center gap-1 font-bold">
+          ✨ Try sample gaming video (Minecraft Vault)
+        </button>
+        <span class="text-slate-600">•</span>
+        <span class="flex items-center gap-1 text-slate-300"><span class="material-symbols-rounded text-cyan-400 text-sm">check_circle</span> ₹0 Starter Tier</span>
+        <span class="flex items-center gap-1 text-slate-300"><span class="material-symbols-rounded text-cyan-400 text-sm">check_circle</span> No Watermarks</span>
+        <span class="flex items-center gap-1 text-slate-300"><span class="material-symbols-rounded text-cyan-400 text-sm">check_circle</span> 1-Click Auto-Post</span>
       </div>
     </div>
 
-    <!-- Live Preview Carousel / Glass Card Showcase -->
-    <div id="features" class="w-full mt-24">
-      <div class="text-left mb-8">
-        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1D1D1F]">Engineered for Viral Growth</h2>
-        <p class="text-sm text-[#86868B] mt-1">Built specifically for clippers who want maximum views and engagement.</p>
+    <!-- Live Interactive Visual Showcase (Phone & Series Splitter Demo) -->
+    <div id="series" class="w-full mt-20 relative max-w-4xl">
+      <div class="dark-card rounded-3xl p-6 sm:p-8 border border-cyan-500/20 shadow-[0_0_60px_rgba(0,240,255,0.1)] text-left flex flex-col md:flex-row gap-8 items-center">
+        
+        <!-- Left: Interactive Phone Mockup -->
+        <div class="w-64 sm:w-72 h-[460px] bg-black rounded-[40px] p-3 border-4 border-slate-700 shadow-2xl relative flex flex-col justify-between overflow-hidden shrink-0">
+          
+          <!-- Mock Video Background Image / Gradient -->
+          <div class="absolute inset-0 bg-gradient-to-b from-blue-950 via-slate-900 to-black z-0 opacity-90"></div>
+          
+          <!-- Top Overlay: Series Part Badge & Viral Score -->
+          <div class="relative z-10 flex items-center justify-between pt-3 px-2">
+            <span class="px-2.5 py-1 rounded-full bg-cyan-500 text-black font-extrabold text-[10px] uppercase tracking-wider">
+              PART 1/5 [CLIFFHANGER]
+            </span>
+            <span class="px-2 py-0.5 rounded-full bg-black/60 border border-white/20 text-yellow-300 font-bold text-[10px] flex items-center gap-1">
+              🔥 95 Viral
+            </span>
+          </div>
+
+          <!-- Center: Dynamic Beat-Synced Phonk Captions -->
+          <div class="relative z-10 text-center my-auto px-2">
+            <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">BEAT-SYNCED CAPTIONS</div>
+            <span class="font-phonk text-3xl sm:text-4xl uppercase tracking-wider inline-block animate-phonk">
+              WAIT FOR IT!
+            </span>
+            <p class="text-[11px] text-slate-300 mt-2 font-medium">Breaking Into Minecraft's Most Illegal Vault</p>
+          </div>
+
+          <!-- Bottom: Animated Retention Watch-Time Bar -->
+          <div class="relative z-10 pb-2">
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1 px-1">
+              <span>0:42</span>
+              <span>1:18</span>
+            </div>
+            <!-- Glowing Bottom Progress Bar -->
+            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden p-0.5">
+              <div class="h-full bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500 rounded-full animate-watch-pbar shadow-[0_0_10px_#00F0FF]"></div>
+            </div>
+            <div class="flex items-center justify-between mt-2 px-1">
+              <span class="text-[9px] text-cyan-300 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Ready to Post
+              </span>
+              <span class="text-[9px] text-slate-400">@jaxcliped • Jax</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Series Splitter Workflow Highlights -->
+        <div class="flex-1 flex flex-col justify-center">
+          <div class="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">
+            <span class="material-symbols-rounded text-sm">auto_stories</span>
+            <span>Why Single Clips Are Dead</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+            Stop Making Random 1-Off Clips. <br/>
+            <span class="text-cyan-400">Build Binge-Worthy Cliffhanger Series.</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-3 leading-relaxed">
+            Standard clippers dump 20 unrelated clips that get lost in the algorithm. JaxCliped intelligently maps narrative arcs from your long streams and segments them into 3, 5, or 10-part serialized cliffhangers.
+          </p>
+          
+          <div class="space-y-3 mt-6">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">1</div>
+              <div>
+                <h4 class="text-xs font-bold text-white">Suspense Snapping (Cliffhanger Cut)</h4>
+                <p class="text-[11px] text-slate-400">Ends precisely right before the reveal or hype moment, forcing viewers to click Part 2.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">2</div>
+              <div>
+                <h4 class="text-xs font-bold text-white">Autonomous Publishing Cadence</h4>
+                <p class="text-[11px] text-slate-400">Automated scheduling (1/Day, 2/Day, or 4/Day) drips episodes consecutively to YouTube Shorts & Instagram.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">3</div>
+              <div>
+                <h4 class="text-xs font-bold text-white">Animated Retention Bar</h4>
+                <p class="text-[11px] text-slate-400">Hardcoded bottom progress bar increases average TikTok & Reels watch completion rate by 34%.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center gap-3">
+            <a href="/signup?next=/app?select_plan=1" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs shadow-[0_0_15px_rgba(0,240,255,0.3)] transition active:scale-95 flex items-center gap-1.5">
+              <span>Split a Video Now</span>
+              <span class="material-symbols-rounded text-sm">arrow_forward</span>
+            </a>
+            <span class="text-xs text-slate-400">Included in Free Starter tier</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Feature Grid Section -->
+    <div id="features" class="w-full mt-32 text-left">
+      <div class="max-w-2xl mb-12">
+        <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Engineered for Virality</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">
+          Everything You Need to Dominate Shorts & Reels
+        </h2>
+        <p class="text-sm text-slate-400 mt-2">
+          Built from the ground up for clippers and creators who want high retention and steady monetization.
+        </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- Feature 1: Phonk Captions -->
-        <div class="ios-glass-card rounded-[28px] p-7 text-left flex flex-col justify-between">
+        <!-- Feature 1: AI Series Splitter -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center text-[#0071E3] mb-5">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5">
+              <span class="material-symbols-rounded text-2xl">movie_edit</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">AI Cliffhanger Series Splitter</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Splits 1-hour streams and gaming VODs into 3 to 30 serialized episodes with suspense hooks that leave viewers desperate for the next drop.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-cyan-400 font-semibold">
+            <span>Part 1 &rarr; Part 2 Hook</span>
+            <span>Included Free</span>
+          </div>
+        </div>
+
+        <!-- Feature 2: Phonk Beat-Sync Captions -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5">
               <span class="material-symbols-rounded text-2xl">subtitles</span>
             </div>
-            <h3 class="text-lg font-bold text-[#1D1D1F]">Beat-Synced Phonk Captions</h3>
-            <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-              1-word rapid pop captions using heavyweight Archivo Black typography with glowing cyan highlights, perfectly synchronized with spoken beats.
+            <h3 class="text-lg font-bold text-white">Beat-Synced Phonk Captions</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              High-impact 1-word pop captions with heavyweight Archivo Black typography and glowing cyan highlights, synchronized millisecond-perfect to speech audio.
             </p>
           </div>
-          <!-- Mini Caption Graphic -->
-          <div class="bg-black/90 rounded-2xl p-4 mt-6 text-center border border-white/10">
-            <span class="font-phonk text-xl text-[#00F0FF] uppercase tracking-wider animate-word-pop inline-block">INSANE!</span>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-indigo-400 font-semibold">
+            <span>Dynamic Word Pop</span>
+            <span>100% Sync Accuracy</span>
           </div>
         </div>
 
-        <!-- Feature 2: Bass-Boosted Phonk Audio -->
-        <div class="ios-glass-card rounded-[28px] p-7 text-left flex flex-col justify-between">
+        <!-- Feature 3: Multi-Platform Auto-Scheduler -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-[#7C3AED] mb-5">
+            <div class="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-5">
+              <span class="material-symbols-rounded text-2xl">schedule_send</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">1-Click Auto-Post Scheduler</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Connect your YouTube and Instagram accounts once. JaxCliped automatically renders and drops your scheduled episodes at peak audience hours.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-pink-400 font-semibold">
+            <span>YouTube & Instagram</span>
+            <span>Zero Manual Work</span>
+          </div>
+        </div>
+
+        <!-- Feature 4: Smart 9:16 Face & Action Crop -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-5">
+              <span class="material-symbols-rounded text-2xl">crop_portrait</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Dynamic 9:16 Action Tracking</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Smart framing centers streamer webcams, podcast speakers, and gaming crosshairs vertically without black bars or distorted stretching.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-blue-400 font-semibold">
+            <span>Full HD 1080p & 4K</span>
+            <span>60FPS Support</span>
+          </div>
+        </div>
+
+        <!-- Feature 5: Bass-Boosted Drift Phonk Audio -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5">
               <span class="material-symbols-rounded text-2xl">graphic_eq</span>
             </div>
-            <h3 class="text-lg font-bold text-[#1D1D1F]">Bass-Boosted Background Audio</h3>
-            <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-              Pre-mixed aggressive drift phonk soundtracks automatically layered under creator audio with dynamic bass enhancement for maximum retention.
+            <h3 class="text-lg font-bold text-white">Bass-Boosted Phonk Audio</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Pre-mixed energetic drift phonk soundtrack automatically layered under creator dialogue with dynamic auto-ducking for maximum engagement.
             </p>
           </div>
-          <div class="bg-white/60 backdrop-blur-md rounded-2xl p-4 mt-6 flex items-center justify-between border border-black/5">
-            <span class="text-xs font-semibold text-[#1D1D1F]">phonk_drift.mp3</span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">+4dB Bass</span>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-amber-400 font-semibold">
+            <span>Auto-Ducking Mix</span>
+            <span>+4dB Bass Boost</span>
           </div>
         </div>
 
-        <!-- Feature 3: AI Reactions -->
-        <div class="ios-glass-card rounded-[28px] p-7 text-left flex flex-col justify-between">
+        <!-- Feature 6: Dedicated 24/7 Cloud Power -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between">
           <div>
-            <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-600 mb-5">
-              <span class="material-symbols-rounded text-2xl">face_6</span>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5">
+              <span class="material-symbols-rounded text-2xl">cloud_sync</span>
             </div>
-            <h3 class="text-lg font-bold text-[#1D1D1F]">AI Reaction Overlays</h3>
-            <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-              Picture-in-picture animated avatars reacting in the corner to increase watch time and algorithmic appeal across TikTok & Shorts feeds.
+            <h3 class="text-lg font-bold text-white">24/7 Dedicated Cloud Engine</h3>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+              Never burn your computer's CPU, GPU, or mobile battery. JaxCliped executes FFmpeg video rendering 24/7 on dedicated cloud instances.
             </p>
           </div>
-          <div class="bg-white/60 backdrop-blur-md rounded-2xl p-3 mt-6 flex items-center gap-3 border border-black/5">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-400 to-purple-500"></div>
-            <span class="text-xs font-semibold text-[#1D1D1F]">Picture-in-Picture Sync</span>
+          <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-emerald-400 font-semibold">
+            <span>Zero Device Lag</span>
+            <span>99.9% Uptime</span>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- Pricing Section: End of Year Sale (90% OFF) -->
-    <div id="pricing" class="w-full mt-28 text-center scroll-mt-24">
-      
-      <!-- Big Sale Glowing Pill -->
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500/10 via-orange-500/10 to-pink-500/10 border border-red-500/20 shadow-sm backdrop-blur-md mb-4 animate-bounce">
-        <span class="text-sm">🔥</span>
-        <span class="text-xs font-extrabold tracking-wide bg-gradient-to-r from-red-600 via-orange-600 to-pink-600 bg-clip-text text-transparent uppercase">End of Year Sale — 90% OFF STOREWIDE!</span>
+    <!-- Comparison Table Section -->
+    <div id="comparison" class="w-full mt-32 text-left">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Unmatched Value</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">JaxCliped vs Other Clippers</h2>
+        <p class="text-sm text-slate-400 mt-2">See why creators are switching from expensive foreign tools.</p>
       </div>
 
-      <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1D1D1F]">
-        Simple, Transparent Pricing.
-      </h2>
-      <p class="text-sm sm:text-base text-[#86868B] max-w-xl mx-auto mt-3">
-        Instant automated access. Choose your plan and start scaling your vertical reach in seconds.
-      </p>
+      <div class="dark-glass rounded-3xl overflow-x-auto border border-white/10 shadow-2xl">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-white/10 bg-white/[0.02]">
+              <th class="p-4 sm:p-5 font-bold text-slate-300">Feature</th>
+              <th class="p-4 sm:p-5 font-extrabold text-cyan-400 bg-cyan-500/10">JaxCliped</th>
+              <th class="p-4 sm:p-5 font-semibold text-slate-400">OpusClip</th>
+              <th class="p-4 sm:p-5 font-semibold text-slate-400">Generic Tools</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">AI Cliffhanger Series Splitter</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ Included (1 to 30 Parts)</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ Single clips only</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ No</td>
+            </tr>
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">All Plans in Indian Rupees (₹)</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ From ₹149 / mo</td>
+              <td class="p-4 sm:p-5 text-slate-400">✗ $29 / mo (₹2,450+)</td>
+              <td class="p-4 sm:p-5 text-slate-400">✗ $35+ / mo</td>
+            </tr>
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">Direct UPI Payment (GPay, PhonePe)</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ Instant QR & Deep Link</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ International Card Only</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ Card Only</td>
+            </tr>
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">Beat-Synced Phonk Captions</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ 1-Word Pop with Neon Cyan</td>
+              <td class="p-4 sm:p-5 text-slate-400">Basic Subtitles</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ Plain text</td>
+            </tr>
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">Direct YouTube & Instagram Auto-Post</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ Automated Daily Cadence</td>
+              <td class="p-4 sm:p-5 text-slate-400">Paid tier only</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ Manual download</td>
+            </tr>
+            <tr>
+              <td class="p-4 sm:p-5 font-semibold text-white">Free Forever Starter Tier</td>
+              <td class="p-4 sm:p-5 font-bold text-cyan-400 bg-cyan-500/10">✓ Free Forever (₹0)</td>
+              <td class="p-4 sm:p-5 text-slate-500">Trial Only (Expires)</td>
+              <td class="p-4 sm:p-5 text-slate-500">✗ Watermarked Trial</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      <!-- 3 Pricing Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-left">
+    <!-- Pricing Section (Rupees ₹ Only) -->
+    <div id="pricing" class="w-full mt-32 text-left">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Transparent Pricing</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">
+          Pricing Built for Creators & Agencies
+        </h2>
+        <p class="text-sm text-slate-400 mt-2">
+          All prices in Indian Rupees (₹). Instant automated activation via UPI or Card.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <!-- Plan 1: Starter -->
-        <div class="ios-glass-card rounded-[32px] p-8 flex flex-col justify-between border border-white/80">
+        <!-- Starter Plan (Free Forever) -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between border border-white/10">
           <div>
-            <div class="inline-block px-3 py-1 rounded-full bg-black/5 text-[11px] font-bold text-[#86868B] mb-4">
-              STARTER
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">STARTER</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-slate-300">Free Forever</span>
             </div>
-            <div class="flex items-baseline gap-1">
-              <span class="text-4xl font-extrabold text-[#1D1D1F]">$0</span>
-              <span class="text-xs font-semibold text-[#86868B]">/ month</span>
+            
+            <div class="flex items-baseline gap-1 my-3">
+              <span class="text-4xl font-extrabold text-white">₹0</span>
+              <span class="text-xs font-semibold text-slate-400">/month</span>
             </div>
-            <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-              Essential clipping tools to try out AI stream automation.
-            </p>
-
-            <div class="border-t border-black/5 my-6"></div>
-
-            <ul class="space-y-3 text-xs text-[#1D1D1F]">
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>720p & 1080p Clip Generation</span>
+            
+            <p class="text-xs text-slate-400 min-h-[32px]">Essential AI clipping and series splitting for casual streamers and test runs.</p>
+            
+            <ul class="space-y-2.5 text-xs text-slate-300 mt-6 mb-8">
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>1 Active Parallel Render Job</span>
               </li>
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Standard Auto-Captions</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>AI Cliffhanger Series Splitter</span>
               </li>
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>1 Creator Workspace</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>Beat-Synced Phonk Captions</span>
               </li>
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Standard Processing Speed</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>1080p Full HD Video Export</span>
               </li>
-              <li class="flex items-center gap-2.5 text-[#86868B]">
-                <span class="material-symbols-rounded text-black/20 text-sm">cancel</span>
-                <span>No Beat-Synced Phonk Captions</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>1-Click Auto-Post (YouTube & Insta)</span>
               </li>
-              <li class="flex items-center gap-2.5 text-[#86868B]">
-                <span class="material-symbols-rounded text-black/20 text-sm">cancel</span>
-                <span>No Personal Agent</span>
+              <li class="flex items-center gap-2 text-slate-500">
+                <span class="material-symbols-rounded text-slate-600 text-sm">close</span>
+                <span>4K 60FPS High Bitrate (Creator Tier)</span>
               </li>
             </ul>
           </div>
 
-          <div class="mt-8">
-            <a href="/signup" class="w-full py-3.5 px-4 rounded-2xl bg-black/5 hover:bg-black/10 text-[#1D1D1F] text-xs font-bold transition flex items-center justify-center gap-1.5">
-              <span>Start Free</span>
-              <span class="material-symbols-rounded text-sm">arrow_forward</span>
-            </a>
-          </div>
+          <a href="/signup?next=/app?select_plan=1" class="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs text-center transition active:scale-95 block">
+            Start Free Forever
+          </a>
         </div>
 
-        <!-- Plan 2: Creator (90% OFF) -->
-        <div class="ios-glass-card rounded-[32px] p-8 flex flex-col justify-between relative border-2 border-[#0071E3] shadow-[0_20px_45px_rgba(0,113,227,0.15)] bg-gradient-to-b from-white via-white to-blue-50/30">
-          
-          <!-- Top Floating Sale Badge -->
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[#0071E3] to-[#38BDF8] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
-            🔥 90% OFF • MOST POPULAR
+        <!-- Creator Pro Plan (Most Popular) -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between border-2 border-cyan-400 relative shadow-[0_0_40px_rgba(0,240,255,0.2)]">
+          <div class="absolute -top-3 right-6 bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+            POPULAR · SAVE 90%
           </div>
 
           <div>
-            <div class="inline-block px-3 py-1 rounded-full bg-[#0071E3]/10 text-[11px] font-bold text-[#0071E3] mb-4">
-              CREATOR PRO
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">CREATOR PRO</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/30">90% OFF</span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-extrabold text-[#1D1D1F]">$14.90</span>
-              <span class="text-xs font-semibold text-[#86868B]">/ mo</span>
-              <span class="text-xs text-[#86868B] line-through ml-1 font-semibold">$149</span>
+            
+            <div class="flex items-baseline gap-2 my-3">
+              <span class="text-4xl font-extrabold text-white">₹149</span>
+              <span class="text-xs font-semibold text-slate-400">/month</span>
+              <span class="text-xs text-slate-500 line-through">₹1,490</span>
             </div>
-            <p class="text-xs text-emerald-600 font-bold mt-1">
-              You save $134.10/mo with 90% End of Year discount!
-            </p>
-
-            <div class="border-t border-black/5 my-6"></div>
-
-            <ul class="space-y-3 text-xs text-[#1D1D1F]">
-              <li class="flex items-center gap-2.5 font-semibold text-[#0071E3]">
-                <span class="material-symbols-rounded text-[#0071E3] text-sm">verified</span>
-                <span>Everything in Starter, plus:</span>
+            
+            <p class="text-xs text-slate-400 min-h-[32px]">For clippers and creators scaling rapidly across TikTok, Shorts, and Reels.</p>
+            
+            <ul class="space-y-2.5 text-xs text-slate-300 mt-6 mb-8">
+              <li class="flex items-center gap-2 text-cyan-300 font-bold">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">bolt</span>
+                <span>⚡ All updates 1 week earlier</span>
               </li>
-              <li class="flex items-center gap-2.5 font-bold text-[#0071E3] bg-blue-50/80 px-2 py-1.5 rounded-xl border border-blue-100">
-                <span class="material-symbols-rounded text-[#0071E3] text-sm">bolt</span>
-                <span>All New Updates 1 Week Earlier</span>
+              <li class="flex items-center gap-2 font-semibold">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>3 Parallel Turbo Render Slots (3x Faster)</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Beat-Synced Phonk Captions & FX</span>
+              <li class="flex items-center gap-2 font-semibold">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>4K 60FPS Ultra HD High-Bitrate Export</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>4K / 60FPS High-Bitrate Export</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>Up to 10 Creator Workspaces</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Multi-Platform Auto-Posting (Shorts/Reels)</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>Multi-Platform Auto-Posting (Shorts & Reels)</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>10 Creator Workspaces</span>
-              </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Custom Watermarks & Clip Hooks</span>
-              </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>5x Faster AI Queue Priority</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-cyan-400 text-sm">check</span>
+                <span>5x Faster GPU Priority Queue</span>
               </li>
             </ul>
           </div>
 
-          <div class="mt-8">
-            <a href="/login?next=/app?upgrade=creator" class="w-full py-4 px-4 rounded-2xl bg-[#0071E3] hover:bg-[#0077ED] text-white text-xs font-bold shadow-[0_6px_20px_rgba(0,113,227,0.35)] transition-all active:scale-95 flex items-center justify-center gap-1.5">
-              <span>Claim 90% Off Creator</span>
-              <span class="material-symbols-rounded text-sm">bolt</span>
-            </a>
-          </div>
+          <a href="/signup?next=/app?upgrade=creator" class="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-extrabold text-xs text-center shadow-[0_0_20px_rgba(0,240,255,0.4)] transition active:scale-95 block">
+            Claim 90% Off — ₹149/mo
+          </a>
         </div>
 
-        <!-- Plan 3: Business VIP (90% OFF) -->
-        <div class="ios-glass-card rounded-[32px] p-8 flex flex-col justify-between relative border border-purple-200 bg-gradient-to-b from-white via-white to-purple-50/30">
-          
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-extrabold uppercase tracking-wider shadow-md">
-            👑 PERSONAL AGENT INCLUDED
+        <!-- Business VIP Plan -->
+        <div class="dark-card rounded-3xl p-7 flex flex-col justify-between border-2 border-indigo-500/50 relative shadow-[0_0_40px_rgba(99,102,241,0.2)]">
+          <div class="absolute -top-3 right-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+            24/7 AUTONOMOUS · SAVE 90%
           </div>
 
           <div>
-            <div class="inline-block px-3 py-1 rounded-full bg-purple-100 text-[11px] font-bold text-purple-700 mb-4">
-              BUSINESS VIP
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">BUSINESS VIP</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-500/30">90% OFF</span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-extrabold text-[#1D1D1F]">$24.90</span>
-              <span class="text-xs font-semibold text-[#86868B]">/ mo</span>
-              <span class="text-xs text-[#86868B] line-through ml-1 font-semibold">$249</span>
+            
+            <div class="flex items-baseline gap-2 my-3">
+              <span class="text-4xl font-extrabold text-white">₹249</span>
+              <span class="text-xs font-semibold text-slate-400">/month</span>
+              <span class="text-xs text-slate-500 line-through">₹2,490</span>
             </div>
-            <p class="text-xs text-purple-600 font-bold mt-1">
-              You save $224.10/mo with 90% End of Year discount!
-            </p>
-
-            <div class="border-t border-black/5 my-6"></div>
-
-            <ul class="space-y-3 text-xs text-[#1D1D1F]">
-              <li class="flex items-center gap-2.5 font-bold text-purple-700">
-                <span class="material-symbols-rounded text-purple-600 text-sm">smart_toy</span>
-                <span>Personal AI Agent (24/7 Autonomous)</span>
+            
+            <p class="text-xs text-slate-400 min-h-[32px]">Autonomous 24/7 AI clipping with your dedicated Personal Agent.</p>
+            
+            <ul class="space-y-2.5 text-xs text-slate-300 mt-6 mb-8">
+              <li class="flex items-center gap-2 text-indigo-300 font-bold">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">smart_toy</span>
+                <span>🤖 Personal AI Agent (24/7 autonomous)</span>
               </li>
-              <li class="flex items-center gap-2.5 font-semibold text-[#1D1D1F]">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">verified</span>
-                <span>All Creator & Starter features included</span>
+              <li class="flex items-center gap-2 font-semibold">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">check</span>
+                <span>10 Parallel Turbo Slots (Zero Queue)</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Unlimited Creators & Streams</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">check</span>
+                <span>Unlimited Channels & Workspaces</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Maximum Turbo GPU Speed (Zero Queue)</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">check</span>
+                <span>Full Commercial Resale Rights</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Multi-Account Team Collaboration</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">check</span>
+                <span>Direct WhatsApp & VIP Dedicated Support</span>
               </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Direct WhatsApp VIP Support</span>
-              </li>
-              <li class="flex items-center gap-2.5 font-medium">
-                <span class="material-symbols-rounded text-emerald-600 text-sm">check_circle</span>
-                <span>Commercial Resale & Agency License</span>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-indigo-400 text-sm">check</span>
+                <span>Instant Automated UPI Activation</span>
               </li>
             </ul>
           </div>
 
-          <div class="mt-8">
-            <a href="/login?next=/app?upgrade=business" class="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold shadow-[0_6px_20px_rgba(124,58,237,0.3)] transition-all active:scale-95 flex items-center justify-center gap-1.5">
-              <span>Claim 90% Off Business</span>
-              <span class="material-symbols-rounded text-sm">star</span>
-            </a>
-          </div>
+          <a href="/signup?next=/app?upgrade=business" class="w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-400 hover:to-pink-400 text-white font-extrabold text-xs text-center shadow-[0_0_20px_rgba(99,102,241,0.4)] transition active:scale-95 block">
+            Get Business VIP — ₹249/mo
+          </a>
         </div>
 
+      </div>
+
+      <div class="mt-8 text-center text-xs text-slate-500 flex flex-wrap items-center justify-center gap-4">
+        <span>⚡ Supported Payment Methods:</span>
+        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-semibold">GPay</span>
+        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-semibold">PhonePe</span>
+        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-semibold">Paytm</span>
+        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-semibold">BHIM UPI (8360101258@upi)</span>
+        <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-semibold">All Cards</span>
       </div>
     </div>
 
     <!-- FAQ Section -->
-    <div id="faq" class="w-full mt-24 text-left">
-      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-[#1D1D1F] mb-6">Frequently Asked Questions</h2>
-      <div class="space-y-4">
+    <div id="faq" class="w-full mt-32 text-left">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Common Questions</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="max-w-3xl mx-auto space-y-4">
         
-        <div class="ios-glass-card rounded-[22px] p-6">
-          <h3 class="text-base font-bold text-[#1D1D1F]">Is JaxCliped really free?</h3>
-          <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-            Yes, JaxCliped runs on your dedicated cloud server. There are zero subscriptions, no hidden limits, and no watermarks on your rendered clips.
+        <details class="dark-card rounded-2xl p-5 group cursor-pointer">
+          <summary class="font-bold text-sm text-white flex items-center justify-between list-none">
+            <span>What happens after I click "Create"?</span>
+            <span class="material-symbols-rounded text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+            Clicking "Create" takes you directly to Sign In or Sign Up. Once signed in, you are shown the plan selection where you can click <strong>[ Continue with Starter ]</strong> to clip 100% free forever, or upgrade to Creator Pro for parallel renders.
           </p>
-        </div>
+        </details>
 
-        <div class="ios-glass-card rounded-[22px] p-6">
-          <h3 class="text-base font-bold text-[#1D1D1F]">How does the 90% Off Sale and instant activation work?</h3>
-          <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-            During our End of Year Sale, Creator ($14.90/mo) and Business ($24.90/mo) have a 90% discount applied automatically. Once payment is completed, your account upgrades instantly in real-time with zero manual waiting.
+        <details class="dark-card rounded-2xl p-5 group cursor-pointer">
+          <summary class="font-bold text-sm text-white flex items-center justify-between list-none">
+            <span>How does the AI Cliffhanger Series Splitter work?</span>
+            <span class="material-symbols-rounded text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+            Instead of giving you 1 random clip, JaxCliped analyzes the narrative trajectory of your video and splits it into serialized episodes (Part 1, Part 2, etc.) that end on suspense hooks, dramatically boosting viewer binge-watching.
           </p>
-        </div>
+        </details>
 
-        <div class="ios-glass-card rounded-[22px] p-6">
-          <h3 class="text-base font-bold text-[#1D1D1F]">What is included in the Business Personal Agent?</h3>
-          <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-            The Business tier includes an autonomous Personal AI Agent that monitors your selected streamers 24/7, detects viral moments as soon as they stream, and renders captioned vertical clips automatically without you having to lift a finger.
+        <details class="dark-card rounded-2xl p-5 group cursor-pointer">
+          <summary class="font-bold text-sm text-white flex items-center justify-between list-none">
+            <span>Can I pay with UPI (GPay, PhonePe, Paytm)?</span>
+            <span class="material-symbols-rounded text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+            Yes! We accept direct UPI transfers to <code>8360101258@upi</code>. Simply scan the QR code or tap the UPI deep link on mobile, enter your 12-digit UTR reference, and your account is activated automatically.
           </p>
-        </div>
+        </details>
 
-        <div class="ios-glass-card rounded-[22px] p-6">
-          <h3 class="text-base font-bold text-[#1D1D1F]">Can multiple people use JaxCliped?</h3>
-          <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-            Yes! JaxCliped features built-in multi-user authentication. Anyone with your link can create an account, log in, and manage their own clip library.
+        <details class="dark-card rounded-2xl p-5 group cursor-pointer">
+          <summary class="font-bold text-sm text-white flex items-center justify-between list-none">
+            <span>Are there watermarks on the free Starter version?</span>
+            <span class="material-symbols-rounded text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+            No! The Starter plan is 100% clean with zero watermarks. You get high-quality 1080p video exports with phonk beat-sync captions and automated scheduling.
           </p>
-        </div>
+        </details>
 
-        <div class="ios-glass-card rounded-[22px] p-6">
-          <h3 class="text-base font-bold text-[#1D1D1F]">Which platforms are supported?</h3>
-          <p class="text-xs text-[#86868B] mt-2 leading-relaxed">
-            You can paste links from YouTube (VODs & live streams), Twitch, Kick, or upload video files directly from your device.
+        <details class="dark-card rounded-2xl p-5 group cursor-pointer">
+          <summary class="font-bold text-sm text-white flex items-center justify-between list-none">
+            <span>What are the limits on the Starter tier?</span>
+            <span class="material-symbols-rounded text-slate-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+            The Starter tier is limited to 1 active parallel render job at a time, up to 1080p export, and 60 minutes/month processing. Upgrading to Creator Pro unlocks 3 parallel slots, 4K 60FPS export, and 5x faster GPU priority.
           </p>
-        </div>
+        </details>
 
       </div>
     </div>
 
   </main>
 
-  <!-- Glass Footer -->
-  <footer class="relative z-10 border-t border-black/5 py-10 px-4 sm:px-6 text-center text-xs text-[#86868B]">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-[#1D1D1F]">JaxCliped</span>
+  <!-- Dark SaaS Footer -->
+  <footer class="relative z-10 border-t border-white/10 py-12 px-4 sm:px-6 text-xs text-slate-500 bg-[#06080C]">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-500 p-0.5 flex items-center justify-center">
+          <div class="w-full h-full bg-[#080B11] rounded-[6px] flex items-center justify-center">
+            <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm9.64-10.36L22 3h-3l-5 5 1.64 1.64z"/>
+            </svg>
+          </div>
+        </div>
+        <span class="font-bold text-white">JaxCliped</span>
         <span>•</span>
-        <span>24/7 AI Cloud Clipper</span>
+        <span>AI Stream Clipper & Series Splitter</span>
       </div>
-      <div class="flex items-center gap-4">
-        <a href="https://wa.me/918360101258?text=Hi%20JaxCliped%20Team%2C%20I%20want%20the%20JaxCliped%20source%20code" target="_blank" rel="noopener" class="text-emerald-600 font-semibold hover:underline">Get Source Code (WhatsApp)</a>
-        <a href="https://www.instagram.com/jaxcliped/" target="_blank" rel="noopener" class="text-pink-600 font-semibold hover:underline">Instagram</a>
-        <a href="/login" class="hover:text-[#1D1D1F]">Sign In</a>
-        <a href="/signup" class="hover:text-[#1D1D1F]">Create Account</a>
-        <a href="/app" class="hover:text-[#1D1D1F]">Studio</a>
+
+      <div class="flex flex-wrap items-center justify-center gap-5 font-medium">
+        <a href="https://wa.me/918360101258?text=Hi%20JaxCliped%20Team%2C%20I%20have%20a%20question" target="_blank" rel="noopener" class="text-emerald-400 hover:underline flex items-center gap-1">
+          WhatsApp (+91 8360101258)
+        </a>
+        <a href="https://www.instagram.com/jaxcliped/" target="_blank" rel="noopener" class="text-pink-400 hover:underline">
+          Instagram (@jaxcliped)
+        </a>
+        <a href="/login?next=/app?select_plan=1" class="hover:text-white transition">Sign In</a>
+        <a href="/signup?next=/app?select_plan=1" class="hover:text-white transition">Create Account</a>
+        <a href="/terms" class="hover:text-white transition">Terms</a>
+        <a href="/privacy" class="hover:text-white transition">Privacy</a>
       </div>
+
     </div>
   </footer>
 
   <script>
-    function handleStart(e) {
-      e.preventDefault();
-      const url = document.getElementById('stream-url').value.trim();
+    async function handleStart(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('stream-url');
+      const url = input ? input.value.trim() : '';
       if (url) {
         sessionStorage.setItem('jaxcliped_link', url);
       }
-      window.location.href = '/app';
+
+      // Check if user is already signed in
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.id) {
+            window.location.href = '/app';
+            return;
+          }
+        }
+      } catch (err) {}
+
+      // If not signed in: send to signup -> then to plan selection
+      const planSelectionNext = encodeURIComponent('/app?select_plan=1');
+      window.location.href = '/signup?next=' + planSelectionNext;
+    }
+
+    function loadSampleVideo() {
+      const sampleUrl = 'https://youtu.be/oBocytbmrhw';
+      const input = document.getElementById('stream-url');
+      if (input) {
+        input.value = sampleUrl;
+        input.focus();
+      }
+      handleStart(null);
     }
   </script>
 </body>

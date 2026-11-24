@@ -1492,19 +1492,21 @@ function openPricing(preselect = "creator") {
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:20px 0">
         <!-- Starter Plan -->
-        <div style="background:#fff;border:1px solid var(--line-2);border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="background:var(--card);border:1px solid var(--line-2);border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between">
           <div>
-            <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:var(--dim)">STARTER</span>
-            <div style="font-size:28px;font-weight:800;margin:8px 0;color:var(--text)">$0 <small style="font-size:13px;font-weight:500;color:var(--dim)">/mo</small></div>
-            <p style="font-size:12px;color:var(--dim);min-height:36px">Essential AI clipping for casual streamers and test runs.</p>
+            <span style="font-size:11px;font-weight:800;letter-spacing:0.5px;color:var(--dim)">STARTER (FREE FOREVER)</span>
+            <div style="font-size:28px;font-weight:800;margin:8px 0;color:var(--text)">₹0 <small style="font-size:13px;font-weight:500;color:var(--dim)">/mo</small></div>
+            <p style="font-size:12px;color:var(--dim);min-height:36px">Essential AI clipping & series splitting for creators and streamers.</p>
             <ul style="font-size:12px;line-height:2;padding-left:16px;color:var(--text);margin:12px 0">
-              <li>1 Creator workspace</li>
-              <li>Standard 1080p export</li>
-              <li>Loudness hype clipping</li>
-              <li>Standard queue</li>
+              <li><b>✓ AI Cliffhanger Series Splitter</b></li>
+              <li><b>✓ Phonk beat-sync animated captions</b></li>
+              <li><b>✓ 1-Click YouTube & Instagram auto-post</b></li>
+              <li>✓ Standard 1080p Full HD export</li>
+              <li>✓ 1 Active concurrent video render</li>
+              <li>✓ 60 mins/month free AI processing</li>
             </ul>
           </div>
-          <button class="btn" disabled style="width:100%;background:var(--muted);color:var(--dim);border-radius:999px">${curPlan === 'free' ? 'Current Plan' : 'Free'}</button>
+          <button class="btn" data-act="closedlg" style="width:100%;border-radius:999px;font-weight:700;background:var(--muted);color:var(--text);border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,0.06);padding:10px 16px">Continue with Starter (Free Forever)</button>
         </div>
 
         <!-- Creator Plan -->
@@ -4123,6 +4125,7 @@ $("#main").addEventListener("scroll", () => $(".topbar").classList.toggle("stuck
   if (q.get("verify_error")) { history.replaceState(null, "", location.pathname); setTimeout(() => toast(q.get("verify_error"), "bad"), 300); }
   if (q.get("upgraded")) { history.replaceState(null, "", location.pathname); setTimeout(() => toast("🎉 Congratulations! Your plan was upgraded and all features are unlocked.", "ok"), 300); }
   if (q.get("upgrade")) { setTimeout(() => openPricing(q.get("upgrade")), 400); }
+  if (q.get("select_plan")) { history.replaceState(null, "", location.pathname); setTimeout(() => openPricing("starter"), 400); }
   if (location.pathname.startsWith("/app/")) { const [v, tab] = fromPath(location.pathname); S.view = v; S.ctab = tab; }  // the address decides, before anything loads
   await tick();
   { const [v, tab] = location.pathname.startsWith("/app/") ? fromPath(location.pathname) : ["overview", "clips"]; go(v, tab, true); remember(S.view, S.ctab, "replace"); }

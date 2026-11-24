@@ -1,29 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg?v=jaxcliped7"/>
-  <link rel="apple-touch-icon" href="/brand/favicon.svg?v=jaxcliped7"/>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
   <title>JaxCliped — Studio Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
           },
           colors: {
-            apple: {
+            brand: {
+              cyan: '#00F0FF',
               blue: '#0071E3',
-              hover: '#0077ED',
-              dark: '#1D1D1F',
-              sub: '#86868B',
+              dark: '#07090E',
+              card: '#0F1523',
             }
           }
         }
@@ -32,100 +31,60 @@
   </script>
   <style>
     body {
-      background-color: #F5F5F7;
-      color: #1D1D1F;
+      background-color: #07090E;
+      color: #F1F5F9;
       -webkit-font-smoothing: antialiased;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    /* iOS Liquid Glass Effect */
-    .ios-glass {
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(40px) saturate(190%);
-      -webkit-backdrop-filter: blur(40px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      box-shadow: 
-        0 20px 40px -15px rgba(0, 0, 0, 0.07),
-        0 0 1px 1px rgba(255, 255, 255, 0.9) inset;
+    .dark-glass {
+      background: rgba(15, 21, 35, 0.85);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.08);
     }
 
-    .ios-input-glass {
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+    .dark-input {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .ios-input-glass:focus {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: #0071E3;
-      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+    .dark-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #00F0FF;
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
       outline: none;
     }
 
-    /* Organic Apple Wallpaper Flowing Blobs */
-    .blob-1 {
+    .ambient-glow {
       position: absolute;
-      top: -10%;
-      left: 15%;
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, rgba(147, 197, 253, 0.65) 0%, rgba(199, 210, 254, 0.2) 70%, transparent 100%);
-      filter: blur(60px);
-      animation: float-1 14s ease-in-out infinite alternate;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 80%);
+      filter: blur(90px);
       pointer-events: none;
-    }
-    .blob-2 {
-      position: absolute;
-      bottom: -10%;
-      right: 10%;
-      width: 520px;
-      height: 520px;
-      background: radial-gradient(circle, rgba(251, 207, 232, 0.6) 0%, rgba(221, 214, 254, 0.25) 70%, transparent 100%);
-      filter: blur(70px);
-      animation: float-2 16s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-    .blob-3 {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(186, 230, 253, 0.45) 0%, rgba(243, 232, 255, 0.2) 70%, transparent 100%);
-      filter: blur(80px);
-      pointer-events: none;
-    }
-
-    @keyframes float-1 {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(60px, 40px) scale(1.08); }
-    }
-    @keyframes float-2 {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-50px, -50px) scale(1.1); }
     }
   </style>
 </head>
-<body class="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-x-hidden selection:bg-blue-100 selection:text-blue-900">
+<body class="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
 
-  <!-- Ambient Apple iOS Wallpaper Blobs -->
-  <div class="blob-1"></div>
-  <div class="blob-2"></div>
-  <div class="blob-3"></div>
+  <!-- Ambient Light Orbs -->
+  <div class="ambient-glow top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2"></div>
+  <div class="ambient-glow bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2"></div>
 
-  <!-- Main Glass Container -->
-  <div class="ios-glass w-full max-w-[420px] rounded-[32px] p-7 sm:p-9 relative z-10 my-auto">
+  <!-- Main Dark Glass Container -->
+  <div class="dark-glass w-full max-w-[430px] rounded-3xl p-7 sm:p-9 relative z-10 my-auto">
     
-    <!-- Brand App Icon + Heading -->
+    <!-- Brand Icon + Heading -->
     <div class="flex flex-col items-center text-center mb-6">
-      <!-- iPhone Squircle Icon -->
       <a href="/" class="group relative mb-3">
-        <div class="w-16 h-16 rounded-[22px] bg-gradient-to-tr from-[#0071E3] via-[#38BDF8] to-[#818CF8] p-0.5 shadow-[0_8px_20px_rgba(0,113,227,0.3)] transition-transform duration-300 group-hover:scale-105 active:scale-95 flex items-center justify-center">
-          <div class="w-full h-full bg-white/20 backdrop-blur-md rounded-[20px] flex items-center justify-center">
-            <svg class="w-8 h-8 text-white drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" opacity="0"/>
-              <!-- Video Scissors Clip Icon -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-transform duration-300 group-hover:scale-105 active:scale-95 flex items-center justify-center">
+          <div class="w-full h-full bg-[#090D14] rounded-[14px] flex items-center justify-center">
+            <svg class="w-8 h-8 text-cyan-400 drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
               <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm0 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm9.64-10.36L22 3h-3l-5 5 1.64 1.64z"/>
             </svg>
           </div>
@@ -133,34 +92,21 @@
       </a>
 
       <div class="flex items-center gap-1.5">
-        <h1 class="text-2xl font-bold tracking-tight text-[#1D1D1F]">Jax<span class="text-[#0071E3]">Cliped</span></h1>
+        <h1 class="text-2xl font-extrabold tracking-tight text-white">Jax<span class="text-cyan-400">Cliped</span></h1>
       </div>
-      <p id="page-subtitle" class="text-xs font-medium text-[#86868B] mt-1">
+      <p id="page-subtitle" class="text-xs font-medium text-slate-400 mt-1">
         Sign in to your AI stream clipping studio
       </p>
     </div>
 
-    <!-- Apple Segmented Control (Tabs) -->
-    <div class="bg-black/[0.05] p-1 rounded-full flex items-center mb-6 relative">
-      <button id="tab-login" onclick="setMode('login')" class="flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#1D1D1F] bg-white shadow-sm">
+    <!-- Segmented Tabs -->
+    <div class="bg-black/50 border border-white/10 p-1 rounded-full flex items-center mb-6 relative">
+      <button id="tab-login" onclick="setMode('login')" class="flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-black bg-cyan-400 shadow-md">
         Sign In
       </button>
-      <button id="tab-signup" onclick="setMode('signup')" class="flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#86868B] hover:text-[#1D1D1F]">
+      <button id="tab-signup" onclick="setMode('signup')" class="flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-slate-400 hover:text-white">
         Create Account
       </button>
-    </div>
-
-    <!-- Google Sign-In Block -->
-    <div id="google-block" class="mb-5">
-      <a id="btn-google" href="/auth/google/start" class="w-full py-3 px-4 rounded-2xl bg-white border border-black/10 hover:border-black/20 hover:bg-black/[0.02] shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] text-xs font-semibold text-[#1D1D1F]">
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.6 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.6A14.5 14.5 0 0 1 9.7 24c0-1.6.3-3.2.8-4.6l-7.9-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.2-13.5-9.9l-7.9 6.2C6.5 42.6 14.6 48 24 48z"/></svg>
-        <span id="google-label">Continue with Google</span>
-      </a>
-      <div class="relative flex py-4 items-center">
-        <div class="flex-grow border-t border-black/10"></div>
-        <span class="flex-shrink mx-3 text-[10px] font-semibold text-[#86868B] uppercase tracking-wider">or with email</span>
-        <div class="flex-grow border-t border-black/10"></div>
-      </div>
     </div>
 
     <!-- Auth Form -->
@@ -168,29 +114,29 @@
       
       <!-- Name (Signup Only) -->
       <div id="group-name" class="hidden">
-        <label class="block text-[11px] font-semibold tracking-wide text-[#86868B] uppercase mb-1.5 ml-1">Your Name</label>
+        <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-1.5 ml-1">Your Name</label>
         <div class="relative">
-          <input type="text" id="input-name" placeholder="Alex Rivers" class="ios-input-glass w-full px-4 py-3 rounded-2xl text-sm text-[#1D1D1F] placeholder-black/30 font-medium"/>
+          <input type="text" id="input-name" placeholder="Creator Name" class="dark-input w-full px-4 py-3 rounded-2xl text-sm text-white placeholder-slate-500 font-medium"/>
         </div>
       </div>
 
       <!-- Email -->
       <div>
-        <label class="block text-[11px] font-semibold tracking-wide text-[#86868B] uppercase mb-1.5 ml-1">Email</label>
+        <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-1.5 ml-1">Email Address</label>
         <div class="relative">
-          <input type="email" id="input-email" required placeholder="alex@gmail.com" class="ios-input-glass w-full px-4 py-3 rounded-2xl text-sm text-[#1D1D1F] placeholder-black/30 font-medium"/>
+          <input type="email" id="input-email" required placeholder="you@domain.com" class="dark-input w-full px-4 py-3 rounded-2xl text-sm text-white placeholder-slate-500 font-medium"/>
         </div>
       </div>
 
       <!-- Password -->
       <div>
         <div class="flex justify-between items-center mb-1.5 ml-1">
-          <label class="block text-[11px] font-semibold tracking-wide text-[#86868B] uppercase">Password</label>
-          <a href="#" id="forgot-link" onclick="handleForgot(event)" class="text-xs font-medium text-[#0071E3] hover:underline">Forgot?</a>
+          <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase">Password</label>
+          <a href="#" id="forgot-link" onclick="handleForgot(event)" class="text-xs font-medium text-cyan-400 hover:underline">Forgot?</a>
         </div>
         <div class="relative">
-          <input type="password" id="input-password" required placeholder="••••••••" class="ios-input-glass w-full px-4 py-3 rounded-2xl text-sm text-[#1D1D1F] placeholder-black/30 font-medium pr-10"/>
-          <button type="button" onclick="togglePass('input-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/60 transition">
+          <input type="password" id="input-password" required placeholder="••••••••" class="dark-input w-full px-4 py-3 rounded-2xl text-sm text-white placeholder-slate-500 font-medium pr-10"/>
+          <button type="button" onclick="togglePass('input-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
             <span class="material-symbols-rounded text-lg">visibility</span>
           </button>
         </div>
@@ -198,29 +144,33 @@
 
       <!-- Confirm Password (Signup Only) -->
       <div id="group-confirm" class="hidden">
-        <label class="block text-[11px] font-semibold tracking-wide text-[#86868B] uppercase mb-1.5 ml-1">Confirm Password</label>
+        <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-1.5 ml-1">Confirm Password</label>
         <div class="relative">
-          <input type="password" id="input-confirm" placeholder="••••••••" class="ios-input-glass w-full px-4 py-3 rounded-2xl text-sm text-[#1D1D1F] placeholder-black/30 font-medium pr-10"/>
+          <input type="password" id="input-confirm" placeholder="••••••••" class="dark-input w-full px-4 py-3 rounded-2xl text-sm text-white placeholder-slate-500 font-medium pr-10"/>
         </div>
       </div>
 
-      <!-- Toast / Error Message -->
-      <div id="auth-alert" class="hidden text-xs py-2 px-3 rounded-xl font-medium text-center"></div>
+      <!-- Alert / Error Toast -->
+      <div id="auth-alert" class="hidden text-xs py-2.5 px-3.5 rounded-xl font-medium text-center"></div>
 
-      <!-- Primary Action Pill Button -->
-      <button type="submit" id="submit-btn" class="w-full py-3.5 px-6 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white text-sm font-semibold shadow-[0_4px_16px_rgba(0,113,227,0.35)] transition-all duration-200 active:scale-[0.98] mt-2 flex items-center justify-center gap-2">
+      <!-- Primary Action Button -->
+      <button type="submit" id="submit-btn" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black text-sm font-extrabold shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-200 active:scale-[0.98] mt-3 flex items-center justify-center gap-2">
         <span id="btn-text">Sign In</span>
       </button>
 
     </form>
 
-    <!-- Footer Switch Note -->
-    <p class="text-center text-xs text-[#86868B] mt-6">
+    <!-- Footer Switch -->
+    <p class="text-center text-xs text-slate-400 mt-6">
       <span id="footer-prompt">Don't have an account?</span>
-      <button type="button" onclick="toggleMode()" id="footer-action" class="font-semibold text-[#0071E3] hover:underline ml-1">
+      <button type="button" onclick="toggleMode()" id="footer-action" class="font-bold text-cyan-400 hover:underline ml-1">
         Sign Up
       </button>
     </p>
+
+    <div class="mt-6 pt-4 border-t border-white/10 text-center text-[11px] text-slate-500">
+      <span>🔒 256-Bit Encrypted Studio Login</span>
+    </div>
 
   </div>
 
@@ -241,32 +191,31 @@
       const alert = document.getElementById('auth-alert');
       alert.classList.add('hidden');
 
+      const urlParams = new URLSearchParams(location.search);
+      const queryStr = urlParams.toString() ? '?' + urlParams.toString() : '';
+
       if (mode === 'signup') {
-        tabSignup.className = "flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#1D1D1F] bg-white shadow-sm";
-        tabLogin.className = "flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#86868B] hover:text-[#1D1D1F]";
+        tabSignup.className = "flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-black bg-cyan-400 shadow-md";
+        tabLogin.className = "flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-slate-400 hover:text-white";
         groupName.classList.remove('hidden');
         groupConfirm.classList.remove('hidden');
         forgotLink.classList.add('hidden');
-        btnText.innerText = "Create Account";
+        btnText.innerText = "Create Account & Continue";
         pageSubtitle.innerText = "Get started with JaxCliped AI Studio";
         footerPrompt.innerText = "Already have an account?";
         footerAction.innerText = "Sign In";
-        history.replaceState(null, '', '/signup');
-        const gLabel = document.getElementById('google-label');
-        if (gLabel) gLabel.innerText = "Sign up with Google";
+        history.replaceState(null, '', '/signup' + queryStr);
       } else {
-        tabLogin.className = "flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#1D1D1F] bg-white shadow-sm";
-        tabSignup.className = "flex-1 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 text-[#86868B] hover:text-[#1D1D1F]";
+        tabLogin.className = "flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-black bg-cyan-400 shadow-md";
+        tabSignup.className = "flex-1 py-1.5 text-xs font-bold rounded-full transition-all duration-300 text-slate-400 hover:text-white";
         groupName.classList.add('hidden');
         groupConfirm.classList.add('hidden');
         forgotLink.classList.remove('hidden');
-        btnText.innerText = "Sign In";
+        btnText.innerText = "Sign In to Studio";
         pageSubtitle.innerText = "Sign in to your AI stream clipping studio";
         footerPrompt.innerText = "Don't have an account?";
         footerAction.innerText = "Sign Up";
-        history.replaceState(null, '', '/login');
-        const gLabel = document.getElementById('google-label');
-        if (gLabel) gLabel.innerText = "Sign in with Google";
+        history.replaceState(null, '', '/login' + queryStr);
       }
     }
 
@@ -282,7 +231,11 @@
     function showAlert(msg, isSuccess = false) {
       const alert = document.getElementById('auth-alert');
       alert.innerText = msg;
-      alert.className = `text-xs py-2 px-3 rounded-xl font-medium text-center ${isSuccess ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`;
+      alert.className = `text-xs py-2.5 px-3.5 rounded-xl font-medium text-center ${
+        isSuccess 
+          ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30' 
+          : 'bg-rose-950/80 text-rose-300 border border-rose-500/30'
+      }`;
       alert.classList.remove('hidden');
     }
 
@@ -323,7 +276,8 @@
 
         showAlert("Success! Entering JaxCliped Studio...", true);
         const nextParam = new URLSearchParams(location.search).get("next");
-        const dest = nextParam && /^\/(?![\/\\])[^\\\t\r\n]*$/.test(nextParam) ? nextParam : '/app';
+        // Safe destination; defaults to plan selection modal if none specified
+        const dest = nextParam && /^\/(?![\/\\])[^\\\t\r\n]*$/.test(nextParam) ? nextParam : '/app?select_plan=1';
         setTimeout(() => { window.location.href = dest; }, 300);
 
       } catch (err) {
@@ -351,28 +305,6 @@
         showAlert("Failed to send reset link");
       }
     }
-
-    // Check URL parameters and public config
-    const dest = new URLSearchParams(location.search).get("next") || "/app";
-    const googleBtn = document.getElementById("btn-google");
-    if (googleBtn) {
-      googleBtn.href = "/auth/google/start?next=" + encodeURIComponent(dest);
-    }
-
-    const params = new URLSearchParams(location.search);
-    if (params.get("error") === "google") {
-      showAlert("Google sign-in was canceled or failed. Try again, or use your email.");
-    } else if (params.get("verified") === "1") {
-      showAlert("Email verified successfully! You can now sign in.", true);
-    } else if (params.get("reset") === "1") {
-      showAlert("Password reset successfully. Please sign in.", true);
-    }
-
-    fetch("/api/public").then(r => r.json()).then(data => {
-      if (data.google === false) {
-        document.getElementById("google-block")?.classList.add("hidden");
-      }
-    }).catch(() => {});
 
     // Initialize initial state
     setMode(mode);

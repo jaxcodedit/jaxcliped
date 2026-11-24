@@ -323,6 +323,7 @@ _LANDING: dict = {}
 
 
 @app.get("/")
+@app.head("/")
 def landing():
     f = WEB / "landing_jaxcliped.html"
     m = f.stat().st_mtime
@@ -353,7 +354,9 @@ def sitemap():
 
 
 @app.get("/login")
+@app.head("/login")
 @app.get("/signup")
+@app.head("/signup")
 def auth_page():
     return _page("auth_jaxcliped.html", shared=True)
 
@@ -395,7 +398,9 @@ _LEGAL_HTML = ""
 
 
 @app.get("/app")
+@app.head("/app")
 @app.get("/app/{rest:path}")
+@app.head("/app/{rest:path}")
 def app_page(rest: str = ""):
     """Every app address (/app/videos, /app/creators/<id>/setup ...) is the same page; it shows the right view."""
     return _page("index.html")
@@ -694,8 +699,20 @@ def _job_slots():
     from . import tools
     if tools.missing():
         raise HTTPException(503, tools.HELP)
-    if jobs.busy_count() >= config.MAX_ACTIVE_JOBS_PER_USER:
-        raise HTTPException(429, f"You already have {config.MAX_ACTIVE_JOBS_PER_USER} videos in progress. Wait for one to finish.")
+    u_id = ctx.uid_or_none()
+    limit = config.MAX_ACTIVE_JOBS_PER_USER
+    if u_id and config.ACCOUNTS:
+        try:
+            from . import billing
+            p = billing.get_user_plan(u_id, is_local=config.is_local_host())
+            plan_id = p.get("plan", "free")
+            limit = 10 if plan_id in ("business", "agency") else 3 if plan_id in ("creator", "pro") else 1
+        except Exception:
+            limit = 1
+    if jobs.busy_count() >= limit:
+        if limit == 1:
+            raise HTTPException(429, "Starter plan allows 1 active video at a time. Upgrade to Creator Pro for parallel processing!")
+        raise HTTPException(429, f"You already have {limit} videos in progress. Wait for one to finish.")
 
 
 _create_lock = threading.Lock()      # "do I have a free slot?" and "take it" happen together, so bursts cannot slip past the limit
