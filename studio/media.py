@@ -1,9 +1,7 @@
 """Getting video in: link download, probing, audio extraction, loudness."""
 import contextlib
 import json
-import os
 import re
-import socket
 import subprocess
 import time
 from pathlib import Path
@@ -97,22 +95,27 @@ class _Quiet:
     def error(self, m): pass
 
 
+def _has_local_proxy(port: int = 40000) -> bool:
+    import socket
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.3)
+            return s.connect_ex(("127.0.0.1", port)) == 0
+    except Exception:
+        return False
+
+
 def _ydl(opts):
     import yt_dlp
-    import socket
     # a channel or playlist link is answered as "a list" straight away, never walked video by video
     base = {"noplaylist": True, "quiet": True, "no_warnings": True, "logger": _Quiet(),
             "extract_flat": "in_playlist", "playlistend": 1, "socket_timeout": 20,
             "concurrent_fragment_downloads": 4}
-    proxy = os.environ.get("YTDLP_PROXY", "")
+    proxy = config.env("PEAKCUT_PROXY")
     if proxy:
         base["proxy"] = proxy
-    else:
-        try:
-            with socket.create_connection(("127.0.0.1", 40000), timeout=0.2):
-                base["proxy"] = "socks5://127.0.0.1:40000"
-        except Exception:
-            pass
+    elif _has_local_proxy(40000):
+        base["proxy"] = "socks5://127.0.0.1:40000"
     for p in (config.ROOT / "cookies.txt", config.DATA_DIR / "cookies.txt"):
         if p.exists():
             base["cookiefile"] = str(p)
@@ -150,14 +153,7 @@ def youtube_words(url: str):
     with _youtube_guard(url), _ydl({}) as ydl:
         i = ydl.extract_info(url, download=False)
         auto = i.get("automatic_captions") or {}
-        # Prioritize English caption tracks first for English videos, then original tracks
-        key = None
-        for cand in ("en-orig", "en", "en-US", "en-GB"):
-            if cand in auto:
-                key = cand
-                break
-        if not key:
-            key = next((k for k in auto if k.endswith("-orig")), None)
+        key = next((k for k in auto if k.endswith("-orig")), None)
         if not key and i.get("language") in auto:
             key = i["language"]
         track = next((f for f in auto.get(key) or [] if f.get("ext") == "json3" and f.get("url")), None) if key else None
