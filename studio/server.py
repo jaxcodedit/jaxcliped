@@ -1089,6 +1089,12 @@ def list_user_series():
     all_s = series.list_series()
     for s in all_s:
         job = jobs.get(s.get("job_id"))
+        if not job and s.get("status") == "processing":
+            try:
+                s = series.restart_series_job(s["id"])
+                job = jobs.get(s.get("job_id"))
+            except Exception:
+                pass
         if job:
             s["job_status"] = job.get("status")
             s["job_progress"] = job.get("progress", 0.0)
@@ -1105,6 +1111,19 @@ def list_user_series():
                     if c.get("posts"):
                         ep["posts"] = c["posts"]
     return all_s
+
+
+@app.post("/api/series/{sid}/retry")
+def retry_series_endpoint(sid: str):
+    _need_verified()
+    s = series.get_series(sid)
+    if not s:
+        raise HTTPException(404, "Series not found")
+    try:
+        updated = series.restart_series_job(sid)
+        return {"ok": True, "series": updated}
+    except Exception as e:
+        raise HTTPException(400, f"Could not restart series: {safe.friendly(e, 200)}")
 
 
 @app.post("/api/series/preview")

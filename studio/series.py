@@ -350,6 +350,65 @@ def create_series(url: str, title: str, mode: str, duration_sec: float,
     return record
 
 
+def restart_series_job(sid: str, user_id: str = None) -> dict:
+    """Re-creates and enqueues a background rendering job for an existing series if its job was lost or interrupted."""
+    uid = user_id or ctx.uid_or_none()
+    if not uid:
+        raise ValueError("No user context for restarting series")
+    with ctx.as_user(uid):
+        s = get_series(sid, uid)
+        if not s:
+            raise ValueError("Series not found")
+        url = s.get("url")
+        title = s.get("title") or "Series"
+        auto_post = s.get("auto_post", True)
+        account_ids = s.get("account_ids", [])
+
+        # Cancel previous job if any
+        old_jid = s.get("job_id")
+        if old_jid:
+            try:
+                jobs.delete(old_jid)
+            except Exception:
+                pass
+
+        # Create underlying jobs.py job with kind="series"
+        job_opts = {
+            "style": "phonk",
+            "layout": "crop",
+            "series_id": sid,
+            "auto_post": bool(auto_post),
+            "account_ids": account_ids
+        }
+        job = jobs.create({"type": "url", "url": url, "name": title}, job_opts, enqueue=False, kind="series")
+        jid = job["id"]
+
+        # Pre-populate job clips matching the existing planned episodes
+        job_clips = []
+        for ep in s.get("episodes", []):
+            job_clips.append({
+                "id": ep["cid"],
+                "title": ep["title"],
+                "hook": ep.get("hook", f"Part {ep.get('part')}"),
+                "start": ep["start"],
+                "end": ep["end"],
+                "status": "queued",
+                "score": 95,
+                "scheduled_due_at": ep.get("due_at") if auto_post else None,
+                "target_accounts": account_ids if auto_post else [],
+                "cliffhanger": ep.get("cliffhanger", True)
+            })
+        job["clips"] = job_clips
+        job["series_id"] = sid
+        jobs.save(job)
+        jobs.enqueue(job)
+
+        update_series(sid, {"job_id": jid, "status": "processing"}, uid)
+        s["job_id"] = jid
+        s["status"] = "processing"
+        return s
+
+
 def on_series_clip_done(job: dict, clip: dict):
     """Called when an episode clip finishes rendering. If auto_post is enabled, schedules the post."""
     sid = job.get("series_id")
