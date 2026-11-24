@@ -965,6 +965,44 @@ dialog[open]{animation:fadein .16s ease}
 .cadence-pill{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;transition:all .15s ease}
 .cadence-pill:hover{border-color:var(--brand);color:var(--brand)}
 .cadence-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
+/* Modern Interactive Series Splitter Styles */
+.ser-pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ser-pill{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:6px 14px;border-radius:999px;border:1px solid var(--line);
+  background:#fff;font-size:12px;font-weight:600;color:var(--text);
+  cursor:pointer;transition:all .18s cubic-bezier(.2,.8,.2,1);user-select:none;
+}
+.ser-pill:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.ser-pill.on{
+  background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700;
+  box-shadow:0 3px 10px rgba(0,113,227,0.28);transform:translateY(-1px);
+}
+.ser-acc-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:999px;border:1px solid var(--line);background:#fff;
+  font-size:12px;font-weight:600;color:var(--text);cursor:pointer;
+  transition:all .15s ease;user-select:none;
+}
+.ser-acc-chip input{accent-color:var(--brand);cursor:pointer}
+.ser-acc-chip:has(input:checked){
+  border-color:var(--brand);background:rgba(0,113,227,0.06);color:var(--brand-ink);
+}
+.ser-timeline-track{
+  display:flex;height:36px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--line-2);background:#0f172a;margin:12px 0 16px;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,0.2);
+}
+.ser-timeline-slice{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;position:relative;
+  transition:all .2s ease;cursor:pointer;padding:0 4px;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ser-timeline-slice:nth-child(even){background:rgba(0,113,227,0.85)}
+.ser-timeline-slice:nth-child(odd){background:rgba(56,189,248,0.85)}
+.ser-timeline-slice:hover{filter:brightness(1.2);transform:scaleY(1.05);z-index:2}
+.ser-timeline-slice .slice-label{text-shadow:0 1px 2px rgba(0,0,0,0.6)}
 </style>
 </head>
 <body>
@@ -2505,120 +2543,79 @@ function onEditSchedCadenceChange(val) {
   }
 }
 
+function onCustomPartsInput(val) {
+  const n = parseInt(val);
+  if (n && n > 1) {
+    curSeriesParts = n;
+    if (curSeriesUrl) updateSerPlan();
+  }
+}
+
 function renderSerModeOptions() {
-  const slot = $("#serOptionsSlot");
-  if (!slot) return;
-  slot.innerHTML = `
-    <div style="background:var(--muted);padding:14px 16px;border-radius:var(--r-sm);border:1px solid var(--line-2)">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-items:start">
-        
-        <!-- Slicing Mode Dropdown -->
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Episode Slicing Mode</label>
-          <select id="serModeSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesMode=this.value;renderSerModeOptions()">
-            <option value="cliffhanger" ${curSeriesMode==='cliffhanger'?'selected':''}>⚡ AI Cliffhanger & Suspense (Auto-detects hooks)</option>
-            <option value="parts" ${curSeriesMode==='parts'?'selected':''}>🔢 By Part Count (Split into custom N parts)</option>
-            <option value="duration" ${curSeriesMode==='duration'?'selected':''}>⏱️ By Duration (Split every X seconds)</option>
-          </select>
-        </div>
-
-        <!-- Series Scope (How much of the video to split) -->
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Series Length / Scope</label>
-          <select id="serScopeSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="onSerScopeChange(this.value)">
-            <option value="full" ${curSeriesScope==='full'?'selected':''}>🎬 Full Video (Entire length)</option>
-            <option value="300" ${curSeriesScope==='300'?'selected':''}>⏱️ First 5 Minutes</option>
-            <option value="600" ${curSeriesScope==='600'?'selected':''}>⏱️ First 10 Minutes</option>
-            <option value="900" ${curSeriesScope==='900'?'selected':''}>⏱️ First 15 Minutes</option>
-            <option value="1800" ${curSeriesScope==='1800'?'selected':''}>⏱️ First 30 Minutes</option>
-            <option value="3600" ${curSeriesScope==='3600'?'selected':''}>⏱️ First 1 Hour</option>
-            <option value="custom" ${curSeriesScope==='custom'?'selected':''}>✏️ Custom Minutes...</option>
-          </select>
-          <div id="serScopeCustomWrap" style="display:${curSeriesScope==='custom'?'flex':'none'};align-items:center;gap:8px;margin-top:8px">
-            <input type="number" id="serScopeCustomMins" value="${curSeriesScopeMins||15}" min="1" max="600" class="input" style="height:32px;width:90px;font-weight:700" placeholder="Mins" oninput="curSeriesScopeMins=parseFloat(this.value)||15">
-            <span style="font-size:12px;color:var(--dim)">minutes of video to split</span>
-          </div>
-        </div>
-
-        <!-- Dynamic Part Count or Episode Duration Options -->
-        <div>
-          ${curSeriesMode === 'parts' ? `
-            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Total Number of Parts (Any count!)</label>
-            <div style="display:flex;align-items:center;gap:8px">
-              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || 4}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" oninput="curSeriesParts=parseInt(this.value)||4;const bi=$('#serBarPartsInput');if(bi)bi.value=this.value;if(curSeriesUrl)updateSerPlan()">
-              <span style="font-size:12px;color:var(--dim)">parts</span>
-            </div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
-              ${[3, 4, 5, 8, 10, 15, 20, 30, 50, 100].map(n => `
-                <button type="button" class="btn sm ${curSeriesParts===n?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n};const bi=$('#serBarPartsInput');if(bi)bi.value=${n};if(curSeriesUrl)updateSerPlan()">${n}</button>
-              `).join('')}
-            </div>
-          ` : curSeriesMode === 'duration' ? `
-            <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">Target Episode Duration</label>
-            <select id="serDurSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="curSeriesDur=parseInt(this.value)||60;if(curSeriesUrl)updateSerPlan()">
-              <option value="30" ${curSeriesDur===30?'selected':''}>30s · Bite-Sized</option>
-              <option value="45" ${curSeriesDur===45?'selected':''}>45s · Medium Short</option>
-              <option value="60" ${curSeriesDur===60?'selected':''}>60s · Shorts / Reels ⭐</option>
-              <option value="90" ${curSeriesDur===90?'selected':''}>90s · Extended Short</option>
-              <option value="120" ${curSeriesDur===120?'selected':''}>120s · 2 Minutes</option>
-              <option value="180" ${curSeriesDur===180?'selected':''}>180s · 3 Minutes</option>
-            </select>
-          ` : `
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <label style="font-size:12px;font-weight:700;color:var(--brand-ink);margin:0">Number of Cliffhanger Parts (Custom)</label>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <input type="number" id="serCustomPartsInput" value="${curSeriesParts || ''}" min="2" max="500" class="input" style="height:38px;width:110px;font-weight:700;font-size:14px" placeholder="Auto ~60s" oninput="curSeriesParts=this.value?parseInt(this.value):null;if(curSeriesUrl)updateSerPlan()">
-              <span style="font-size:12px;color:var(--dim)">parts (or pick quick count below):</span>
-            </div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
-              <button type="button" class="btn sm ${!curSeriesParts?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=null;$('#serCustomPartsInput').value='';if(curSeriesUrl)updateSerPlan()">Auto (~60s)</button>
-              ${[3, 4, 5, 8, 10, 15, 20, 30].map(n => `
-                <button type="button" class="btn sm ${curSeriesParts===n?'primary':'ghost'}" style="padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px" onclick="curSeriesParts=${n};$('#serCustomPartsInput').value=${n};if(curSeriesUrl)updateSerPlan()">${n} Parts</button>
-              `).join('')}
-            </div>
-          `}
-        </div>
-
-      </div>
-
-      ${curSeriesMode === 'cliffhanger' ? `
-        <div style="margin-top:12px;padding:8px 12px;background:rgba(0,113,227,0.05);border:1px solid rgba(0,113,227,0.15);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-          <span style="font-size:12px;color:var(--brand-ink)">⚡ <b>AI Cliffhanger Engine:</b> Snaps cuts at emotional hooks & suspense peaks ("Wait for Part X...") to maximize audience retention.</span>
-          <span class="pill ok" style="font-size:11px;font-weight:700">Auto-Active</span>
-        </div>
-      ` : ''}
-    </div>
-  `;
+  // Mode & parts are now unified directly in the interactive composer bar
 }
 
 function renderSerCalendarPreview(plan) {
   const slot = $("#serCalPreview");
   if (!slot || !plan || !plan.episodes) return;
+  const nEps = plan.episodes.length;
+  const dur = Math.round(plan.duration || 0);
+  const durMin = Math.floor(dur / 60);
+  const durSec = dur % 60;
+  const durFmt = durMin > 0 ? `${durMin}m ${durSec}s` : `${durSec}s`;
+
+  // Visual Timeline Segments
+  const slicesHtml = plan.episodes.map((ep) => {
+    const epDur = Math.round(ep.duration || (ep.end - ep.start) || 60);
+    const pct = dur > 0 ? Math.max(8, Math.round((epDur / dur) * 100)) : Math.round(100 / nEps);
+    return `
+      <div class="ser-timeline-slice" style="flex:${pct}" title="Part ${ep.part}: ${esc(ep.title)} (${epDur}s)">
+        <span class="slice-label">Part ${ep.part} (${epDur}s)</span>
+      </div>
+    `;
+  }).join("");
+
   slot.innerHTML = `
-    <div class="cal-preview-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-2);padding-bottom:12px">
-        <div style="display:flex;align-items:center;gap:12px">
-          ${plan.preview?.thumb ? `<img src="${esc(plan.preview.thumb)}" alt="Thumb" style="width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:8px">` : ''}
+    <div class="cal-preview-card" style="animation:ntin .25s ease">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line-2);padding-bottom:14px">
+        <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:280px">
+          ${plan.preview?.thumb ? `<img src="${esc(plan.preview.thumb)}" alt="Thumb" style="width:84px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">` : ''}
           <div>
-            <h4 style="font-size:14px;font-weight:700;color:var(--brand-ink);margin:0">${esc(plan.preview?.title || plan.title)}</h4>
-            <span style="font-size:12px;color:var(--dim)">⏱️ ${Math.round(plan.duration)}s duration · ${plan.episodes.length} episodes planned · Cadence: <b>${plan.cadence_label || plan.cadence}</b></span>
+            <h4 style="font-size:15px;font-weight:700;color:var(--brand-ink);margin:0;line-height:1.3">${esc(plan.preview?.title || plan.title)}</h4>
+            <div style="font-size:12px;color:var(--dim);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <span>⏱️ Total: <b>${durFmt}</b></span>
+              <span>🎬 <b>${nEps} Episodes</b> Planned</span>
+              <span>📅 Cadence: <b>${esc(plan.cadence_label || plan.cadence)}</b></span>
+            </div>
           </div>
         </div>
-        <button class="btn primary" id="serLaunchBtn" data-act="serlaunch" style="height:38px;padding:0 20px;font-weight:700;border-radius:10px">
-          ${ic("scissors")} Split & Schedule Series
+        <button class="btn primary" id="serLaunchBtn" data-act="serlaunch" style="height:42px;padding:0 24px;font-weight:700;font-size:14px;border-radius:10px;box-shadow:0 2px 10px rgba(0,113,227,0.3);cursor:pointer">
+          ${ic("scissors")} Split & Schedule Series (${nEps} Parts)
         </button>
       </div>
+
+      <!-- Interactive Visual Timeline Strip -->
+      <div style="margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px">⚡ Visual Episode Breakdown</span>
+          <span style="font-size:11px;color:var(--brand);font-weight:600">${plan.cliffhanger ? 'AI Suspense Cliffhangers Active' : 'Duration Splits'}</span>
+        </div>
+        <div class="ser-timeline-track">
+          ${slicesHtml}
+        </div>
+      </div>
+
+      <!-- Episode Cards Grid -->
       <div class="cal-grid">
-        ${plan.episodes.map(ep => `
+        ${plan.episodes.map((ep, i) => `
           <div class="cal-card">
             <div style="display:flex;align-items:center;justify-content:space-between">
-              <span class="cal-badge ${ep.cliffhanger ? 'cliff' : (ep.part === plan.episodes.length ? 'finale' : '')}">
-                Part ${ep.part} ${ep.cliffhanger ? '⚡ Cliffhanger' : (ep.part === plan.episodes.length ? '🏆 Finale' : '')}
+              <span class="cal-badge ${ep.cliffhanger ? 'cliff' : (ep.part === nEps ? 'finale' : '')}">
+                Part ${ep.part} ${ep.cliffhanger ? '⚡ Cliffhanger' : (ep.part === nEps ? '🏆 Finale' : '')}
               </span>
-              <span style="font-size:11px;font-weight:600;color:var(--dim)">${ep.duration}s</span>
+              <span style="font-size:11px;font-weight:600;color:var(--dim)">${Math.round(ep.duration || 60)}s</span>
             </div>
-            <div style="font-size:13px;font-weight:600;color:var(--brand-ink);line-height:1.3;margin:4px 0">${esc(ep.title)}</div>
+            <input type="text" class="input ep-title-inline" value="${esc(ep.title)}" style="height:30px;font-size:12px;font-weight:600;padding:0 8px;border:1px solid var(--line-2);border-radius:6px;background:#fff;margin:4px 0" title="Click to rename episode" oninput="if(curSeriesPlan&&curSeriesPlan.episodes[${i}])curSeriesPlan.episodes[${i}].title=this.value">
             <div style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px;margin-top:auto">
               <span>📅</span> <b>${esc(ep.due_formatted)}</b>
             </div>
@@ -2969,113 +2966,152 @@ async function drawSeries() {
 
   const accList = S.accounts || [];
   const accountsHtml = accList.length ? accList.map(a => `
-    <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer">
-      <input type="checkbox" name="ser_acc" value="${esc(a.id)}" checked style="accent-color:var(--brand)">
+    <label class="ser-acc-chip">
+      <input type="checkbox" name="ser_acc" value="${esc(a.id)}" checked>
       <span>${esc(a.name)} <small style="color:var(--dim)">(${esc(a.platform)})</small></span>
     </label>
-  `).join("") : `<span style="font-size:12px;color:var(--dim)">No accounts connected. <a href="/app/settings/apps" data-act="go" data-v="settings" data-tab="apps" style="color:var(--brand);font-weight:600">Connect Instagram or YouTube</a></span>`;
+  `).join("") : `<span style="font-size:12px;color:var(--dim)">No accounts connected. <a href="/app/settings/apps" data-act="go" data-v="settings" data-tab="apps" style="color:var(--brand);font-weight:600">Connect in Settings</a></span>`;
 
   box.innerHTML = `
     <div style="max-width:1100px;margin:0 auto;padding-bottom:60px">
-      <div class="hero" style="padding-top:16px;padding-bottom:28px">
-        <h2>✨ Series Splitter & Cliffhanger Studio</h2>
+      <div class="hero" style="padding-top:16px;padding-bottom:24px">
+        <h2>✨ Series Splitter Studio</h2>
         <p>Slice long YouTube videos into serialized multi-part Shorts & Reels. Snaps each episode to high-suspense cliffhangers with an automated publishing calendar.</p>
 
-        <div class="composer big" id="serComposer" style="margin-top:18px">
-          <div class="composer-input" style="position:relative;display:flex;align-items:center;padding-right:12px">
+        <!-- Modern Unified Interactive Composer -->
+        <div class="composer big" id="serComposer" style="margin-top:18px;border-radius:var(--r-lg);background:#fff;border:1px solid var(--line);box-shadow:0 4px 20px rgba(0,0,0,0.04);overflow:hidden">
+          
+          <!-- URL Input Bar -->
+          <div class="composer-input" style="position:relative;display:flex;align-items:center;padding:12px 14px;background:#fff">
             ${ic("link")}
-            <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a YouTube video link to split into a series..." autocomplete="off" spellcheck="false" style="padding-right:130px">
-            <button class="btn primary" id="serPreviewBtn" data-act="serpreview" ${curSeriesAnalyzing ? 'disabled' : ''} style="position:absolute;right:10px;top:50%;transform:translateY(-50%);height:42px;padding:0 22px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,113,227,0.25);flex:none;cursor:pointer">
+            <input id="serUrlInput" type="url" value="${esc(curSeriesUrl)}" placeholder="Paste a YouTube video link to split into a series..." autocomplete="off" spellcheck="false" style="padding-right:140px;font-size:14px">
+            <button class="btn primary" id="serPreviewBtn" data-act="serpreview" ${curSeriesAnalyzing ? 'disabled' : ''} style="position:absolute;right:10px;top:50%;transform:translateY(-50%);height:42px;padding:0 22px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(0,113,227,0.3);flex:none;cursor:pointer">
               ${curSeriesAnalyzing ? `${ic("spin")} Analyzing…` : `${ic("bolt")}Analyze`}
             </button>
           </div>
 
-          <div class="composer-bar" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 14px 12px;border-top:1px solid var(--line-2)">
-            <span style="font-size:12px;font-weight:700;color:var(--dim);margin-right:2px">Mode:</span>
-            <button type="button" class="chip ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Mode</button>
-            <button type="button" class="chip ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ By Duration</button>
-            <button type="button" class="chip ${curSeriesMode === 'parts' ? 'on' : ''}" data-act="sermode" data-m="parts">🔢 By Part Count</button>
-            <span id="serBarPartsWrap" style="display:${curSeriesMode==='parts'?'inline-flex':'none'};align-items:center;gap:4px;background:rgba(0,113,227,0.08);padding:3px 8px;border-radius:20px;border:1px solid rgba(0,113,227,0.25)">
-              <span style="font-size:11px;font-weight:700;color:var(--brand)">Parts:</span>
-              <input type="number" id="serBarPartsInput" value="${curSeriesParts || 4}" min="2" max="500" style="width:52px;height:24px;border:1px solid var(--line);border-radius:12px;font-weight:700;font-size:12px;text-align:center;background:#fff;color:var(--brand-ink)" oninput="curSeriesParts=parseInt(this.value)||4;const el=$('#serCustomPartsInput');if(el)el.value=this.value;if(curSeriesUrl)updateSerPlan()">
-            </span>
-            <span style="flex:1"></span>
-            <button type="button" class="chip ${curSeriesOptsOpen ? 'on' : ''}" data-act="sertoggleopts" style="display:inline-flex;align-items:center;gap:6px">${ic("sliders")}Schedule & Options</button>
-          </div>
-
-          <div id="serOptsPanel" style="${curSeriesOptsOpen ? 'display:block;' : 'display:none;'}padding:16px 18px;border-top:1px solid var(--line-2);background:#fff;border-radius:0 0 var(--r-lg) var(--r-lg);opacity:1">
-            <div id="serOptionsSlot"></div>
-
-            <!-- Schedule & Destinations -->
-            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-                <div>
-                  <b style="font-size:14px;color:var(--brand-ink);display:flex;align-items:center;gap:6px">📅 Automated Publishing Schedule</b>
-                  <p style="font-size:12px;color:var(--dim);margin-top:2px">JaxCliped will automatically post each episode to your connected accounts at the scheduled calendar times.</p>
-                </div>
-                <label style="cursor:pointer;display:inline-flex;align-items:center;gap:8px">
-                  <input type="checkbox" id="serAutoPost" ${curSeriesAutoPost ? 'checked' : ''} data-act="serautopost" style="accent-color:var(--brand);width:16px;height:16px">
-                  <span style="font-size:13px;font-weight:600">Auto-Post</span>
-                </label>
+          <!-- Interactive Controls Bar -->
+          <div style="padding:14px 18px 16px;background:#fbfcfd;border-top:1px solid var(--line-2)">
+            
+            <!-- ROW 1: PART COUNT SELECTOR -->
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span style="font-size:12px;font-weight:700;color:var(--brand-ink);display:flex;align-items:center;gap:4px">
+                <span>🔢</span> Split into:
+              </span>
+              <div class="ser-pills" id="serPartsPills">
+                <button type="button" class="ser-pill ${!curSeriesParts ? 'on' : ''}" data-act="serpartspill" data-n="auto">Auto (~60s)</button>
+                <button type="button" class="ser-pill ${curSeriesParts === 3 ? 'on' : ''}" data-act="serpartspill" data-n="3">3 Parts</button>
+                <button type="button" class="ser-pill ${curSeriesParts === 4 ? 'on' : ''}" data-act="serpartspill" data-n="4">4 Parts</button>
+                <button type="button" class="ser-pill ${curSeriesParts === 5 ? 'on' : ''}" data-act="serpartspill" data-n="5">5 Parts</button>
+                <button type="button" class="ser-pill ${curSeriesParts === 10 ? 'on' : ''}" data-act="serpartspill" data-n="10">10 Parts</button>
+                <button type="button" class="ser-pill ${[3,4,5,10].includes(curSeriesParts) || !curSeriesParts ? '' : 'on'}" data-act="serpartspill" data-n="custom">✏️ Custom</button>
+                <span id="serCustomPartsWrap" style="display:${[3,4,5,10].includes(curSeriesParts) || !curSeriesParts ? 'none' : 'inline-flex'};align-items:center;gap:4px">
+                  <input type="number" id="serCustomPartsInput" value="${curSeriesParts || 4}" min="2" max="500" class="input" style="width:65px;height:30px;font-size:13px;font-weight:700;text-align:center;padding:0" oninput="onCustomPartsInput(this.value)">
+                  <span style="font-size:12px;color:var(--dim);font-weight:600">parts</span>
+                </span>
               </div>
 
-              <div id="serScheduleSection" style="${curSeriesAutoPost ? '' : 'display:none;'}margin-top:14px">
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:start">
-                  <div>
-                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Posting Cadence (Drop Frequency)</label>
-                    <select id="serCadenceSelect" class="input" style="height:38px;font-size:13px;width:100%" onchange="onSerCadenceChange(this.value)">
-                      <option value="twice_daily" ${curSeriesCadence==='twice_daily'?'selected':''}>⚡ 2 Posts / Day (Every 12 hrs)</option>
-                      <option value="thrice_daily" ${curSeriesCadence==='thrice_daily'?'selected':''}>🔥 3 Posts / Day (Every 8 hrs)</option>
-                      <option value="four_daily" ${curSeriesCadence==='four_daily'?'selected':''}>🚀 4 Posts / Day (Every 6 hrs)</option>
-                      <option value="every_4_hours" ${curSeriesCadence==='every_4_hours'?'selected':''}>💥 6 Posts / Day (Every 4 hrs)</option>
-                      <option value="daily" ${curSeriesCadence==='daily'?'selected':''}>📅 1 Post / Day (Every 24 hrs)</option>
-                      <option value="every_2_days" ${curSeriesCadence==='every_2_days'?'selected':''}>📆 Every 2 Days (48 hrs)</option>
-                      <option value="weekly" ${curSeriesCadence==='weekly'?'selected':''}>🗓️ Once a Week</option>
-                      <option value="monthly" ${curSeriesCadence==='monthly'?'selected':''}>🌕 Once a Month</option>
-                      <option value="custom_daily" ${curSeriesCadence==='custom_daily'?'selected':''}>✏️ Custom Posts Per Day...</option>
-                      <option value="custom_hours" ${curSeriesCadence==='custom_hours'?'selected':''}>⏱️ Custom Hours Interval...</option>
-                    </select>
-                    <div id="serCustomCadenceWrap" style="display:${curSeriesCadence==='custom_daily'||curSeriesCadence==='custom_hours'?'flex':'none'};align-items:center;gap:10px;margin-top:8px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line-2);border-radius:6px">
-                      ${curSeriesCadence === 'custom_hours' ? `
-                        <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Hours Interval:</label>
-                        <input type="number" id="serCustomHoursInput" value="${curSeriesCustomHours||4}" min="0.5" max="720" step="0.5" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomHours=parseFloat(this.value)||4">
-                        <span style="font-size:11px;color:var(--dim)">e.g. drops an episode every 4 hrs</span>
-                      ` : `
-                        <label style="font-size:12px;font-weight:700;color:var(--brand-ink)">Posts per Day:</label>
-                        <input type="number" id="serCustomDailyInput" value="${curSeriesCustomDaily||5}" min="1" max="48" step="1" class="input" style="width:85px;height:32px;font-weight:700" oninput="curSeriesCustomDaily=parseFloat(this.value)||5">
-                        <span style="font-size:11px;color:var(--dim)">e.g. 5 posts daily = 1 drop every 4.8 hrs</span>
-                      `}
-                    </div>
-                  </div>
-                  <div>
-                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">First Episode Drop Time</label>
-                    <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff">
-                  </div>
-                  <div>
-                    <label style="font-size:12px;font-weight:700;color:var(--dim);display:block;margin-bottom:6px">Target Destinations</label>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                      ${accountsHtml}
-                    </div>
-                  </div>
+              <span style="flex:1"></span>
+
+              <!-- Quick Sample Button -->
+              <button type="button" class="btn sm ghost" data-act="sersample" style="font-size:11px;font-weight:600;color:var(--brand);padding:2px 8px;border-radius:6px" title="Try with sample video">
+                💡 Try sample video
+              </button>
+            </div>
+
+            <!-- ROW 2: EPISODE STYLE, CADENCE & TARGET ACCOUNTS -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2);align-items:start">
+              
+              <!-- Episode Cut Style -->
+              <div>
+                <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">⚡ Episode Style</label>
+                <div class="ser-pills">
+                  <button type="button" class="ser-pill ${curSeriesMode === 'cliffhanger' ? 'on' : ''}" data-act="sermode" data-m="cliffhanger">⚡ Cliffhanger Cut</button>
+                  <button type="button" class="ser-pill ${curSeriesMode === 'duration' ? 'on' : ''}" data-act="sermode" data-m="duration">⏱️ Fixed (~60s)</button>
+                </div>
+              </div>
+
+              <!-- Automated Schedule & Cadence -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <label style="font-size:12px;font-weight:700;color:var(--brand-ink);margin:0">📅 Publishing Schedule</label>
+                  <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                    <input type="checkbox" id="serAutoPost" ${curSeriesAutoPost ? 'checked' : ''} data-act="serautopost" style="accent-color:var(--brand);width:15px;height:15px">
+                    <span style="font-size:12px;font-weight:700;color:${curSeriesAutoPost ? 'var(--brand)' : 'var(--dim)'}">${curSeriesAutoPost ? 'Active' : 'Off'}</span>
+                  </label>
+                </div>
+                <div class="ser-pills" id="serCadencePills" style="${curSeriesAutoPost ? '' : 'opacity:0.4;pointer-events:none;'}">
+                  <button type="button" class="ser-pill ${curSeriesCadence === 'daily' ? 'on' : ''}" data-act="sercadencepill" data-c="daily">1 / Day</button>
+                  <button type="button" class="ser-pill ${curSeriesCadence === 'twice_daily' ? 'on' : ''}" data-act="sercadencepill" data-c="twice_daily">2 / Day</button>
+                  <button type="button" class="ser-pill ${curSeriesCadence === 'four_daily' ? 'on' : ''}" data-act="sercadencepill" data-c="four_daily">4 / Day</button>
+                  <button type="button" class="ser-pill ${['daily','twice_daily','four_daily'].includes(curSeriesCadence) ? '' : 'on'}" data-act="sercadencepill" data-c="custom">Custom ▾</button>
+                </div>
+                <div id="serCadenceSelectWrap" style="display:${['daily','twice_daily','four_daily'].includes(curSeriesCadence) ? 'none' : 'block'};margin-top:6px">
+                  <select id="serCadenceSelect" class="input" style="height:32px;font-size:12px;width:100%" onchange="onSerCadenceChange(this.value)">
+                    <option value="thrice_daily" ${curSeriesCadence==='thrice_daily'?'selected':''}>🔥 3 Posts / Day (Every 8 hrs)</option>
+                    <option value="every_4_hours" ${curSeriesCadence==='every_4_hours'?'selected':''}>💥 6 Posts / Day (Every 4 hrs)</option>
+                    <option value="every_2_days" ${curSeriesCadence==='every_2_days'?'selected':''}>📆 Every 2 Days (48 hrs)</option>
+                    <option value="weekly" ${curSeriesCadence==='weekly'?'selected':''}>🗓️ Once a Week</option>
+                    <option value="custom_daily" ${curSeriesCadence==='custom_daily'?'selected':''}>✏️ Custom Posts Per Day...</option>
+                    <option value="custom_hours" ${curSeriesCadence==='custom_hours'?'selected':''}>⏱️ Custom Hours Interval...</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Target Destinations -->
+              <div>
+                <label style="font-size:12px;font-weight:700;color:var(--brand-ink);display:block;margin-bottom:6px">🎯 Post Drops To</label>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  ${accountsHtml}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Advanced Options Toggle -->
+            <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line-2);display:flex;align-items:center;justify-content:space-between">
+              <button type="button" class="btn sm ghost" data-act="sertoggleopts" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--dim);padding:2px 8px">
+                ${ic("sliders")}<span>Advanced Scope & Drop Time ${curSeriesOptsOpen ? '▴' : '▾'}</span>
+              </button>
+              <span style="font-size:11px;color:var(--faint)">All episodes auto-rendered vertically (9:16) with word-synced captions</span>
+            </div>
+
+            <div id="serOptsPanel" style="${curSeriesOptsOpen ? 'display:block;' : 'display:none;'}margin-top:10px;padding:12px 14px;background:#f1f5f9;border-radius:8px">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:center">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--dim);display:block;margin-bottom:4px">Video Scope (Split portion of video)</label>
+                  <select id="serScopeSelect" class="input" style="height:32px;font-size:12px;width:100%" onchange="onSerScopeChange(this.value)">
+                    <option value="full" ${curSeriesScope==='full'?'selected':''}>🎬 Full Video (Entire length)</option>
+                    <option value="300" ${curSeriesScope==='300'?'selected':''}>⏱️ First 5 Minutes</option>
+                    <option value="600" ${curSeriesScope==='600'?'selected':''}>⏱️ First 10 Minutes</option>
+                    <option value="900" ${curSeriesScope==='900'?'selected':''}>⏱️ First 15 Minutes</option>
+                    <option value="1800" ${curSeriesScope==='1800'?'selected':''}>⏱️ First 30 Minutes</option>
+                    <option value="custom" ${curSeriesScope==='custom'?'selected':''}>✏️ Custom Minutes...</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--dim);display:block;margin-bottom:4px">First Episode Drop Time</label>
+                  <input type="datetime-local" id="serStartTimeInput" value="${esc(curSeriesStartTime)}" style="height:32px;font-size:12px;width:100%;border:1px solid var(--line);border-radius:6px;padding:0 8px;background:#fff">
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
       <div id="serPreviewSlot">
         ${!curSeriesPlan ? `
-          <div style="background:#fff;border:1px dashed var(--line);border-radius:var(--r);padding:28px 20px;text-align:center;margin-top:20px">
-            <div style="width:44px;height:44px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px">✂️</div>
+          <div style="background:#fff;border:1px dashed var(--line);border-radius:var(--r);padding:24px 20px;text-align:center;margin-top:18px">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 8px">✂️</div>
             <h4 style="font-size:15px;font-weight:700;color:var(--brand-ink);margin:0 0 6px">Turn 1 Long Video Into a Viral Multi-Episode Series</h4>
-            <p style="font-size:13px;color:var(--dim);max-width:500px;margin:0 auto 14px;line-height:1.5">
-              Paste any YouTube video link above and click <b>Analyze</b>. JaxCliped automatically splits the video into serialized episodes, identifies high-suspense cliffhangers, and generates an automated release calendar.
+            <p style="font-size:13px;color:var(--dim);max-width:500px;margin:0 auto 12px;line-height:1.5">
+              Paste any YouTube video link above and click <b>Analyze</b> (or pick parts first). JaxCliped automatically splits the video into serialized episodes and schedules the drops.
             </p>
             <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">1️⃣ Paste YouTube Link</span>
-              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">2️⃣ Click Analyze</span>
-              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:6px 14px;border-radius:999px">3️⃣ Split & Launch Schedule</span>
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:5px 12px;border-radius:999px">1️⃣ Paste YouTube Link</span>
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:5px 12px;border-radius:999px">2️⃣ Pick Part Count</span>
+              <span style="font-size:12px;font-weight:600;color:var(--brand-ink);background:var(--muted);padding:5px 12px;border-radius:999px">3️⃣ Split & Launch Schedule</span>
             </div>
           </div>
         ` : ''}
@@ -3328,6 +3364,16 @@ $("#file").addEventListener("change", e => { attach(e.target.files); e.target.va
 document.addEventListener("dragover", e => { const a = $(".composer"); if (a) { e.preventDefault(); a.classList.add("over"); } });
 document.addEventListener("dragleave", () => $(".composer")?.classList.remove("over"));
 document.addEventListener("drop", e => { const a = $(".composer"); if (a) { e.preventDefault(); a.classList.remove("over"); attach(e.dataTransfer.files); } });
+document.addEventListener("paste", e => {
+  if (e.target && e.target.id === "serUrlInput") {
+    setTimeout(() => {
+      const v = (e.target.value || "").trim();
+      if (v.startsWith("http")) {
+        $("#serPreviewBtn")?.click();
+      }
+    }, 150);
+  }
+});
 function syncCaptionStyle(toggle) {
   toggle.closest("#addform, #cform, #clipdlg").querySelectorAll("[data-caption-style]").forEach(i => i.disabled = !toggle.checked);
 }
@@ -3605,47 +3651,66 @@ document.addEventListener("click", async e => {
     if (a === "sermode") {
       curSeriesMode = d.m;
       $$("[data-act=sermode]").forEach(c => c.classList.toggle("on", c.dataset.m === d.m));
-      const barParts = $("#serBarPartsWrap");
-      if (barParts) barParts.style.display = (d.m === "parts") ? "inline-flex" : "none";
-      if (d.m === "parts") {
-        curSeriesOptsOpen = true;
-        const panel = $("#serOptsPanel");
-        if (panel) panel.style.display = "block";
-        const btn = $("[data-act=sertoggleopts]");
-        if (btn) btn.classList.add("on");
-      }
-      renderSerModeOptions();
       if (curSeriesUrl) updateSerPlan();
       return;
     }
-    if (a === "sercadence") {
-      curSeriesCadence = d.c;
-      $$(".cadence-pill").forEach(p => p.classList.toggle("on", p.dataset.c === d.c));
+    if (a === "serpartspill") {
+      const n = d.n;
+      const wrap = $("#serCustomPartsWrap");
+      if (n === "auto") {
+        curSeriesParts = null;
+        if (wrap) wrap.style.display = "none";
+      } else if (n === "custom") {
+        curSeriesParts = parseInt($("#serCustomPartsInput")?.value) || 4;
+        if (wrap) {
+          wrap.style.display = "inline-flex";
+          $("#serCustomPartsInput")?.focus();
+        }
+      } else {
+        curSeriesParts = parseInt(n) || 4;
+        if (wrap) wrap.style.display = "none";
+      }
+      $$("#serPartsPills .ser-pill").forEach(p => p.classList.toggle("on", p.dataset.n === n));
       if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "sercadencepill") {
+      const c = d.c;
+      const wrap = $("#serCadenceSelectWrap");
+      if (c === "custom") {
+        curSeriesCadence = $("#serCadenceSelect")?.value || "custom_daily";
+        if (wrap) wrap.style.display = "block";
+      } else {
+        curSeriesCadence = c;
+        if (wrap) wrap.style.display = "none";
+      }
+      $$("#serCadencePills .ser-pill").forEach(p => p.classList.toggle("on", p.dataset.c === c));
+      if (curSeriesUrl) updateSerPlan();
+      return;
+    }
+    if (a === "sersample") {
+      const inp = $("#serUrlInput");
+      if (inp) {
+        inp.value = "https://www.youtube.com/watch?v=kXYiU_JCYtU";
+        curSeriesUrl = inp.value;
+        $("#serPreviewBtn")?.click();
+      }
       return;
     }
     if (a === "serautopost") {
-      curSeriesAutoPost = $("#serAutoPost").checked;
-      $("#serScheduleSection").style.display = curSeriesAutoPost ? "" : "none";
-      return;
-    }
-    if (a === "serdurlen") {
-      curSeriesDur = Number(d.d);
-      $$("[data-act=serdurlen]").forEach(b => { b.className = `btn sm ${Number(b.dataset.d) === curSeriesDur ? 'primary' : 'ghost'}`; });
-      if (curSeriesUrl) updateSerPlan();
-      return;
-    }
-    if (a === "serpartscnt") {
-      curSeriesParts = Number(d.n);
-      $$("[data-act=serpartscnt]").forEach(b => { b.className = `btn sm ${Number(b.dataset.n) === curSeriesParts ? 'primary' : 'ghost'}`; });
-      if (curSeriesUrl) updateSerPlan();
+      curSeriesAutoPost = $("#serAutoPost")?.checked ?? true;
+      const pills = $("#serCadencePills");
+      if (pills) {
+        pills.style.opacity = curSeriesAutoPost ? "1" : "0.4";
+        pills.style.pointerEvents = curSeriesAutoPost ? "auto" : "none";
+      }
       return;
     }
     if (a === "sertoggleopts") {
       curSeriesOptsOpen = !curSeriesOptsOpen;
       const p = $("#serOptsPanel"), btn = $("[data-act=sertoggleopts]");
       if (p) p.style.display = curSeriesOptsOpen ? "block" : "none";
-      if (btn) btn.classList.toggle("on", curSeriesOptsOpen);
+      if (btn) btn.innerHTML = `${ic("sliders")}<span>Advanced Scope & Drop Time ${curSeriesOptsOpen ? '▴' : '▾'}</span>`;
       return;
     }
     if (a === "serpreview") {
